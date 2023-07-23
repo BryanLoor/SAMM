@@ -2,7 +2,7 @@ from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita, SAMM_BitacoraVis
 from app.models.SAMM_UbiPersona import SAMM_UbiPersona, SAMM_UbiPersonaSchema
 from app.models.SAMM_Ubicacion import SAMM_Ubicacion, SAMM_UbicacionSchema
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
-from app.models.Persona import Persona, PersonaSchema
+from app.models.SAMM_Persona import Persona
 from app.models.SAMM_Ronda import SAMM_Ronda, SAMM_RondaSchema
 from app.models.SAMM_Ubicacion import SAMM_Ubicacion, SAMM_UbicacionSchema
 from app.models.SAMM_RondaAsignacion import SAMM_RondaAsignacion, SAMM_RondaAsignacionSchema

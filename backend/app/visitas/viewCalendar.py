@@ -2,7 +2,6 @@ from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita, SAMM_BitacoraVis
 from app.models.SAMM_UbiPersona import SAMM_UbiPersona, SAMM_UbiPersonaSchema
 from app.models.SAMM_Ubicacion import SAMM_Ubicacion, SAMM_UbicacionSchema
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
-from app.models.Persona import Persona, PersonaSchema
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from dateutil.parser import parse

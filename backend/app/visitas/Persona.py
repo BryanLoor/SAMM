@@ -2,9 +2,8 @@ from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita, SAMM_BitacoraVis
 from app.models.SAMM_UbiPersona import SAMM_UbiPersona, SAMM_UbiPersonaSchema
 from app.models.SAMM_Ubicacion import SAMM_Ubicacion, SAMM_UbicacionSchema
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
-from app.models.Persona import Persona, PersonaSchema
+from app.models.SAMM_Persona import Persona, PersonaSchema
 from app.models.SAMM_Rol import SAMM_Rol
-
 from flask import jsonify, request
 from flask_cors import cross_origin
 from app.visitas import bp
@@ -15,6 +14,46 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import date, datetime
 from sqlalchemy import or_
 
+
+persona_schema = PersonaSchema()
+personas_schema = PersonaSchema(many=True)
+
+#Obtiene todos los registros de la tabla Persona
+@bp.route('/personas', methods=['GET'])
+@cross_origin()
+@jwt_required()
+def getPersonas():
+    try:
+        todas_personas = Persona.query.all()
+        
+        results =  personas_schema.dump(todas_personas)
+        return jsonify(results), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+#Consulta registro Persona por ID
+
+# API para consultar por ID
+@bp.route('/personas/<int:id>', methods=['GET'])
+@jwt_required()
+def get_persona(id):
+    try:
+        persona = Persona.query.get(id)
+        return persona_schema.jsonify(persona)
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+# @bp.route('/persona/<id>', methods=['GET'])
+# @cross_origin()
+# @jwt_required()
+# def getPersona(id):
+#     try:
+#         persona = Persona.query.filter_by(Id=id).first()
+#         if persona is None:
+#             return jsonify({'message': 'Persona no existe'}), 400
+#         return jsonify(persona=persona.serialize()), 200
+#     except Exception as e:
+#         return jsonify({'message': str(e)}), 500
 
 @bp.route('/existePersona/<cedula>', methods=['GET'])	
 @cross_origin()
@@ -28,28 +67,9 @@ def existePersona(cedula):
     except Exception as e:
         return jsonify({'message': str(e)}), 500
     
-@bp.route('/persona/<id>', methods=['GET'])
-@cross_origin()
-@jwt_required()
-def getPersona(id):
-    try:
-        persona = Persona.query.filter_by(Id=id).first()
-        if persona is None:
-            return jsonify({'message': 'Persona no existe'}), 400
-        return jsonify(persona=persona.serialize()), 200
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+
     
     
-@bp.route('/personas', methods=['GET'])
-@cross_origin()
-@jwt_required()
-def getPersonas():
-    try:
-        personas = Persona.query.all()
-        return jsonify(personas=[persona.serialize() for persona in personas]), 200
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
 
 @bp.route('/lista', methods=['GET'])
 @cross_origin()

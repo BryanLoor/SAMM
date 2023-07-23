@@ -1,10 +1,7 @@
-#crud for  SAMM_Usuario
-
-#crud for  SAMM_Usuario
-
-from app.models.Persona import Persona, PersonaSchema
+from app.models.SAMM_Persona import Persona, PersonaSchema
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
-
+from app.models.SAMM_RolUsu import SAMM_RolUsu, SAMM_RolUsuSchema
+from app.models.SAMM_Rol import SAMM_Rol, SAMM_RolSchema
 from flask import jsonify, request
 from flask_cors import cross_origin
 from app.visitas import bp
@@ -21,11 +18,49 @@ from sqlalchemy import or_
 @jwt_required()
 def getUsuarios():
     try:
-        usuarios = SAMM_Usuario.query.all()
-        usuariosSchema = SAMM_UsuarioSchema(many=True)
-        return jsonify(usuarios=usuariosSchema.dump(usuarios)), 200
+        
+        usuario_creador_alias = db.aliased(SAMM_Usuario)
+        usuario_modificador_alias = db.aliased(SAMM_Usuario)
+
+        # Realizar joins adicionales con los alias para obtener información del usuario creador y modificador
+        usuarios = db.session.query(SAMM_Usuario.Id,
+                                    SAMM_Usuario.Codigo,
+                                    Persona.Nombres,
+                                    Persona.Apellidos,
+                                    SAMM_Usuario.FechaCrea,
+                                    usuario_creador_alias.Codigo.label("CodigoUsCrea"),
+                                    SAMM_Usuario.FechaModifica,
+                                    usuario_modificador_alias.Codigo.label("CodigoUsMod"),
+                                    SAMM_Usuario.Estado
+                                   ) \
+            .join(Persona, Persona.Id == SAMM_Usuario.IdPersona) \
+            .join(usuario_creador_alias, usuario_creador_alias.Id == SAMM_Usuario.UsuarioCrea) \
+            .join(usuario_modificador_alias, usuario_modificador_alias.Id == SAMM_Usuario.UsuarioModifica) \
+            .all()
+            
+
+        # Procesar los resultados del join y convertirlos en una lista de diccionarios
+        resultados = []
+
+        for usuario in usuarios:
+            resultados.append({
+                'id': usuario.Id,
+                'codigo': usuario.Codigo,
+                'nombres': usuario.Nombres,
+                'apellidos': usuario.Apellidos,
+                'fechaCrea:':usuario.FechaCrea.strftime('%d-%m-%Y'),
+                'horaCrea': usuario.FechaCrea.strftime('%H:%M:%S'),
+                'codigo_usuario_crea': usuario.CodigoUsCrea,
+                'fechaModifica:':usuario.FechaModifica.strftime('%d-%m-%Y'),
+                'horaModifica': usuario.FechaModifica.strftime('%H:%M:%S'),
+                'codigo_usuario_modifica': usuario.CodigoUsMod,
+                'estado': usuario.Estado
+                # Otros campos que desees agregar...
+            })
+        return jsonify(resultados), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+
     
 @bp.route('/usuarios/<id>', methods=['GET'])
 @cross_origin()

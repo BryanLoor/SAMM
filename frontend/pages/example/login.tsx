@@ -1,12 +1,7 @@
 import React, { useContext, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Label,
-  Input,
-  Button,
-  WindmillContext,
-} from "@roketid/windmill-react-ui";
+import {Label,Input,Button,WindmillContext,} from "@roketid/windmill-react-ui";
 import { Alert, AlertColor, AlertTitle } from "@mui/material";
 import { useRouter } from "next/router";
 import { get, post } from "utils/services/api";
@@ -33,7 +28,7 @@ function LoginPage() {
     if (!codigo || !clave) {
       setAlert({
         type: "error",
-        title: "Please fill all the fields",
+        title: "Por favor ingresa tus credenciales",
       });
       return;
     }
@@ -61,7 +56,7 @@ function LoginPage() {
       router.push("/example/welcome");
     } catch (error: any) {
       // TODO: Handle login error
-      console.error("Login failed", error);
+      console.error("Credenciales incorrectas", error);
       setAlert({
         type: "error",
         title: error.response.data.message,
@@ -97,7 +92,7 @@ function LoginPage() {
                 <Input
                   className="mt-1"
                   type="email"
-                  placeholder="juan@digotec.com"
+                  placeholder="Escribe tu usuario"
                   value={codigo}
                   onChange={(e) => setCodigo(e.target.value)}
                 />

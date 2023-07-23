@@ -45,15 +45,15 @@ function Header() {
       : "/assets/img/SAMM-horizontal2.png";
 
   return (
-    <header className="z-40 h-[120px] bg-[#0040AE] shadow-bottom dark:bg-gray-800">
+    <header className="z-40 h-[80px] bg-[#0040AE] shadow-bottom dark:bg-gray-800">
       <div className="container flex items-center  justify-between h-full mx-auto text-purple-600 dark:text-purple-300">
         <ul>
           <Image
             aria-hidden="true"
             src={imgSource}
             alt="Office"
-            width={193}
-            height={50}
+            width={150}
+            height={20}
           />
         </ul>
 

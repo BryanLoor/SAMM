@@ -6,7 +6,7 @@ from app.extensions import db
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
 from app.models.SAMM_RolUsu import SAMM_RolUsu, SAMM_RolUsuSchema
 from app.models.SAMM_UbiPersona import SAMM_UbiPersona, SAMM_UbiPersonaSchema
-from app.models.Persona import Persona, PersonaSchema
+from app.models.SAMM_Persona import Persona
 from app.login import bp as app
 from marshmallow import ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash

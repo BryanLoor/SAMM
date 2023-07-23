@@ -1,15 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { Input, Label, TableHeader } from "@roketid/windmill-react-ui";
 import PageTitle from "example/components/Typography/PageTitle";
 import SectionTitle from "example/components/Typography/SectionTitle";
 import Layout from "example/containers/Layout";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-} from "@mui/material";
+import {Table,TableBody,TableCell,TableContainer,TableRow,} from "@mui/material";
 import { get } from "utils/services/api";
 import ModalUsuario from "./modal-crear-usuario";
 import Link from "next/link";
@@ -18,17 +12,19 @@ function Usuarios() {
   const [data, setData] = React.useState<ITableData[]>([]);
   interface ITableData {
     id: number;
-    nombre: string;
+    codigo: string;
+    nombres: string;
     apellidos: string;
-    identificacion: string;
-    celular: string;
-    status_actividad: string;
-    status_rondas: string;
+    estado: string;
+    usuariocrea: string;
+    fechacrea: string;
+    usuariomodifica: string;
+    fechamodifica: string;
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await get("/visitas/getAgentes");
+      const result = await get("/visitas/usuarios");
       setData(result);
     };
     fetchData();
@@ -55,14 +51,16 @@ function Usuarios() {
           <Table>
             <TableHeader>
               <tr className=" text-[#0040AE]">
-                <TableCell></TableCell>
-                <TableCell>#</TableCell>
+              <TableCell></TableCell>
+                <TableCell>Id</TableCell>
+                <TableCell>Codigo</TableCell>
                 <TableCell>Nombres</TableCell>
                 <TableCell>Apellidos</TableCell>
-                <TableCell>Identificación</TableCell>
-                <TableCell>Celular</TableCell>
-                <TableCell>Status actividad</TableCell>
-                <TableCell>Status rondas</TableCell>
+                <TableCell>Estado</TableCell>
+                <TableCell>UsuarioCrea</TableCell>
+                <TableCell>FechaCrea</TableCell>
+                <TableCell>UsuarioModifica</TableCell>
+                <TableCell>FechaModifica</TableCell>
               </tr>
             </TableHeader>
             <TableBody>
@@ -79,32 +77,34 @@ function Usuarios() {
                     <span className="text-sm">{row.id}</span>
                   </TableCell>
                   <TableCell>
+                    <span className="text-sm">{row.codigo}</span>
+                  </TableCell>
+                  <TableCell>
                     <Link href="/example/info-usuario">
                       <span className="text-sm text-blue-800 hover:text-blue-900 underline">
-                        {row.nombre}
+                        {row.nombres}
                       </span>
                     </Link>
                   </TableCell>
                   <TableCell>
                     <span className="text-sm">{row.apellidos}</span>
                   </TableCell>
-                  <TableCell>
-                    <span className="text-sm">{row.identificacion}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm">
-                      {row.celular ? row.celular : "No tiene"}
-                    </span>
-                  </TableCell>
                   <TableCell className="text-center">
                     <span className="text-sm">
-                      {row.status_actividad === "A" ? "Activo" : "Inactivo"}
+                      {row.estado === "A" ? "Activo" : "Inactivo"}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm">
-                      {row.status_rondas} rondas completadas
-                    </span>
+                    <span className="text-sm"> {row.usuariocrea} </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm"> {row.fechacrea} </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm"> {row.usuariomodifica} </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm"> {row.fechamodifica} </span>
                   </TableCell>
                 </TableRow>
               ))}

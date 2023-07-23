@@ -2,9 +2,7 @@ from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita, SAMM_BitacoraVis
 from app.models.SAMM_UbiPersona import SAMM_UbiPersona, SAMM_UbiPersonaSchema
 from app.models.SAMM_Ubicacion import SAMM_Ubicacion, SAMM_UbicacionSchema
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
-from app.models.Persona import Persona, PersonaSchema
 from app.models.SAMM_Rol import SAMM_Rol, SAMM_RolSchema
-
 from flask import jsonify, request
 from flask_cors import cross_origin
 from app.visitas import bp

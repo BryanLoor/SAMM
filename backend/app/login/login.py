@@ -3,7 +3,7 @@ import os
 import random
 import ssl
 import string
-from app.models.Persona import Persona
+from app.models.SAMM_Persona import Persona
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token
 from app.extensions import db

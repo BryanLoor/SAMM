@@ -2,7 +2,7 @@ from app.extensions import db, PrimaryKeyConstraint
 from app.extensions import ma
 
 class Persona(db.Model):
-    __tablename__ = 'Persona'
+    __tablename__ = 'SAMM_Persona'
     __table_args__ = {'schema':'SAMM.dbo'}
     
     Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -19,17 +19,17 @@ class Persona(db.Model):
     UsuarioModifica = db.Column(db.Integer)
     Tel_Domicilio = db.Column(db.String(20))
     Tel_Trabajo = db.Column(db.String(20))
-    Correo_Domicilio = db.Column(db.String(100))
+    Correo_Personal = db.Column(db.String(100))
     Correo_Trabajo = db.Column(db.String(100))
     Dir_Domicilio = db.Column(db.String(100))
     Dir_Trabajo = db.Column(db.String(100))
     Cel_Personal = db.Column(db.String(20))
     Cel_Trabajo = db.Column(db.String(20))
-    Cargo = db.Column(db.String(100))
-    Foto= db.Column(db.Text())
-    NombreFoto= db.Column(db.Text())
-    Mimetype= db.Column(db.Text())
-    IdRol= db.Column(db.Integer)
+    # Cargo = db.Column(db.String(100))
+    # Foto= db.Column(db.Text())
+    # NombreFoto= db.Column(db.Text())
+    # Mimetype= db.Column(db.Text())
+    # IdRol= db.Column(db.Integer)
     Estado = db.Column(db.String(1))
 
     #serialize
@@ -50,13 +50,13 @@ class Persona(db.Model):
             'UsuarioModifica': self.UsuarioModifica,
             'Tel_Domicilio': self.Tel_Domicilio,
             'Tel_Trabajo': self.Tel_Trabajo,
-            'Correo_Domicilio': self.Correo_Domicilio,
+            'Correo_Personal': self.Correo_Personal,
             'Correo_Trabajo': self.Correo_Trabajo,
             'Dir_Domicilio': self.Dir_Domicilio,
             'Dir_Trabajo': self.Dir_Trabajo,
             'Cel_Personal': self.Cel_Personal,
             'Cel_Trabajo': self.Cel_Trabajo,
-            'Cargo': self.Cargo
+            # 'Cargo': self.Cargo
         }
 
 

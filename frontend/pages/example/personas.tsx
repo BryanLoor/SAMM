@@ -14,21 +14,24 @@ import { get } from "utils/services/api";
 import Link from "next/link";
 import ModalPersonas from "./modal-crear-persona";
 
-function Usuarios() {
+function Personas() {
   const [data, setData] = React.useState<ITableData[]>([]);
   interface ITableData {
     id: number;
-    nombre: string;
+    tipoIdentificacion:string;
+    identificacion : string;
+    nombres: string;
     apellidos: string;
-    identificacion: string;
-    celular: string;
+    correoPersonal: string;
+    dirDomicilio: string;
+    celPersonal: string;
     status_actividad: string;
     status_rondas: string;
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await get("/visitas/getAgentes");
+      const result = await get("/visitas/personas");
       setData(result);
     };
     fetchData();
@@ -56,13 +59,14 @@ function Usuarios() {
             <TableHeader>
               <tr className=" text-[#0040AE]">
                 <TableCell></TableCell>
-                <TableCell>#</TableCell>
+                <TableCell>TipoIden.</TableCell>
                 <TableCell>Identificación</TableCell>
-                <TableCell>teléfono domicilio</TableCell>
-                <TableCell>Correo domicilio</TableCell>
-                <TableCell>Dirección domicilio</TableCell>
-                <TableCell>Celular personal</TableCell>
-                <TableCell>Cargo</TableCell>
+                <TableCell>Nombres Completos</TableCell>
+                <TableCell>Correo Personal</TableCell>
+                <TableCell>Dirección Domicilio</TableCell>
+                <TableCell>Cel_ personal</TableCell>
+                <TableCell>Estado</TableCell>
+
               </tr>
             </TableHeader>
             <TableBody>
@@ -76,32 +80,30 @@ function Usuarios() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm">{""}</span>
+                    <span className="text-sm">{row.tipoIdentificacion}</span>
                   </TableCell>
                   <TableCell>
                     <Link href="/example/info-personas">
                       <span className="text-sm text-blue-800 hover:text-blue-900 underline">
-                        {"1105496309"}
+                      {row.identificacion}
                       </span>
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm">{"N/A"}</span>
+                    <span className="text-sm">{row.nombres +' '+ row.apellidos}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm">{"N/A"}</span>
+                    <span className="text-sm">{row.correoPersonal}</span>
                   </TableCell>
                   <TableCell>
                     <span className="text-sm">
-                      {"Quito, valle de los chillos, urbanización la colina"}
+                      {row.dirDomicilio}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
-                    <span className="text-sm">{"0993189641"}</span>
+                    <span className="text-sm">{row.celPersonal}</span>
                   </TableCell>
-                  <TableCell>
-                    <span className="text-sm">{"adminitrador"}</span>
-                  </TableCell>
+            
                 </TableRow>
               ))}
             </TableBody>
@@ -112,4 +114,4 @@ function Usuarios() {
   );
 }
 
-export default Usuarios;
+export default Personas;
