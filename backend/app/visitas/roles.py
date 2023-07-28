@@ -79,7 +79,7 @@ def updateRol(id):
         rol = SAMM_Rol.query.filter_by(Id=id).first()
         if rol is None:
             return jsonify({'message': 'Rol no existe'}), 400
-        rol.Nombre=data['nombre']
+        rol.Codigo=data['codigo']
         rol.Descripcion=data['descripcion']
         rol.Estado=data['estado']
         db.session.add(rol)
