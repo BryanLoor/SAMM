@@ -35,6 +35,7 @@ def getPersonas():
 
 # API para consultar por ID
 @bp.route('/personas/<int:id>', methods=['GET'])
+@cross_origin()
 @jwt_required()
 def get_persona(id):
     try:
@@ -43,19 +44,7 @@ def get_persona(id):
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
-# @bp.route('/persona/<id>', methods=['GET'])
-# @cross_origin()
-# @jwt_required()
-# def getPersona(id):
-#     try:
-#         persona = Persona.query.filter_by(Id=id).first()
-#         if persona is None:
-#             return jsonify({'message': 'Persona no existe'}), 400
-#         return jsonify(persona=persona.serialize()), 200
-#     except Exception as e:
-#         return jsonify({'message': str(e)}), 500
-
-@bp.route('/existePersona/<cedula>', methods=['GET'])	
+@bp.route('/buscarPersonaXIden/<cedula>', methods=['GET'])	
 @cross_origin()
 @jwt_required()
 def existePersona(cedula):
