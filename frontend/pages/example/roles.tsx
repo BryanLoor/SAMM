@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Input, Label, TableHeader } from "@roketid/windmill-react-ui";
 import PageTitle from "example/components/Typography/PageTitle";
 import SectionTitle from "example/components/Typography/SectionTitle";
@@ -14,6 +14,8 @@ import { get } from "utils/services/api";
 import ModalUsuario from "./modal-crear-usuario";
 import Link from "next/link";
 import ModalRol from "./modal-crear-rol";
+import ModalAssignRol from "../../components/modalAssignRol";
+import ModalUpadateRol from "../../components/ModalUpdateRol";
 
 function Roles() {
   const [data, setData] = React.useState<ITableData[]>([]);
@@ -43,6 +45,13 @@ function Roles() {
     getRoles();
   }, []);
 
+  const handleRowClick = (row) => {
+    setCurrentRowSelected(row);
+    setOpenModalUpadateRol(true);
+  };
+
+  const [openModalUpadateRol, setOpenModalUpadateRol] = useState(false);
+  const [currentRowSelected, setCurrentRowSelected] = useState({});
   return (
     <Layout>
       <div className="flex flex-row justify-between mb-4">
@@ -51,10 +60,23 @@ function Roles() {
             <p className="font-sans text-[#001554]">Registro Roles</p>
           </PageTitle>
         </div>
-        <div className="mt-4">
-          <ModalRol />
+        <div style={{ display: "flex" }}>
+          <div className="mt-4">
+            <ModalAssignRol />
+          </div>
+          <div className="mt-4 ml-10">
+            <ModalRol />
+          </div>
         </div>
       </div>
+
+      {/* MODAL TO UPDATE EACH ROL WITH SPECIFC INFO */}
+      <ModalUpadateRol
+        openModalUpadateRol={openModalUpadateRol}
+        setOpenModalUpadateRol={setOpenModalUpadateRol}
+        row={currentRowSelected}
+        updateAllInfoRoles={setData}
+      />
 
       <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
         <SectionTitle>
@@ -79,7 +101,18 @@ function Roles() {
             </TableHeader>
             <TableBody>
               {data.map((row) => (
-                <TableRow className="text-[#001554]" key={row.Id}>
+                <TableRow
+                  className="text-[#001554]"
+                  key={row.Id}
+                  onClick={() => handleRowClick(row)}
+                  sx={{
+                    cursor: "pointer",
+                    "&:hover": {
+                      // Estilo cuando se hace hover en la fila
+                      backgroundColor: "lightgray",
+                    },
+                  }}
+                >
                   <TableCell>
                     <div className="flex items-center text-sm">
                       <Label check>
