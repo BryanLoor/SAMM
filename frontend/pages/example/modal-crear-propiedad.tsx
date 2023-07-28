@@ -44,17 +44,23 @@ export default function ModalPropiedad() {
 
   React.useEffect(() => {
     const fetchAgentes = async () => {
-      const result = await get("/visitas/personas/Agente");
-      console.log(result);
-      setAgentes(result["personas"]);
-      console.log(agentes);
+      try {
+        const result = await get("/visitas/personas/Agente");
+        console.log(result);
+        setAgentes(result["personas"]);
+      } catch (error) {
+        console.error(error, "error");
+      }
     };
     fetchAgentes();
     const fetchSupervisores = async () => {
-      const result = await get("/visitas/personas/Supervisor");
-      console.log(result);
-      setSupervisores(result["personas"]);
-      console.log(supervisores);
+      try {
+        const result = await get("/visitas/personas/Supervisor");
+        console.log(result);
+        setSupervisores(result["personas"]);
+      } catch (error) {
+        console.error(error, "error");
+      }
     };
     fetchSupervisores();
     const fetchData = async () => {
@@ -245,7 +251,7 @@ export default function ModalPropiedad() {
                     }}
                   >
                     <option value="">Escoja el supervisor</option>
-                    {supervisores.map((supervisor) => (
+                    {supervisores?.map((supervisor) => (
                       <option key={supervisor.id} value={supervisor.id}>
                         {supervisor.nombres}
                       </option>
@@ -299,7 +305,7 @@ export default function ModalPropiedad() {
                     }}
                   >
                     <option value="">Escoja el agente</option>
-                    {agentes.map((agente) => (
+                    {agentes?.map((agente) => (
                       <option key={agente.id} value={agente.id}>
                         {agente.nombres}
                       </option>

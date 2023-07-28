@@ -19,34 +19,35 @@ function DesktopSidebar() {
     saveScroll(sidebarRef.current);
   };
 
-
   const getRol = async (id: string) => {
-    const rol = await get('/menu/getRolByID/'+id)
-    console.log(rol.Rol.Codigo)
+    const rol = await get("/menu/getRolByID/" + id);
+    console.log(rol.Rol.Codigo);
     setRole(rol.Rol.Codigo);
   };
 
   const getPersona = async (id: string) => {
-    const persona = await get('/visitas/persona/'+id)
-  setPersona(persona.persona);
-  console.log(persona)
+    try {
+      const persona = await get("/visitas/personas/" + id);
+      setPersona(persona.persona);
+      console.log(persona);
+    } catch (error) {
+      console.error(error, "error");
+    }
   };
 
   useEffect(() => {
-
     const getUser = () => {
       const user = localStorage.getItem("user");
       if (user) {
         setUser(JSON.parse(user));
         getRol(JSON.parse(user).IdPerfil);
-        getPersona(JSON.parse(user).IdPersona)
-        
+        getPersona(JSON.parse(user).IdPersona);
       }
     };
     getUser();
   }, []);
 
-    return (
+  return (
     <aside
       id="desktopSidebar"
       ref={sidebarRef}
@@ -54,18 +55,19 @@ function DesktopSidebar() {
     >
       <Grid container alignItems="center" spacing={2} className="p-6">
         <Grid item>
-          <Avatar alt={persona.Nombres} src="/path/to/avatar.jpg" />
+          <Avatar alt={persona?.Nombres} src="/path/to/avatar.jpg" />
         </Grid>
         <Grid item>
           <div className="text-center text-white">
-            <Typography className="text-lg font-sans font-bold"
-            >
-              {persona.Nombres} {persona.Apellidos}
+            <Typography className="text-lg font-sans font-bold">
+              {persona?.Nombres} {persona?.Apellidos}
             </Typography>
             <Typography className="text-lg font-sans font-bold">
               {role}
             </Typography>
-            <Typography className="text-base font-sans">{persona.Identificacion}</Typography>
+            <Typography className="text-base font-sans">
+              {persona?.Identificacion}
+            </Typography>
           </div>
         </Grid>
       </Grid>

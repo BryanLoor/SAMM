@@ -28,10 +28,13 @@ function RegistroRondas() {
   };
   useEffect(() => {
     const fetchAgentes = async () => {
-      const result = await get("/visitas/personas/Agente");
-      console.log(result);
-      setAgentes(result["personas"]);
-      console.log(agentes);
+      try {
+        const result = await get("/visitas/personas/Agente");
+        console.log(result);
+        setAgentes(result["personas"]);
+      } catch (error) {
+        console.error(error, "error");
+      }
     };
     fetchAgentes();
     const mapContainer: HTMLElement | null = document.getElementById("map");
@@ -116,7 +119,7 @@ function RegistroRondas() {
               }}
             >
               <option value="">Escoja el agente</option>
-              {agentes.map((agente) => (
+              {agentes?.map((agente) => (
                 <option key={agente.id} value={agente.id}>
                   {agente.nombres}
                 </option>
