@@ -61,7 +61,101 @@ def getUsuarios():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
+@bp.route('/updaterol/<id>', methods=['PUT'])
+@cross_origin()
+@jwt_required()
+def updateRol(id):
+    try:
+        data = request.get_json()
+        rol = SAMM_Rol.query.filter_by(Id=id).first()
+        if rol is None:
+            return jsonify({'message': 'Rol no existe'}), 400
+        rol.Codigo=data['codigo']
+        rol.Descripcion=data['descripcion']
+        rol.Estado=data['estado']
+        db.session.add(rol)
+        db.session.commit()
+        return jsonify({'message': 'Rol actualizado exitosamente'}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
     
+@bp.route('/roles/<id>', methods=['DELETE'])
+@cross_origin()
+@jwt_required()
+def deleteRol(id):
+    try:
+        rol = SAMM_Rol.query.filter_by(Id=id).first()
+        if rol is None:
+            return jsonify({'message': 'Rol no existe'}), 400
+        db.session.delete(rol)
+        db.session.commit()
+        return jsonify({'message': 'Rol eliminado exitosamente'}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+
+from flask import request, jsonify
+
+
+"""" Body
+{
+    "rol":1
+}
+
+"""
+
+
+"""" Output
+[
+    {
+        "Codigo": "admin",
+        "Nombres": "Wilmer Rodriguez",
+        "estadousuario": "A",
+        "rolusuarioestado": "A"
+    }
+]
+"""
+
+
+@bp.route('/usuariosxrol', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def get_usuarios_by_rol():
+    data = request.get_json()
+
+    # Obtener el valor del parámetro "usuario" del cuerpo de la solicitud
+    rol_id = data.get('rol')
+
+    # Verificar si se proporcionó el parámetro "usuario" en el cuerpo de la solicitud
+    if rol_id is None:
+        return jsonify({"error": "Se requiere el parámetro 'rol' en el cuerpo de la solicitud."}), 400
+
+    # Aquí puedes realizar la lógica para obtener los roles de usuario para el "usuario" dado
+    # Ejecutar el query utilizando SQLAlchemy para obtener los roles
+    query_result = db.session.query(SAMM_RolUsu.Estado.label('rolusuarioestado'),
+                                    SAMM_Usuario.Codigo,
+                                    (Persona.Nombres +" "+ Persona.Apellidos).label('nombrescompletos'),
+                                    SAMM_Usuario.Estado) \
+        .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_RolUsu.IdUsuario) \
+        .join(Persona, SAMM_Usuario.IdPersona == Persona.Id) \
+        .join(SAMM_Rol, SAMM_Rol.Id == SAMM_RolUsu.IdRol) \
+        .filter(SAMM_Rol.Id == rol_id) \
+        .all()
+
+    # Formatear los resultados como un diccionario de objetos JSON
+    usuarios = [
+        {
+            'rolusuarioestado': item.rolusuarioestado,
+            'Codigo': item.Codigo,
+            'Nombres': item.nombrescompletos,
+            'estadousuario':item.Estado
+        }
+        for item in query_result
+    ]
+
+    return jsonify(usuarios)
+
+
 @bp.route('/usuarios/<id>', methods=['GET'])
 @cross_origin()
 @jwt_required()

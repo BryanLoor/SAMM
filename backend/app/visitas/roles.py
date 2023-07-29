@@ -75,42 +75,28 @@ def addRol():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
     
-@bp.route('/updaterol/<id>', methods=['PUT'])
-@cross_origin()
-@jwt_required()
-def updateRol(id):
-    try:
-        data = request.get_json()
-        rol = SAMM_Rol.query.filter_by(Id=id).first()
-        if rol is None:
-            return jsonify({'message': 'Rol no existe'}), 400
-        rol.Codigo=data['codigo']
-        rol.Descripcion=data['descripcion']
-        rol.Estado=data['estado']
-        db.session.add(rol)
-        db.session.commit()
-        return jsonify({'message': 'Rol actualizado exitosamente'}), 200
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
-    
-@bp.route('/roles/<id>', methods=['DELETE'])
-@cross_origin()
-@jwt_required()
-def deleteRol(id):
-    try:
-        rol = SAMM_Rol.query.filter_by(Id=id).first()
-        if rol is None:
-            return jsonify({'message': 'Rol no existe'}), 400
-        db.session.delete(rol)
-        db.session.commit()
-        return jsonify({'message': 'Rol eliminado exitosamente'}), 200
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+""""
+Body
+{
+    "usuario":1
+}
 
 
-from flask import request, jsonify
+Output
 
-# ... Código anterior ...
+[
+    {
+        "Codigo": "ADMIN",
+        "Descripcion": "Usuario Administrador de prueba",
+        "rolusuarioestado": "A"
+    },
+    {
+        "Codigo": "VISITA",
+        "Descripcion": "Usuario visitaa",
+        "rolusuarioestado": "A"
+    }
+]
+"""
 
 @bp.route('/rolesxusuario', methods=['POST'])
 @cross_origin()
@@ -146,8 +132,6 @@ def get_roles_by_usuario():
     ]
 
     return jsonify(roles)
-
-
 
 # Crear una instancia del esquema SAMM_RolSchema
 rol_schema = SAMM_RolSchema()
