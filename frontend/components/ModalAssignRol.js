@@ -1,6 +1,47 @@
 import { useState } from "react";
 import { Modal, Button, Box } from "@mui/material";
 import { Input, Label } from "@roketid/windmill-react-ui";
+import QuickFilteringGrid from "components/user";
+
+// api
+// [
+//   {
+//     id: 1,
+//     name: "Jhon",
+//     roles: [
+//       {
+//         id: 1,
+//         codigo: "visitante",
+//       },
+//       {
+//         id: 2,
+//         codigo: "anfitrion",
+//       },
+//       {
+//         id: 3,
+//         codigo: "supervisor",
+//       },
+//     ],
+//   },
+//   {
+//     id: 2,
+//     name: "Maria",
+//     roles: [
+//       {
+//         id: 1,
+//         codigo: "visitante",
+//       },
+//       {
+//         id: 2,
+//         codigo: "anfitrion",
+//       },
+//       {
+//         id: 3,
+//         codigo: "supervisor",
+//       },
+//     ],
+//   },
+// ];
 
 const style = {
   position: "absolute",
@@ -25,7 +66,7 @@ const ModalAssignRol = () => {
         onClick={handleOpen}
         className="bg-[#0040AE] hover:bg-[#1B147A] text-white font-sans py-1 px-4 rounded-lg mt-1"
       >
-        Asignar rol
+        Asignar roll
       </Button>
       <Modal
         open={open}
@@ -36,7 +77,7 @@ const ModalAssignRol = () => {
         <Box sx={style}>
           <div className="flex justify-between">
             <h1 className="text-2xl font-sans font-semibold text-[#297DE2] mb-2">
-              Nuevo rol
+              Asignación de rol
             </h1>
             <Button onClick={handleClose}>
               <svg
@@ -57,12 +98,13 @@ const ModalAssignRol = () => {
           </div>
 
           <hr />
+          <QuickFilteringGrid />
           <div className="flex flex-col overflow-y-auto md:flex-row">
             <main className="flex items-center justify-center sm:p-4 md:w-1/2">
               <div className="w-80">
                 <Label className="mt-4">
                   <span className="font-sans text-[#001554] font-semibold">
-                    Codigo
+                    Codigooo
                   </span>
                   <Input
                     type="text"

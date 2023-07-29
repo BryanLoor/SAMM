@@ -14,8 +14,8 @@ import { get } from "utils/services/api";
 import ModalUsuario from "./modal-crear-usuario";
 import Link from "next/link";
 import ModalRol from "./modal-crear-rol";
-import ModalAssignRol from "../../components/modalAssignRol";
-import ModalUpadateRol from "../../components/ModalUpdateRol";
+import ModalAssignRol from "components/ModalAssignRol";
+import ModalUpadateRol from "components/ModalUpdateRol";
 
 function Roles() {
   const [data, setData] = React.useState<ITableData[]>([]);
