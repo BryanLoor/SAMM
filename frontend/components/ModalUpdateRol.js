@@ -68,6 +68,7 @@ const ModalUpadateRol = ({
       console.log(response, "aqui");
       setInfoRolToUpadte(infoRolToUpadte);
       setLoadingSaveBtn(false);
+      setOpen(false)
     } catch (error) {
       console.error(error, "error");
     }

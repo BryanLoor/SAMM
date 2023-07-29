@@ -12,7 +12,6 @@ class SAMM_Rol(db.Model):
     UsuarioCrea = db.Column(db.Integer)
     FechaModifica = db.Column(db.DateTime)
     UsuarioModifica = db.Column(db.Integer)
-    FechaUltimoLogin = db.Column(db.DateTime)
     Descripcion = db.Column(db.String(1))
 
 class SAMM_RolSchema(ma.SQLAlchemyAutoSchema):

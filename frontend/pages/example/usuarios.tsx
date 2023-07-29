@@ -7,6 +7,9 @@ import {Table,TableBody,TableCell,TableContainer,TableRow,} from "@mui/material"
 import { get } from "utils/services/api";
 import ModalUsuario from "./modal-crear-usuario";
 import Link from "next/link";
+import { DateFormat } from "react-big-calendar";
+import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 
 function Usuarios() {
   const [data, setData] = React.useState<ITableData[]>([]);
@@ -16,15 +19,16 @@ function Usuarios() {
     nombres: string;
     apellidos: string;
     estado: string;
-    usuariocrea: string;
-    fechacrea: string;
-    usuariomodifica: string;
-    fechamodifica: string;
+    codigo_usuario_crea: string;
+    fechaCrea: Date;
+    codigo_usuario_modifica: string;
+    fechaModifica: Date;
   }
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await get("/visitas/usuarios");
+      console.log(result)
       setData(result);
     };
     fetchData();
@@ -65,6 +69,7 @@ function Usuarios() {
             </TableHeader>
             <TableBody>
               {data.map((row) => (
+              
                 <TableRow className="text-[#001554]" key={row.id}>
                   <TableCell>
                     <div className="flex items-center text-sm">
@@ -95,16 +100,16 @@ function Usuarios() {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm"> {row.usuariocrea} </span>
+                    <span className="text-sm"> {row.codigo_usuario_crea} </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm"> {row.fechacrea} </span>
+                    <span className="text-sm">  {row.fechaCrea?.toString()} </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm"> {row.usuariomodifica} </span>
+                    <span className="text-sm"> {row.codigo_usuario_modifica} </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm"> {row.fechamodifica} </span>
+                    <span className="text-sm"> {row.fechaModifica?.toLocaleDateString()} </span>
                   </TableCell>
                 </TableRow>
               ))}
