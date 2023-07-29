@@ -60,7 +60,7 @@ const ModalUpadateRol = ({
     try {
       setLoadingSaveBtn(true);
       const response = await put(
-        `/visitas/roles/${infoRolToUpadte.idRol}`,
+        `/visitas/updaterol/${infoRolToUpadte.idRol}`,
         infoRolToUpadte
       );
       const result = await get("/visitas/roles");
@@ -68,6 +68,7 @@ const ModalUpadateRol = ({
       console.log(response, "aqui");
       setInfoRolToUpadte(infoRolToUpadte);
       setLoadingSaveBtn(false);
+      setOpen(false)
     } catch (error) {
       console.error(error, "error");
     }

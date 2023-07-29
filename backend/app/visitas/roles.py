@@ -3,6 +3,7 @@ from app.models.SAMM_UbiPersona import SAMM_UbiPersona, SAMM_UbiPersonaSchema
 from app.models.SAMM_Ubicacion import SAMM_Ubicacion, SAMM_UbicacionSchema
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
 from app.models.SAMM_Rol import SAMM_Rol, SAMM_RolSchema
+from app.models.SAMM_RolUsu import SAMM_RolUsu, SAMM_RolUsuSchema
 from flask import jsonify, request
 from flask_cors import cross_origin
 from app.visitas import bp
@@ -38,6 +39,10 @@ def getRol(id):
         return jsonify({'message': str(e)}), 500
     
 
+
+
+
+
 @bp.route('/roles', methods=['POST'])
 @cross_origin()
 @jwt_required()
@@ -70,7 +75,7 @@ def addRol():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
     
-@bp.route('/roles/<id>', methods=['PUT'])
+@bp.route('/updaterol/<id>', methods=['PUT'])
 @cross_origin()
 @jwt_required()
 def updateRol(id):
@@ -101,3 +106,83 @@ def deleteRol(id):
         return jsonify({'message': 'Rol eliminado exitosamente'}), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+
+
+from flask import request, jsonify
+
+# ... Código anterior ...
+
+@bp.route('/rolesxusuario', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def get_roles_by_usuario():
+    data = request.get_json()
+
+    # Obtener el valor del parámetro "usuario" del cuerpo de la solicitud
+    usuario_id = data.get('usuario')
+
+    # Verificar si se proporcionó el parámetro "usuario" en el cuerpo de la solicitud
+    if usuario_id is None:
+        return jsonify({"error": "Se requiere el parámetro 'usuario' en el cuerpo de la solicitud."}), 400
+
+    # Aquí puedes realizar la lógica para obtener los roles de usuario para el "usuario" dado
+    # Ejecutar el query utilizando SQLAlchemy para obtener los roles
+    query_result = db.session.query(SAMM_RolUsu.Estado.label('rolusuarioestado'),
+                                    SAMM_Rol.Codigo,
+                                    SAMM_Rol.Descripcion) \
+        .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_RolUsu.IdUsuario) \
+        .join(SAMM_Rol, SAMM_Rol.Id == SAMM_RolUsu.IdRol) \
+        .filter(SAMM_Usuario.Id == usuario_id) \
+        .all()
+
+    # Formatear los resultados como un diccionario de objetos JSON
+    roles = [
+        {
+            'rolusuarioestado': item.rolusuarioestado,
+            'Codigo': item.Codigo,
+            'Descripcion': item.Descripcion
+        }
+        for item in query_result
+    ]
+
+    return jsonify(roles)
+
+
+
+# Crear una instancia del esquema SAMM_RolSchema
+rol_schema = SAMM_RolSchema()
+
+@bp.route('/addrol', methods=['POST'])
+def add_rol():
+    try:
+
+       # Obtener los datos del cuerpo de la solicitud y deserializar usando el esquema
+        data = request.get_json()
+        codigo = data.get('Codigo')
+        descripcion = data.get('Descripcion')
+        Idsuario = data.get('IdUsuario')
+
+        # Validar que se proporcionen los campos obligatorios (codigo y descripcion)
+        if not codigo or not descripcion:
+            return jsonify({"error": "Los campos 'codigo' y 'descripcion' son requeridos."}), 400
+        print(data) 
+        data['Estado'] = 'A'  # Establecer el Estado como 'A'
+        data['UsuarioCrea'] = Idsuario  # Establecer el UsuarioCrea con el ID del usuario logueado
+        data['UsuarioModifica'] = Idsuario  # Establecer el UsuarioModifica con el ID del usuario logueado
+        data['FechaCrea'] = datetime.now()  # Establecer la FechaCrea con la fecha y hora actual
+        data['FechaModifica'] = datetime.now()  # Establecer la FechaModifica con la fecha y hora actual
+           
+        # Deserializar los datos usando el esquema
+        new_rol = rol_schema.load(data)
+      
+        # Agregar el nuevo rol a la base de datos
+        db.session.add(new_rol)
+        db.session.commit()
+
+        # Responder con el rol agregado en formato JSON
+        return rol_schema.dump(new_rol)
+    except Exception as e:
+        # Si hay algún error, responder con un mensaje de error y el código de estado 400 (Bad Request)
+        return jsonify({"error": str(e)}), 400
+
+# Resto del código...

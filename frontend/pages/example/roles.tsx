@@ -21,7 +21,6 @@ function Roles() {
   const [data, setData] = React.useState<ITableData[]>([]);
   interface ITableData {
     Descripcion: string;
-    FechaUltimoLogin: Date;
     FechaModifica: Date;
     UsuarioCrea: string;
     FechaCrea: Date;
@@ -45,7 +44,7 @@ function Roles() {
     getRoles();
   }, []);
 
-  const handleRowClick = (row) => {
+  const handleRowClick = (row: React.SetStateAction<{}>) => {
     setCurrentRowSelected(row);
     setOpenModalUpadateRol(true);
   };
@@ -141,16 +140,13 @@ function Roles() {
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
-                    <span className="text-sm">{row.FechaCrea}</span>
+                    <span className="text-sm">{row.FechaCrea?.toString()}</span>
                   </TableCell>
                   <TableCell>
                     <span className="text-sm">{row.UsuarioCrea}</span>
                   </TableCell>
                   <TableCell className="text-center">
-                    <span className="text-sm">{row.FechaModifica}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm">{row.FechaUltimoLogin}</span>
+                    <span className="text-sm">{row.FechaModifica?.toString()}</span>
                   </TableCell>
                   <TableCell>
                     <span className="text-sm">{row.Descripcion}</span>

@@ -13,7 +13,7 @@ const Carga: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push("/example");
-    }, 5000);
+    }, 3000);
 
     return () => {
       clearTimeout(timer);
