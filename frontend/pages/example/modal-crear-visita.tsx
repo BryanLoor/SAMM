@@ -112,7 +112,7 @@ export default function ModalVisita() {
 
   function handleSearch(event: any): void {
     const fetchData = async () => {
-      const result = await get(`/visitas/existePersona/${cedulaVisitante}`);
+      const result = await get(`/visitas/buscarPersonaXIden/${cedulaVisitante}`);
       console.log(result["persona"]);
       setNombresCompletos(result["persona"].Nombres);
       setApellidosCompletos(result["persona"].Apellidos);

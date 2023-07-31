@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from dateutil.parser import parse
 from collections import defaultdict
+from app.models.SAMM_Persona import Persona
 
 from flask import jsonify, request
 from flask_cors import cross_origin
@@ -36,7 +37,7 @@ def viewCalendar():
     tipo = data['tipo']
 
 
-    if tipo == 'ENTRADAS' :
+    if tipo == 'ENTRADAS' or tipo == "TODAS" :
     #return all
         bitacoras = SAMM_BitacoraVisita.query.all()
     elif tipo == 'SALIDAS':
@@ -89,6 +90,15 @@ def viewCalendar():
     # Return the result as JSON
     return jsonify(result)
 
+@bp.route('/getAllVisitas', methods=['GET'])
+@cross_origin()
+@jwt_required()
+def getAllVisitas():
+
+    visitas = SAMM_BitacoraVisita.query.all()
+
+    return jsonify(visitas),200
+
 @bp.route('/viewList', methods=['POST'])
 @cross_origin()
 @jwt_required()
@@ -98,8 +108,8 @@ def viewList():
       ENTRADAS, SALIDAS, INVITACIONES, ALERTAS, SEGUIMIENTO
             title: "5", // Número total registrado (puedes reemplazar "5" por cualquier número)
         start: fechaActual.toDate(),
-        end: fechaActual.toDate(),
-        tipo: tipo,
+        end: fechaActualipo,.toDate(),
+        tipo: t
         total: 5,
     '''
     data = request.get_json()
