@@ -90,11 +90,10 @@ function Roles() {
                 <TableCell>Codigo</TableCell>
                 <TableCell>Estado</TableCell>
                 <TableCell className="text-center">Fecha Creacion</TableCell>
-                <TableCell>Usuario</TableCell>
+                <TableCell>UsuarioCrea</TableCell>
                 <TableCell className="text-center">
                   Fecha modificacion
                 </TableCell>
-                <TableCell>ultimo login</TableCell>
                 <TableCell>Descripcion</TableCell>
               </tr>
             </TableHeader>

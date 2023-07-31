@@ -206,7 +206,7 @@ const Calendario: React.FC = () => {
             endAccessor="end"
             style={{ height: 500, width: 750, ...calendarStyle }}
             eventPropGetter={eventPropGetter}
-            views={["month", "week", "day"]}
+            views={["month"]}
             onView={(view) => setSelectedView(view)}
           />
         </div>

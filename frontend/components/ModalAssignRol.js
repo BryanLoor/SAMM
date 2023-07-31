@@ -43,6 +43,17 @@ import QuickFilteringGrid from "components/user";
 //   },
 // ];
 
+// [
+//   {
+//     id:"1",
+//     codigo:"visitante"
+//   },
+//   {
+//     id:"2",
+//     codigo:"anfitrion"
+//   }
+// ]
+
 const style = {
   position: "absolute",
   top: "50%",
