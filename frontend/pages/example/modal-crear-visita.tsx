@@ -44,6 +44,8 @@ export default function ModalVisita() {
   const [horaIngreso, setHoraIngreso] = React.useState("");
   const [tiempoEstadia, setTiempoEstadia] = React.useState("");
   const [placa, setPlaca] = React.useState("");
+  const [phone, setPhone] = React.useState("");
+  const [email, setEmail] = React.useState("");
 
   React.useEffect(() => {
     const currentDate = new Date();
@@ -85,6 +87,18 @@ export default function ModalVisita() {
 
     return { hours: formattedHours, minutes: parseInt(minutes, 10), meridiem };
   }
+  const cleanVisitaData = () => {
+    setSelectedPropiedad("");
+    setCedulaVisitante("");
+    setNombresCompletos("");
+    setApellidosCompletos("");
+    setFechaVisita("");
+    setHoraIngreso("");
+    setTiempoEstadia("");
+    setPlaca("");
+    setPhone("");
+    setEmail("");
+  };
 
   // Btn Guardar
   const handleSave = () => {
@@ -102,20 +116,35 @@ export default function ModalVisita() {
       placa: placa,
     };
     const response = async () => {
-      const result = await post("/visitas/registraVisita", loadData);
-      console.log(result);
+      try {
+        const result = await post("/visitas/registraVisita", loadData);
+        console.log(result);
+        cleanVisitaData();
+      } catch (error) {
+        alert("Error en registrar la visita");
+      }
     };
-    response();
-    console.log("Guardar datos de la visita");
-    handleClose();
+    try {
+      response();
+    } catch {
+      console.log("Guardar datos de la visita");
+    } finally {
+      handleClose();
+    }
   };
 
   function handleSearch(event: any): void {
     const fetchData = async () => {
-      const result = await get(`/visitas/buscarPersonaXIden/${cedulaVisitante}`);
-      console.log(result["persona"]);
-      setNombresCompletos(result["persona"].Nombres);
-      setApellidosCompletos(result["persona"].Apellidos);
+      try {
+        const result = await get(
+          `/visitas/buscarPersonaXIden/${cedulaVisitante}`
+        );
+        console.log(result["persona"]);
+        setNombresCompletos(result["persona"].Nombres);
+        setApellidosCompletos(result["persona"].Apellidos);
+      } catch (error) {
+        alert("Persona no encontrada. Necesita crear una nueva");
+      }
     };
     fetchData();
   }
@@ -235,6 +264,20 @@ export default function ModalVisita() {
                     }}
                   />
                 </Label>
+                <Label className="mt-4">
+                  <span className="font-sans text-[#001554] font-semibold">
+                    Teléfono
+                  </span>
+                  <Input
+                    type="text"
+                    className="mt-1 bg-[#297DE240] rounded-2xl text-[16px]"
+                    placeholder="Ingrese la placa del visitante"
+                    value={phone}
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                    }}
+                  />
+                </Label>
               </div>
             </main>
             <main className="flex items-center justify-center sm:p-4 md:w-2/2">
@@ -283,7 +326,7 @@ export default function ModalVisita() {
                 </Label>
                 <Label className="mt-4">
                   <span className="font-sans text-[#001554] font-semibold">
-                    Placa
+                    Placa (Opcional)
                   </span>
                   <Input
                     type="text"
@@ -292,6 +335,20 @@ export default function ModalVisita() {
                     value={placa}
                     onChange={(e) => {
                       setPlaca(e.target.value);
+                    }}
+                  />
+                </Label>
+                <Label className="mt-4">
+                  <span className="font-sans text-[#001554] font-semibold">
+                    Correo
+                  </span>
+                  <Input
+                    type="text"
+                    className="mt-1 bg-[#297DE240] rounded-2xl text-[16px]"
+                    placeholder="Ingrese la placa del visitante"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
                     }}
                   />
                 </Label>
