@@ -14,7 +14,7 @@ import { get, post } from "utils/services/api";
 import { IconButton, Tooltip } from "@mui/material";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import ModalVisita from "./modal-crear-visita";
-
+import { useRouter } from "next/navigation";
 const localizer = momentLocalizer(moment);
 
 interface Registro extends Event {
@@ -35,6 +35,7 @@ const COLORS = {
 };
 
 const Calendario: React.FC = () => {
+  const router = useRouter();
   const [eventos, setEventos] = useState<Registro[]>([]);
   const [eventosDiarios, setEventosDiarios] = useState<Registro[]>([]);
   const [selectedView, setSelectedView] = useState("month");
@@ -199,7 +200,7 @@ const Calendario: React.FC = () => {
           </button>
         </div>
         <div>
-          <Calendar<Registro>
+          <Calendar
             localizer={localizer}
             events={eventos}
             startAccessor="start"
@@ -208,6 +209,9 @@ const Calendario: React.FC = () => {
             eventPropGetter={eventPropGetter}
             views={["month"]}
             onView={(view) => setSelectedView(view)}
+            onSelectEvent={(event) => {
+              router.push("/example/entradas");
+            }}
           />
         </div>
       </div>
