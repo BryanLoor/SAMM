@@ -55,23 +55,30 @@ export default function ModalRol() {
   }
 
   // Btn Guardar
-  const handleSave = () => {
+  const handleSave = async() => {
     // Lógica para guardar los datos de la visita
     // Puedes implementar tu propia lógica aquí
     // make 12:05 tiempoEstadia a number
-    const tE = convertTo12Hour(tiempoEstadia);
-    console.log(tiempoEstadia);
-    const loadData = {
-      Codigo: codigo,
-      Descripcion: descripcion,
-    };
-    const response = async () => {
-      const result = await post("/visitas/roles", loadData);
-      console.log(result);
-    };
-    response();
-    console.log("Guardar datos de la visita");
-    handleClose();
+    try{
+      const tE = convertTo12Hour(tiempoEstadia);
+      console.log(tiempoEstadia);
+      const loadData = {
+        Codigo: codigo,
+        Descripcion: descripcion,
+      };
+    
+        const result = await post("/visitas/roles", loadData);
+        console.log(result);
+      
+      console.log("Guardar datos de la visita");
+      handleClose();
+    }
+    catch(error){
+      const msg = "Error al crear rol"
+      alert(msg)
+      console.log(error,msg, error.message)
+    }
+    
   };
   interface IPropiedades {
     Id: number;

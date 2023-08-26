@@ -32,101 +32,102 @@ from sqlalchemy import or_
 @cross_origin()
 @jwt_required()
 def registraVisita():
-    userName=get_jwt_identity()
-    user= SAMM_Usuario.query.filter_by(Codigo=userName).first()
-    print(user)
-    usuarioPersona = user.IdPersona
-    print(usuarioPersona)
-    #read estado from request, if none, set to 'P'
-    estado = request.json['estado'] if 'estado' in request.json else 'A'
+    # userName=get_jwt_identity()
+    # user= SAMM_Usuario.query.filter_by(Codigo=userName).first()
+    # print(user)
+    # usuarioPersona = user.IdPersona
+    # print(usuarioPersona)
+    # #read estado from request, if none, set to 'P'
+    # estado = request.json['estado'] if 'estado' in request.json else 'A'
 
-    # get data from persona, check if exists by cedula
-    anfitrion = Persona.query.filter_by(Id=usuarioPersona).first()
-    print(anfitrion)
-    IdAnfitrion=anfitrion.Id
-    # check if persona anfritiona exists
-    # get data from ubicacion, check if exists by coordinates
-    '''coordenadas = request.json['coordenadas']
-    ubicacion = SAMM_Ubicacion.query.filter_by(Coordenadas=coordenadas).first()
-    if ubicacion is None:
-        # create new ubicacion
-        ubicacion = SAMM_Ubicacion()
-        ubicacion.Codigo = request.json['codigo_ubicacion']
-        ubicacion.Coordenadas = coordenadas
-        ubicacion.Tipo = request.json['tipo']
-        ubicacion.Descripcion = request.json['descripcion_ubicacion']
-        ubicacion.Direccion = request.json['direccion']
-        ubicacion.UsuarioCrea = user
-        ubicacion.UsuarioModifica = user
-        ubicacion.FechaCrea = datetime.now()
-        ubicacion.FechaModifica = datetime.now()
-        db.session.add(ubicacion)
-        db.session.commit()'''
-    # get data from persona, check if exists by cedula
-    visitante = Persona.query.filter_by(Identificacion=request.json['cedula']).first()
-    if visitante is None:
-        #create new persona
-        visitante = Persona()
-        visitante.TipoIde= 'CED'
-        visitante.Identificacion = request.json['cedula']
-        visitante.Nombres = request.json['name']
-        visitante.Apellidos = request.json['lastName']
-        visitante.UsuarioCrea = user.Id
-        visitante.UsuarioModifica = user.Id
-        visitante.FechaCrea = datetime.now()
-        visitante.FechaModifica = datetime.now()
-        #falta visitante placa
-        '''visitante.FechaNac= request.json['fecha_nacimiento']
-        visitante.Sexo = request.json['sexo']
-        visitante.EstadoCivil = request.json['estado_civil']
+    # # get data from persona, check if exists by cedula
+    # anfitrion = Persona.query.filter_by(Id=usuarioPersona).first()
+    # print(anfitrion)
+    # IdAnfitrion=anfitrion.Id
+    # # check if persona anfritiona exists
+    # # get data from ubicacion, check if exists by coordinates
+    # '''coordenadas = request.json['coordenadas']
+    # ubicacion = SAMM_Ubicacion.query.filter_by(Coordenadas=coordenadas).first()
+    # if ubicacion is None:
+    #     # create new ubicacion
+    #     ubicacion = SAMM_Ubicacion()
+    #     ubicacion.Codigo = request.json['codigo_ubicacion']
+    #     ubicacion.Coordenadas = coordenadas
+    #     ubicacion.Tipo = request.json['tipo']
+    #     ubicacion.Descripcion = request.json['descripcion_ubicacion']
+    #     ubicacion.Direccion = request.json['direccion']
+    #     ubicacion.UsuarioCrea = user
+    #     ubicacion.UsuarioModifica = user
+    #     ubicacion.FechaCrea = datetime.now()
+    #     ubicacion.FechaModifica = datetime.now()
+    #     db.session.add(ubicacion)
+    #     db.session.commit()'''
+    # # get data from persona, check if exists by cedula
+    # visitante = Persona.query.filter_by(Identificacion=request.json['cedula']).first()
+    # if visitante is None:
+    #     #create new persona
+    #     visitante = Persona()
+    #     visitante.TipoIde= 'CED'
+    #     visitante.Identificacion = request.json['cedula']
+    #     visitante.Nombres = request.json['name']
+    #     visitante.Apellidos = request.json['lastName']
+    #     visitante.UsuarioCrea = user.Id
+    #     visitante.UsuarioModifica = user.Id
+    #     visitante.FechaCrea = datetime.now()
+    #     visitante.FechaModifica = datetime.now()
+    #     #falta visitante placa
+    #     '''visitante.FechaNac= request.json['fecha_nacimiento']
+    #     visitante.Sexo = request.json['sexo']
+    #     visitante.EstadoCivil = request.json['estado_civil']
 
-        visitante.Cargo = request.json['cargo']
-        visitante.Dir_Domicilio = request.json['direccion_domicilio']
-        visitante.Correo_Domicilio = request.json['correo_domicilio']
-        visitante.Cel_Personal = request.json['celular_personal']'''
+    #     visitante.Cargo = request.json['cargo']
+    #     visitante.Dir_Domicilio = request.json['direccion_domicilio']
+    #     visitante.Correo_Domicilio = request.json['correo_domicilio']
+    #     visitante.Cel_Personal = request.json['celular_personal']'''
 
-        db.session.add(visitante)
-        db.session.commit()
-    idVisitante=visitante.Id
-    # look if the visitante is already an user
-    usuario = SAMM_Usuario.query.filter_by(IdPersona=idVisitante).first()
-    if usuario is None:
-        # add a user temp for the visitante
+    #     db.session.add(visitante)
+    #     db.session.commit()
+    # idVisitante=visitante.Id
+    # # look if the visitante is already an user
+    # usuario = SAMM_Usuario.query.filter_by(IdPersona=idVisitante).first()
+    # if usuario is None:
+    #     # add a user temp for the visitante
 
-            # create new user
-        usuario = SAMM_Usuario()
-        usuario.IdPersona = idVisitante
-        usuario.Codigo = request.json['cedula']
-        usuario.Clave = generate_password_hash(request.json['cedula'], method='sha256')
-        usuario.IdPerfil = 2
-        usuario.Estado = 'T'
-        usuario.FechaCrea = datetime.now()
-        usuario.FechaModifica = datetime.now()
-        usuario.UsuarioCrea = user.Id
-        usuario.UsuarioModifica = user.Id
-        usuario.Confirmado='Y'
-        usuario.FechaConfirmacion=datetime.now()
-        db.session.add(usuario)
-        db.session.commit()
+    #         # create new user
+    #     usuario = SAMM_Usuario()
+    #     usuario.IdPersona = idVisitante
+    #     usuario.Codigo = request.json['cedula']
+    #     usuario.Clave = generate_password_hash(request.json['cedula'], method='sha256')
+    #     usuario.IdPerfil = 2
+    #     usuario.Estado = 'T'
+    #     usuario.FechaCrea = datetime.now()
+    #     usuario.FechaModifica = datetime.now()
+    #     usuario.UsuarioCrea = user.Id
+    #     usuario.UsuarioModifica = user.Id
+    #     usuario.Confirmado='Y'
+    #     usuario.FechaConfirmacion=datetime.now()
+    #     db.session.add(usuario)
+    #     db.session.commit()
 
-    else:
-        #activate user
-        usuario.Estado = 'T'
-        usuario.FechaModifica = datetime.now()
-        db.session.commit()
+    # else:
+    #     #activate user
+    #     usuario.Estado = 'T'
+    #     usuario.FechaModifica = datetime.now()
+    #     db.session.commit()
 
-    # check if there is ubicacion in request
-    if 'ubicacion' in request.json:
-        idUbicacion = request.json['ubicacion']
-    else:
-        idUbicacion = 1
+    # # check if there is ubicacion in request
+    # if 'ubicacion' in request.json:
+    #     idUbicacion = request.json['ubicacion']
+    # else:
+    #     idUbicacion = 1
     # # create new visita
+
     visita = SAMM_BitacoraVisita()
     visita.Codigo = str(request.json['cedula'])
-    visita.Descripcion = 'Visita de ' + request.json['name'] + ' ' + request.json['lastName'] + ' a ' + anfitrion.Nombres + ' ' + anfitrion.Apellidos
-    visita.IdAnfitrion = IdAnfitrion
-    visita.IdVisita= usuario.Id
-    visita.IdUbicacion = idUbicacion
+    # visita.Descripcion = 'Visita de ' + request.json['name'] + ' ' + request.json['lastName'] + ' a ' + anfitrion.Nombres + ' ' + anfitrion.Apellidos
+    visita.IdAnfitrion = 1
+    visita.IdVisita= 1
+    visita.IdUbicacion = request.json["ubicacion"]
     #transformar fecha de string a date
     #join time and date
     date_time_str = request.json['date'] + ' ' + request.json['time']
@@ -134,9 +135,9 @@ def registraVisita():
     visita.FechaVisita = date_time_obj
     visita.FechaCrea = datetime.now()
     visita.FechaModifica = datetime.now()
-    visita.UsuarioCrea = user.Id
-    visita.UsuarioModifica = user.Id
-    visita.Estado = estado
+    visita.UsuarioCrea = 1
+    visita.UsuarioModifica = 1
+    visita.Estado = request.json["estado"]
     visita.Hora = request.json['time']
     visita.Duracion= request.json['duration']
     visita.Placa= request.json['placa']
@@ -150,35 +151,36 @@ def registraVisita():
     db.session.commit()
 
     
-    temp_user_dict={
-        'Id':usuario.Id,
-        'IdPersona':usuario.IdPersona,
-        'Nombres':visitante.Nombres,
-        'Apellidos':visitante.Apellidos,
-        'Codigo':usuario.Codigo,
-        'Clave':usuario.Codigo,
-        'IdPerfil':usuario.IdPerfil,
-        'Estado':usuario.Estado,
-        'FechaCrea':usuario.FechaCrea,
-        'access_token': create_access_token(identity=usuario.Codigo),
-        'UsuarioCrea':usuario.UsuarioCrea,
-        'UsuarioModifica':usuario.UsuarioModifica,
-        'Confirmado':usuario.Confirmado,
-        'FechaConfirmacion':usuario.FechaConfirmacion,
-        "visita": {
-            'Id':visita.Id,
-            'Codigo':visita.Codigo,
-            'Descripcion':visita.Descripcion,
-            'IdAnfitrion':visita.IdAnfitrion,
-            'IdVisita':visita.IdVisita,
-            'IdUbicacion':visita.IdUbicacion,
-            'FechaVisita':visita.FechaVisita,
-            'FechaSalidaEstimada':visita.FechaSalidaEstimada,
+    # temp_user_dict={
+    #     'Id':usuario.Id,
+    #     'IdPersona':usuario.IdPersona,
+    #     'Nombres':visitante.Nombres,
+    #     'Apellidos':visitante.Apellidos,
+    #     'Codigo':usuario.Codigo,
+    #     'Clave':usuario.Codigo,
+    #     'IdPerfil':usuario.IdPerfil,
+    #     'Estado':usuario.Estado,
+    #     'FechaCrea':usuario.FechaCrea,
+    #     'access_token': create_access_token(identity=usuario.Codigo),
+    #     'UsuarioCrea':usuario.UsuarioCrea,
+    #     'UsuarioModifica':usuario.UsuarioModifica,
+    #     'Confirmado':usuario.Confirmado,
+    #     'FechaConfirmacion':usuario.FechaConfirmacion,
+    #     "visita": {
+    #         'Id':visita.Id,
+    #         'Codigo':visita.Codigo,
+    #         'Descripcion':visita.Descripcion,
+    #         'IdAnfitrion':visita.IdAnfitrion,
+    #         'IdVisita':visita.IdVisita,
+    #         'IdUbicacion':visita.IdUbicacion,
+    #         'FechaVisita':visita.FechaVisita,
+    #         'FechaSalidaEstimada':visita.FechaSalidaEstimada,
 
-        }
-    }
+    #     }
+    # }
     # return the new user and their JWT to the client
-    return jsonify(visita=temp_user_dict), 201
+    # return jsonify(visita=temp_user_dict), 201
+    return jsonify({"msg":"Visita creada"}), 201
 
 
 # end a visit

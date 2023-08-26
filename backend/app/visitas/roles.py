@@ -19,7 +19,16 @@ from sqlalchemy import or_
 @jwt_required()
 def getRoles():
     try:
-        roles = SAMM_Rol.query.all()
+        roles = db.session.query(SAMM_Rol.Id,
+                                    SAMM_Rol.Codigo,
+                                    SAMM_Rol.Descripcion,
+                                    SAMM_Rol.Estado,
+                                    SAMM_Rol.FechaCrea,
+                                    SAMM_Rol.FechaModifica,
+                                    SAMM_Usuario.Codigo.label("CodUsuarioCrea"),
+                                   ) \
+            .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_Rol.UsuarioCrea) \
+            .all()
         rolesSchema = SAMM_RolSchema(many=True)
         return jsonify(roles=rolesSchema.dump(roles)), 200
     except Exception as e:

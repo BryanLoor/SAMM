@@ -282,8 +282,13 @@ function Entradas() {
 
   const updateTable = (tipo: string) => {
     const fetchData = async () => {
-      const result = await post("/visitas/viewList", { tipo: tipo });
-      setTableData(result);
+      try {
+        const result = await post("/visitas/viewList", { tipo: tipo });
+        console.log({ tipo: tipo }, result, "88888/////");
+        setTableData(result);
+      } catch (err) {
+        console.error(err, "error");
+      }
     };
     fetchData();
   };
@@ -393,6 +398,9 @@ function Entradas() {
             </MenuItem>
             <MenuItem className="text-[#001554]" value="PROXIMAS">
               Próximas visitas
+            </MenuItem>
+            <MenuItem className="text-[#001554]" value="TODAS">
+              Todas
             </MenuItem>
           </Select>
         </div>
@@ -557,13 +565,13 @@ function Entradas() {
                 </TableCell>
                 <TableCell>
                   <Select
-                    value={alerta}
+                    value={event.alerta}
                     onChange={(event) => setAlerta(event.target.value)}
                     className="h-8 text-sm"
                   >
                     <MenuItem value="">
                       <b>
-                        Seleccionar
+                        Seleccionar ss
                         <hr />
                       </b>
                     </MenuItem>
