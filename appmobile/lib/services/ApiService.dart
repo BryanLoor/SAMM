@@ -4,12 +4,30 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  final String _baseUrl = 'http://10.0.2.2:5000'; //ip para emulador
-  //198.38.89.240:8035
+  //final String _baseUrl = 'http://127.0.0.1:5000'; //local
+  final String _baseUrl = 'http://198.38.89.240:8035'; //produccionGrowthly
+
   //ip para tlf http://10.0.2.2:5000
 
   String getServiceUrl(String serviceUrl) {
     return "$_baseUrl/$serviceUrl";
+  }
+
+  Future<String> getAccessToken(String username, String password) async {
+    final url = Uri.parse('${_baseUrl}generate_token');
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'username': username,
+      'password': password,
+    });
+    final response = await http.post(url, headers: headers, body: body);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['access_token'];
+    } else {
+      throw Exception('Could not get token');
+    }
   }
 
   Future<dynamic> getData(String endpoint, String jwtToken) async {
@@ -50,6 +68,7 @@ class ApiService {
   Future<Map<String, dynamic>> postData(
       String endpoint, Map<String, dynamic> data, String jwtToken) async {
     var url = Uri.parse(_baseUrl + endpoint);
+    //print("data");
     var headers = {
       "Content-Type": "application/json",
     };
@@ -62,7 +81,7 @@ class ApiService {
       body: jsonEncode(data),
     );
 
-    if (response. statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Fallo al enviar datos');

@@ -15,84 +15,88 @@ class ScreenWelcome extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Image.asset('assets/images/SAMMA.png'),
-            Text(
-              '¡Hola, que gusto verte!',
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0040AE)),
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Flexible(
-                  child: CustomButton(
-                    iconData: Icons.mail,
-                    text: 'Correo y Contraseña',
-                    onPressed: () {
-                      Navigator.pushNamed(context, LoginPage.routeName);
-                    },
-                  ),
-                ),
-                SizedBox(width: 16),
-                Flexible(
-                  child: CustomButton(
-                    iconData: Icons.fingerprint,
-                    text: 'Face ID/Huella',
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context, ScreenFaceID_Huella.routeName);
-                    },
-                  ),
-                ),
-                SizedBox(width: 16),
-                Flexible(
-                  child: CustomButton(
-                    iconData: Icons.lock,
-                    text: 'Pin de Seguridad',
-                    onPressed: () {
-                      Navigator.pushNamed(context, ScreenLoginPin.routeName);
-                    },
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            RichText(
-              text: TextSpan(
-                text: '¿No tienes una cuenta? ',
-                style: TextStyle(color: Color(0xFF0040AE), fontSize: 16),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: 'Regístrate',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0040AE),
-                    ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ScreenCreascuenta(),
-                          ),
-                        );
+        child: Flexible(
+          fit: FlexFit.loose,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('assets/images/SAMMA.png', scale: 4),
+              const Text(
+                '¡Hola, que gusto verte!',
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0040AE)),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Flexible(
+                    child: CustomButton(
+                      iconData: Icons.mail,
+                      text: 'Correo & Pass',
+                      onPressed: () {
+                        Navigator.pushNamed(context, LoginPage.routeName);
                       },
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Flexible(
+                    child: CustomButton(
+                      iconData: Icons.fingerprint,
+                      text: 'Face ID/Huella',
+                      onPressed: () {
+                        Navigator.pushNamed(
+                            context, ScreenFaceID_Huella.routeName);
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Flexible(
+                    child: CustomButton(
+                      iconData: Icons.lock,
+                      text: 'Pin de Seguridad',
+                      onPressed: () {
+                        Navigator.pushNamed(context, ScreenLoginPin.routeName);
+                      },
+                    ),
                   ),
                 ],
               ),
-            ),
-            SizedBox(height: 60),
-          ],
+              SizedBox(height: 20),
+              RichText(
+                text: TextSpan(
+                  text: '¿No tienes una cuenta? ',
+                  style: TextStyle(color: Color(0xFF0040AE), fontSize: 16),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'Regístrate',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0040AE),
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ScreenCreascuenta(),
+                            ),
+                          );
+                        },
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 60),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
 class CustomButton extends StatelessWidget {
   final IconData iconData;
   final String text;
@@ -123,7 +127,10 @@ class CustomButton extends StatelessWidget {
             Icon(iconData, size: 35),
             Align(
               alignment: Alignment.center,
-              child: Text(text),
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),

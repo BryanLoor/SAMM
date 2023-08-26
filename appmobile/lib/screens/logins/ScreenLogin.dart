@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
-      {bool isObscured = false}) {
+      {bool isObscured = true}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                 ? IconButton(
                     icon: Icon(
                       // Cambiar el ícono en función de si la contraseña está oculta o no
-                      _obscureText ? Icons.visibility : Icons.visibility_off,
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
                     ),
                     onPressed: () {
                       // Cambia el estado de _obscureText cuando se presiona el botón
@@ -107,8 +107,7 @@ class _LoginPageState extends State<LoginPage> {
         _mainProvider.updateToken(response['access_token']);
       }
     } catch (e) {
-      print(e);
-      throw Exception('Failed to post data: $e');
+      throw Exception('Fallo metodo posteo de Api Service: $e');
     }
   }
 
