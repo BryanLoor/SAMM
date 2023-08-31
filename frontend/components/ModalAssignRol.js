@@ -77,7 +77,7 @@ const ModalAssignRol = () => {
         onClick={handleOpen}
         className="bg-[#0040AE] hover:bg-[#1B147A] text-white font-sans py-1 px-4 rounded-lg mt-1"
       >
-        Asignar roll
+        Asignar rol
       </Button>
       <Modal
         open={open}

@@ -78,7 +78,7 @@ export default function ModalPersonas() {
       Descripcion: descripcion,
     };
     const response = async () => {
-      const result = await post("/visitas/roles", loadData);
+      const result = await post("/visitas/crearPersona", loadData);
       console.log(result);
     };
     response();

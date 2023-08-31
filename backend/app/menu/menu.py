@@ -37,7 +37,7 @@ def getMenu():
                 # put path as '''if id is 1
                 # put path as gOpcion.Descripcion.replace(" ", "-").lower().replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u") else
                 tryPath=gOpcion.Descripcion.replace(" ", "-").lower().replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                path='' if gOpcion.Id ==1 else tryPath
+                path= tryPath
                 opcion_schema.append({
                     'Id': gOpcion.Id,
                     'Codigo': gOpcion.Codigo,

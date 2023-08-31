@@ -41,6 +41,7 @@ def getUsuarios():
 
         # Procesar los resultados del join y convertirlos en una lista de diccionarios
         resultados = []
+        print(usuarios)
 
         for usuario in usuarios:
             resultados.append({
@@ -55,7 +56,6 @@ def getUsuarios():
                 'horaModifica': usuario.FechaModifica.strftime('%H:%M:%S'),
                 'codigo_usuario_modifica': usuario.CodigoUsMod,
                 'estado': usuario.Estado
-                # Otros campos que desees agregar...
             })
         return jsonify(resultados), 200
     except Exception as e:

@@ -7,7 +7,7 @@ import {
 } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import Layout from "example/containers/Layout";
+import Layout from "components/layout";
 import PageTitle from "example/components/Typography/PageTitle";
 import Link from "next/link";
 import { get, post } from "utils/services/api";
@@ -147,7 +147,7 @@ const Calendario: React.FC = () => {
         <PageTitle>Registro de Visitas</PageTitle>
         <div className="mb-4 flex justify-end mr-2 mt-6">
           <Link href="/example/entradas" className="mr-2">
-            <Tooltip title="Bitacora digital">
+            <Tooltip title="Ver como Tabla">
               <IconButton className="bg-[#0040AE] hover:bg-[#1B147A] text-white">
                 <TableChartIcon />
               </IconButton>
@@ -210,7 +210,7 @@ const Calendario: React.FC = () => {
             views={["month"]}
             onView={(view) => setSelectedView(view)}
             onSelectEvent={(event) => {
-              router.push("/example/entradas");
+              router.push("visitas/entradas");
             }}
           />
         </div>

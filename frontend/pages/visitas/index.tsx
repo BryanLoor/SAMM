@@ -1,5 +1,5 @@
 import PageTitle from "example/components/Typography/PageTitle";
-import Layout from "example/containers/Layout";
+import Layout from "components/layout";
 import SectionTitle from "example/components/Typography/SectionTitle";
 import { CSSProperties, useEffect, useState } from "react";
 import {
@@ -354,13 +354,13 @@ function Entradas() {
         </div>
 
         <div className="mb-4 flex justify-end mr-2 mt-6">
-          <Link href="/example/registro-visitas" className="mr-2">
-            <Tooltip title="Proximas invitaciones">
+          {/* <Link href="/visitas" className="mr-2">
+            <Tooltip title="Vista Calendario">
               <IconButton className="bg-[#0040AE] hover:bg-[#1B147A] text-white">
                 <CalendarTodayIcon />
               </IconButton>
             </Tooltip>
-          </Link>
+          </Link> */}
 
           <ModalVisita />
         </div>

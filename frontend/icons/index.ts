@@ -17,6 +17,7 @@ import CartIcon from './cart.svg'
 import ChatIcon from './chat.svg'
 import MoneyIcon from './money.svg'
 import PeopleIcon from './people.svg'
+import RolIcon from './rol.svg'
 import SearchIcon from './search.svg'
 import MoonIcon from './moon.svg'
 import SunIcon from './sun.svg'
@@ -47,6 +48,7 @@ export {
   ChatIcon,
   MoneyIcon,
   PeopleIcon,
+  RolIcon,
   SearchIcon,
   MoonIcon,
   SunIcon,

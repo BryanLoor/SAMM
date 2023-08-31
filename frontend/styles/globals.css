@@ -14,3 +14,20 @@ a {
 * {
   box-sizing: border-box;
 }
+
+
+.content{
+  flex-grow: 1;
+}
+
+.layout {
+  display: flex;
+  height: 100vh;
+  position: relative;
+  gap: 2rem;
+
+}
+
+.layout__main-content {
+  flex-grow: 1;
+}

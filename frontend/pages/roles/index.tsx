@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { Input, Label, TableHeader } from "@roketid/windmill-react-ui";
 import PageTitle from "example/components/Typography/PageTitle";
 import SectionTitle from "example/components/Typography/SectionTitle";
-import Layout from "example/containers/Layout";
+import Layout from "components/layout"
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { get } from "utils/services/api";
-import ModalUsuario from "./modal-crear-usuario";
+import ModalUsuario from "../usuarios/modal-crear-usuario";
 import Link from "next/link";
 import ModalRol from "./modal-crear-rol";
 import ModalAssignRol from "components/ModalAssignRol";
@@ -55,14 +55,14 @@ function Roles() {
     <Layout>
       <div className="flex flex-row justify-between mb-4">
         <div>
-          <PageTitle>
+          {/* <PageTitle>
             <p className="font-sans text-[#001554]">Registro Roles</p>
-          </PageTitle>
+          </PageTitle> */}
         </div>
         <div style={{ display: "flex" }}>
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <ModalAssignRol />
-          </div>
+          </div> */}
           <div className="mt-4 ml-10">
             <ModalRol />
           </div>

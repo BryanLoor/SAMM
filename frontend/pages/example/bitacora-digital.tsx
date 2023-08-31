@@ -3,7 +3,7 @@ import Layout from "example/containers/Layout";
 import SectionTitle from "example/components/Typography/SectionTitle";
 import { CSSProperties, useState } from "react";
 import { Input, Label, TableHeader } from "@roketid/windmill-react-ui";
-import ModalVisita from "./modal-crear-visita";
+import ModalVisita from "../visitas/modal-crear-visita";
 import React from "react";
 import {
   IconButton,

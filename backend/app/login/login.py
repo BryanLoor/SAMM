@@ -21,6 +21,8 @@ from datetime import date, datetime
 import smtplib
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from app.models.SAMM_Rol import SAMM_Rol
+
 @app.route('/login', methods=['POST'])
 @cross_origin()
 def login():
@@ -32,33 +34,46 @@ def login():
         Pin= data.get('Pin')
         Clave = data.get('Clave')
         if not Codigo:
-            return jsonify({'message': 'No Codigo provided'}), 400
+            return jsonify({'message': 'Ingresa codigo'}), 400
         if not Clave and not Pin:
-            return jsonify({'message': 'No Clave or Pin provided'}), 400
-        usuario = SAMM_Usuario.query.filter_by(Codigo=Codigo).first()
+            return jsonify({'message': 'Ingresa la clave'}), 400
+        #usuario = SAMM_Usuario.query.filter_by(Codigo=Codigo).first()
+        usuario = db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado) \
+        .join(Persona, SAMM_Usuario.IdPersona == Persona.Id) \
+        .join(SAMM_Rol, SAMM_Usuario.IdPerfil == SAMM_Rol.Id) \
+        .filter_by(Codigo=SAMM_Usuario.Codigo) \
+        .first()
+
+         
+        
+        expires = timedelta(hours=3)
+        # #change the fechaultimologin of the user
+        #usuario.Fechaultimologin = datetime.now()
+        
         if not usuario:
             return jsonify({'message': 'Usuario no existe'}), 400
-        if Pin and not (usuario.Pin == Pin):
-            return jsonify({'message': 'Pin incorrecto'}), 400
+        # if Pin and not (usuario.Pin == Pin):
+        #     return jsonify({'message': 'Pin incorrecto'}), 400
         if Clave and not check_password_hash(usuario.Clave, Clave):
             return jsonify({'message': 'Contraseña incorrecta'}), 400
-        if usuario.Estado != 'A' and usuario.Estado != 'T':
+        if usuario.Estado != 'A':
             return jsonify({'message': 'Usuario inactivo'}), 400
-        if usuario.Confirmado == 'N':
-            return jsonify({'message': 'Usuario no confirmado'}), 400
-        
-        #check if data request has a web field
-        if 'web' in data:
-            if data['web'] == True:
-                if usuario.IdPerfil == 2 or usuario.IdPerfil == 3:
-                    return jsonify({'message': 'Usuario no autorizado'}), 400	
-        
-        expires = timedelta(hours=120)
-        #change the fechaultimologin of the user
-        usuario.Fechaultimologin = datetime.now()
-        user=SAMM_UsuarioSchema().dump(usuario)
+        # if usuario.Confirmado == 'N':
+        #     return jsonify({'message': 'Usuario no confirmado'}), 400
+
         access_token = create_access_token(identity=usuario.Codigo, expires_delta=expires)
-        return jsonify(access_token=access_token, usuario=user), 200
+
+               
+        response_data = {
+            "access_token": access_token,
+            "Codigo":usuario[0],
+            "Nombres": usuario[2],
+            "Apellidos": usuario[3],
+            "Descripcion": usuario[4],
+            "Estado": usuario[5]
+                }
+    
+        return jsonify(response_data), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
     

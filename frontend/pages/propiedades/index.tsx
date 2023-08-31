@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PageTitle from "example/components/Typography/PageTitle";
-import Layout from "example/containers/Layout";
+import Layout from "components/layout"
 import { ITableData } from "utils/demo/tableData";
 
 import { Input, Label, TableHeader } from "@roketid/windmill-react-ui";

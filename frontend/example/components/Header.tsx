@@ -34,7 +34,7 @@ function Header() {
        // Aquí deberías realizar las operaciones de cierre de sesión, como borrar tokens o limpiar el estado de autenticación.
 
        // Después de cerrar la sesión, redirecciona al usuario a la página de inicio de sesión.
-       router.push("/example/login");
+       router.push("/login");
      }
   }
 

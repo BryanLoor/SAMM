@@ -160,32 +160,36 @@ def addPersona():
     if user is None:
         return jsonify({'message': 'Usuario no existe'}), 400
     #check if there is a persona with the same cedula
-    persona = Persona.query.filter_by(Identificacion=data['cedula']).first()
+    persona = Persona.query.filter_by(Identificacion=data['identificacion']).first()
     if persona:
         return jsonify({'message': 'Persona ya existe'}), 500
-    #check if there is a persona with the same email
-    persona = Persona.query.filter_by(Correo_Domicilio=data['email']).first()
-    if persona:
-        return jsonify({'message': 'Correo ya existe'}), 500
+    # #check if there is a persona with the same email
+    # persona = Persona.query.filter_by(Correo_Domicilio=data['correo']).first()
+    # if persona:
+    #     return jsonify({'message': 'Correo ya existe'}), 500
     
     #create a new persona
     persona = Persona(
+        TipoIde =data['tipoIde'],
+        Identificacion=data['identificacion'],
         Nombres=data['nombres'],
         Apellidos=data['apellidos'],
-        Identificacion=data['cedula'],
-        Cel_Personal=data['tel_celular'],
-        Correo_Domicilio=data['email'],
-        Dir_Domicilio=data['direccion'],
-        Cargo=data['cargo'],
-        IdRol=data['rol'],
+        EstadoCivil=data['estadoCivil'],
+        Sexo=data['sexo'],
+        Cel_Personal=data['cel_personal'],
+        Cel_Trabajo=data['cel_trabajo'],
+        Dir_Domicilio=data['dir_domicilio'],
+        Dir_Trabajo=data['dir_trabajo'],
+        Correo_Personal=data['correo_personal'],
+        Correo_Trabajo=data['correo_trabajo'],
         Estado='A',
         FechaCrea=datetime.now(),
         UsuarioCrea=user.Id,
         FechaModifica=datetime.now(),
         UsuarioModifica=user.Id,
-        Foto=None,
-        NombreFoto=None,
-        Mimetype=None,
+        # Foto=None,
+        # NombreFoto=None,
+        # Mimetype=None,
     )
     db.session.add(persona)
     db.session.commit()

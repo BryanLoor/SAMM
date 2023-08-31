@@ -30,7 +30,7 @@ function SidebarContent({ linkClicked }: ISidebarContent) {
         routesT.push({
           name: item.Descripcion,
           icon: item.Icon ? item.Icon : 'HomeIcon',
-          path: '/example/' + item.path,
+          path: '/' + item.path,
           exact: item.Id==1 ? true : false,
         });
       });

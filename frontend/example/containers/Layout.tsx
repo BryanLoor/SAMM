@@ -19,7 +19,7 @@ function Layout({ children }: ILayout) {
           isSidebarOpen && "overflow-hidden"
         }`}
       >
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div className="back flex flex-col flex-1 w-full bg-gray-100">
           <Main>{children}</Main>
         </div>

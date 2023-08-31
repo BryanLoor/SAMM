@@ -2,7 +2,7 @@ import React, { useEffect,useState } from "react";
 import { Input, Label, TableHeader } from "@roketid/windmill-react-ui";
 import PageTitle from "example/components/Typography/PageTitle";
 import SectionTitle from "example/components/Typography/SectionTitle";
-import Layout from "example/containers/Layout";
+import Layout from "components/layout";
 import {Table,TableBody,TableCell,TableContainer,TableRow,} from "@mui/material";
 import { get } from "utils/services/api";
 import ModalUsuario from "./modal-crear-usuario";
@@ -85,7 +85,7 @@ function Usuarios() {
                     <span className="text-sm">{row.codigo}</span>
                   </TableCell>
                   <TableCell>
-                    <Link href="/example/info-usuario">
+                    <Link href="/info-usuario">
                       <span className="text-sm text-blue-800 hover:text-blue-900 underline">
                         {row.nombres}
                       </span>

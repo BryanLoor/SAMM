@@ -6,6 +6,14 @@ import { Alert, AlertColor, AlertTitle } from "@mui/material";
 import { useRouter } from "next/router";
 import { get, post } from "utils/services/api";
 
+// interface UserAuth {
+//   apellidos: string;
+//   codigo: string;
+//   descripcion: string;
+//   estado: string;
+//   nombres:
+// }
+
 function LoginPage() {
   const { mode } = useContext(WindmillContext);
   const router = useRouter();
@@ -18,6 +26,8 @@ function LoginPage() {
     type: "",
     title: "",
   });
+
+ 
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -39,11 +49,21 @@ function LoginPage() {
         Clave: clave,
         web: true,
       });
-      const { access_token } = response;
-      const { usuario } = response;
-      localStorage.setItem("user", JSON.stringify(usuario));
-      // Store the JWT token in localStorage
-      localStorage.setItem("jwtToken", access_token);
+      const usuauth = response as {
+        apellidos: string,
+        codigo: string,
+        descripcion: string,
+        estado: string,
+        nombres: string,
+        access_token: string,
+      };
+      localStorage.setItem("userAuth", JSON.stringify(response));
+      const user = localStorage.getItem('userAuth');
+      if (user === null){ 
+      }       
+      else{
+      localStorage.setItem("jwtToken", usuauth.access_token);
+      }
 
       const getMenu = await get("/menu/getMenu");
       localStorage.setItem("menu", JSON.stringify(getMenu));
@@ -53,7 +73,7 @@ function LoginPage() {
         type: "success",
         title: "Bienvenido",
       });
-      router.push("/example/welcome");
+      router.push("/welcome");
     } catch (error: any) {
       // TODO: Handle login error
       console.error("Credenciales incorrectas", error);
@@ -73,8 +93,8 @@ function LoginPage() {
               aria-hidden="true"
               src={imgSource}
               alt="Office"
-              width={350}
-              height={350}
+              width={200}
+              height={200}
             />
           </div>
           <main className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">

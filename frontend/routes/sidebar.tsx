@@ -4,6 +4,7 @@
  *
  */
 
+
 interface IRoute {
   path?: string;
   icon?: string;
@@ -12,6 +13,8 @@ interface IRoute {
   checkActive?(pathname: String, route: IRoute): boolean;
   exact?: boolean;
 }
+
+
 
 export function routeIsActive(pathname: String, route: IRoute): boolean {
   if (route.checkActive) {
@@ -25,80 +28,55 @@ export function routeIsActive(pathname: String, route: IRoute): boolean {
     : false;
 }
 
-const routes: IRoute[] = [
-  {
-    path: "/example", // the url
-    icon: "HomeIcon", // the component being exported from icons/index.js
-    name: "Propiedades", // name that appear in Sidebar
-    exact: true,
-  },
-  {
-    path: "/example/agentes",
-    icon: "PeopleIcon",
-    name: "Agentes",
-  },
-  {
-    path: "/example/registro-visitas",
-    icon: "FormsIcon",
-    name: "Registro Visitas",
-  },
-  // {
-  //   path: "/example/bitacora-digital",
-  //   icon: "ChartsIcon",
-  //   name: "Bitácora Digital",
-  // },
+const routes: IRoute[] = [];
 
-  {
-    path: "/example/registro-rondas",
-    icon: "FormsIcon",
-    name: "Registro Rondas",
-  },
-  // {
-  //   path: "/example/invitaciones",
-  //   icon: "ModalsIcon",
-  //   name: "Invitaciones",
-  // },
-  // {
-  //   path: "/example/tables",
-  //   icon: "TablesIcon",
-  //   name: "Tables",
-  // },
-  // {
-  //   icon: "PagesIcon",
-  //   name: "Pages",
-  //   routes: [
-  //     // submenu
-  //     {
-  //       path: "/example/login",
-  //       name: "Login",
-  //     },
-  //     {
-  //       path: "/example/create",
-  //       name: "Create",
-  //     },
-  //     {
-  //       path: "/example/create-account",
-  //       name: "Create account",
-  //     },
-  //     {
-  //       path: "/example/confirm-account",
-  //       name: "Confirm account",
-  //     },
-  //     {
-  //       path: "/example/forgot-password",
-  //       name: "Forgot password",
-  //     },
-  //     {
-  //       path: "/example/404",
-  //       name: "404",
-  //     },
-  //     {
-  //       path: "/example/blank",
-  //       name: "Blank",
-  //     },
-  //   ],
-  // },
-];
+
+
+    const menu = JSON.parse(localStorage.getItem("menu"));
+  
+    for (const item of menu) {
+      const route = {
+        path: item.path,
+        icon: item.icon,
+        name: item.Descripcion,
+      };
+  
+      routes.push(route);
+    }
+  }
 
 export type { IRoute };
 export default routes;
+
+
+// const routes: IRoute[] = [
+//   {
+//     path: "/example", // the url
+//     icon: "HomeIcon", // the component being exported from icons/index.js
+//     name: "Propiedades", // name that appear in Sidebar
+//     exact: true,
+//   },
+//   {
+//     path: "/example/agentes",
+//     icon: "PeopleIcon",
+//     name: "Agentes",
+//   },
+//   {
+//     path: "/example/registro-visitas",
+//     icon: "FormsIcon",
+//     name: "Registro Visitas",
+//   },
+//   // {
+//   //   path: "/example/bitacora-digital",
+//   //   icon: "ChartsIcon",
+//   //   name: "Bitácora Digital",
+//   // },
+
+//   {
+//     path: "/example/registro-rondas",
+//     icon: "FormsIcon",
+//     name: "Registro Rondas",
+//   },
+
+// ];
+
