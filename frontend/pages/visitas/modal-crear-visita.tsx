@@ -6,6 +6,9 @@ import { Input, Label } from "@roketid/windmill-react-ui";
 import { get, post } from "utils/services/api";
 import { IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const style = {
   position: "absolute" as "absolute",
@@ -35,8 +38,15 @@ interface IPropiedades {
 
 export default function ModalVisita() {
   const [open, setOpen] = React.useState(false);
+  //COMBOBOX for anfitriones
+  const [allAnfitriones, setAllAnfitriones] = React.useState([]);
+  const [openCBAnfitrion, setOpenCBAnfitrion] = React.useState(false);
+  const [isLoadingCBAnfitrion, setIsLoadingCBAnfitrion] = React.useState(false);
+  const [idAnfitrionSelected, setIdAnfitrionSelected] = React.useState("");
+
   const [selectedPropiedad, setSelectedPropiedad] = React.useState("");
   const [propiedades, setPropiedades] = React.useState([] as IPropiedades[]);
+  const [idVisitante, setIdVisitante] = React.useState(null);
   const [cedulaVisitante, setCedulaVisitante] = React.useState("");
   const [nombresCompletos, setNombresCompletos] = React.useState("");
   const [apellidosCompletos, setApellidosCompletos] = React.useState("");
@@ -64,9 +74,20 @@ export default function ModalVisita() {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const result = await get("/visitas/getUrbanizaciones");
-      console.log(result);
-      setPropiedades(result);
+      try {
+        setIsLoadingCBAnfitrion(true);
+
+        const result1 = await get("/visitas/getUrbanizaciones");
+        const result2 = await get("/visitas/personas");
+
+        setPropiedades(result1);
+        setAllAnfitriones(result2);
+        console.log(result2);
+      } catch (err) {
+        console.error("Error al cargar datos de anfitrion o urbanizaciones");
+      } finally {
+        setIsLoadingCBAnfitrion(false);
+      }
     };
     fetchData();
   }, []);
@@ -105,21 +126,42 @@ export default function ModalVisita() {
     const tE = convertTo12Hour(tiempoEstadia);
     console.log(tiempoEstadia);
     const loadData = {
-      estado: "W",
-      cedula: cedulaVisitante,
+      estado: "A",
+      idAnfitrion: idAnfitrionSelected,
       ubicacion: selectedPropiedad,
+      cedula: cedulaVisitante,
       name: nombresCompletos,
       lastName: apellidosCompletos,
+      idVisitante: idVisitante,
+      phone: phone,
+      email: email,
       date: fechaVisita,
       time: horaIngreso,
       duration: tE.hours,
       placa: placa,
     };
+    if (
+      !idAnfitrionSelected ||
+      !selectedPropiedad ||
+      !cedulaVisitante ||
+      !nombresCompletos ||
+      !apellidosCompletos ||
+      !phone ||
+      !fechaVisita ||
+      !horaIngreso ||
+      !tiempoEstadia ||
+      !email
+    ) {
+      alert("Complete los campos que son obligatorios");
+      return;
+    }
+
     const response = async () => {
       try {
         const result = await post("/visitas/registraVisita", loadData);
         console.log(result);
         cleanVisitaData();
+        alert("Visita registrada");
       } catch (error) {
         alert("Error en registrar la visita");
       }
@@ -127,7 +169,7 @@ export default function ModalVisita() {
     try {
       response();
     } catch {
-      console.log("Guardar datos de la visita");
+      console.log("No se pudo guardar datos de la visita");
     } finally {
       handleClose();
     }
@@ -142,12 +184,28 @@ export default function ModalVisita() {
         console.log(result["persona"]);
         setNombresCompletos(result["persona"].Nombres);
         setApellidosCompletos(result["persona"].Apellidos);
+        setIdVisitante(result["persona"].Identificacion);
       } catch (error) {
-        alert("Persona no encontrada. Necesita crear una nueva");
+        alert("Persona no encontrada");
+        setNombresCompletos("");
+        setApellidosCompletos("");
+        setIdVisitante(null);
       }
     };
     fetchData();
   }
+
+  //Filtros para buscar el anfitrion por cedula o nombre
+  const customFilterOptions = (options, { inputValue }) => {
+    // Filtrar las opciones por el valor de búsqueda en las propiedades 'nombre' o 'apellido' o 'cedula'
+
+    return options.filter(
+      (opcion) =>
+        opcion.Nombres.toLowerCase().includes(inputValue.toLowerCase()) ||
+        opcion.Apellidos.toLowerCase().includes(inputValue.toLowerCase()) ||
+        opcion.Identificacion.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
 
   return (
     <div>
@@ -187,6 +245,47 @@ export default function ModalVisita() {
           </div>
 
           <hr />
+          <div style={{ width: "90%", margin: "0 auto", paddingTop: "15px" }}>
+            <Autocomplete
+              style={{ width: "100%" }}
+              placeholder="Escoja un anfitrión"
+              id="asynchronous-demo"
+              sx={{ width: 300 }}
+              open={openCBAnfitrion}
+              onOpen={() => {
+                setOpenCBAnfitrion(true);
+              }}
+              onClose={() => {
+                setOpenCBAnfitrion(false);
+              }}
+              filterOptions={customFilterOptions}
+              getOptionLabel={(option) =>
+                option.Nombres + " " + option.Apellidos
+              }
+              onChange={(event, option) => {
+                setIdAnfitrionSelected(option.Id);
+              }}
+              options={allAnfitriones}
+              loading={isLoadingCBAnfitrion}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Anfitrión"
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <React.Fragment>
+                        {isLoadingCBAnfitrion ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </React.Fragment>
+                    ),
+                  }}
+                />
+              )}
+            />
+          </div>
           <div className="flex flex-col overflow-y-auto md:flex-row">
             <main className="flex items-center justify-center sm:p-4 md:w-1/2">
               <div className="w-80">
