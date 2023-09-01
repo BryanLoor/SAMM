@@ -28,6 +28,17 @@ from sqlalchemy import or_
 
 }
 '''
+
+@bp.route('/obtenerAllBitacoraVisitas', methods=['GET'])
+@cross_origin()
+@jwt_required()
+def obtenerAllBitacoralVisitas():
+    allBitacoraVisitas = SAMM_BitacoraVisita.query.all()
+    samm_bitacora_visitas_schema = SAMM_BitacoraVisitaSchema(many=True)
+    registros = samm_bitacora_visitas_schema.dump(allBitacoraVisitas)
+
+    return jsonify(registros)
+
 @bp.route('/registraVisita', methods=['POST'])
 @cross_origin()
 @jwt_required()
@@ -121,13 +132,25 @@ def registraVisita():
     # else:
     #     idUbicacion = 1
     # # create new visita
+    currentUserID =  get_jwt_identity()
 
     visita = SAMM_BitacoraVisita()
+
+    print(request.json['nameVisitante'])
+    visita.NombresVisitante= request.json['nameVisitante']
+    visita.ApellidosVisitante = request.json['lastNameVisitante']
+    visita.NombresAnfitrion = request.json['nameAnfitrion']
+    visita.ApellidosAnfitrion= request.json['lastNameAnfitrion']
+
     visita.Codigo = str(request.json['cedula'])
     # visita.Descripcion = 'Visita de ' + request.json['name'] + ' ' + request.json['lastName'] + ' a ' + anfitrion.Nombres + ' ' + anfitrion.Apellidos
-    visita.IdAnfitrion = 1
-    visita.IdVisita= 1
-    visita.IdUbicacion = request.json["ubicacion"]
+    visita.IdAnfitrion = request.json['idAnfitrion']
+    visita.IdVisita=  request.json['idVisitante']
+    visita.IdUbicacion = request.json["idUbicacion"]
+    visita.Ubicacion = request.json["ubicacion"]
+    visita.Telefono = request.json["phone"]
+    visita.Correo = request.json["email"]
+
     #transformar fecha de string a date
     #join time and date
     date_time_str = request.json['date'] + ' ' + request.json['time']
@@ -135,8 +158,8 @@ def registraVisita():
     visita.FechaVisita = date_time_obj
     visita.FechaCrea = datetime.now()
     visita.FechaModifica = datetime.now()
-    visita.UsuarioCrea = 1
-    visita.UsuarioModifica = 1
+    visita.UsuarioCrea = currentUserID
+    visita.UsuarioModifica = currentUserID
     visita.Estado = request.json["estado"]
     visita.Hora = request.json['time']
     visita.Duracion= request.json['duration']
@@ -146,7 +169,6 @@ def registraVisita():
     Duracion= request.json['duration']*60
     FechaSalidaEstimada = date_time_obj + timedelta(minutes=int(Duracion))
     visita.FechaSalidaEstimada = FechaSalidaEstimada
-    print(visita)
     db.session.add(visita)
     db.session.commit()
 
