@@ -1,15 +1,20 @@
-'use client';
+"use client";
 
 import { SideBarMenu } from "components/SideBarMenu";
 import React, { useState, useEffect, ReactNode } from "react";
 import { SideBarMenuCard, SideBarMenuItem } from "types/types";
-import {FcAdvertising,FcHome,FcWorkflow,FcSurvey,FcManager} from 'react-icons/fc';
+import {
+  FcAdvertising,
+  FcHome,
+  FcWorkflow,
+  FcSurvey,
+  FcManager,
+} from "react-icons/fc";
 
 interface LayoutProps {
   children: ReactNode;
 }
-function Layout({children}: LayoutProps) {
-
+function Layout({ children }: LayoutProps) {
   const [items, setItems] = useState<SideBarMenuItem[]>([]);
   const [card, setCard] = useState<SideBarMenuCard>({
     id: "card001",
@@ -20,11 +25,10 @@ function Layout({children}: LayoutProps) {
   });
 
   useEffect(() => {
-    
-    const menuT = localStorage.getItem('menu');
+    const menuT = localStorage.getItem("menu");
 
-    if(menuT){
-    const menuJson = JSON.parse(menuT);
+    if (menuT) {
+      const menuJson = JSON.parse(menuT);
       const transformedItems: SideBarMenuItem[] = menuJson.map((item: any) => ({
         id: item.Id,
         label: item.Descripcion,
@@ -33,16 +37,16 @@ function Layout({children}: LayoutProps) {
         url: "/" + item.path,
       }));
       setItems(transformedItems);
-      console.log(transformedItems)
+      console.log(transformedItems);
     }
-  
-    const user  = localStorage.getItem('userAuth');
+
+    const user = localStorage.getItem("userAuth");
 
     if (user) {
       const userJson = JSON.parse(user);
       setCard((prevCard) => ({
         ...prevCard,
-        displayName: userJson.Nombres +' ' + userJson.Apellidos , // Cambia a la propiedad correcta en tu objeto userAuth
+        displayName: userJson.Nombres + " " + userJson.Apellidos, // Cambia a la propiedad correcta en tu objeto userAuth
         title: userJson.Descripcion, // Cambia a la propiedad correcta en tu objeto userAuth
         // photoUrl: userJson.photoUrl, // Si también quieres actualizar la foto
       }));
@@ -51,12 +55,10 @@ function Layout({children}: LayoutProps) {
     // }
   }, []);
   return (
-   
-      <div className="layout">
-        <SideBarMenu key={card.id} items={items} card={card} />
-        <main className="layout__main-content">{children}</main>;
-      </div>
-
+    <div className="layout">
+      <SideBarMenu key={card.id} items={items} card={card} />
+      <main className="layout__main-content">{children}</main>;
+    </div>
   );
 }
 

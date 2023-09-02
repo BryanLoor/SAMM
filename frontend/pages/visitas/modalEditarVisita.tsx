@@ -1,44 +1,65 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Input, Label } from "@roketid/windmill-react-ui";
-import { get, post } from "utils/services/api";
+import { get, post, put } from "utils/services/api";
 import { IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
+import { Textarea } from "@roketid/windmill-react-ui";
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 840,
+  width: "90%",
+  height: "90%",
   bgcolor: "background.paper",
-  borderRadius: "8px",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
-interface IPropiedades {
-  Id: number;
-  Codigo: string;
-  Coordenadas: string;
-  Tipo: string;
-  FechaCrea: string;
-  UsuarioCrea: number;
-  FechaModifica: string;
-  Descripcion: string;
-  UsuarioModifica: number;
-  Direccion: string;
-  Estado: string;
-}
+export default function ModalEditarVisita({
+  visita,
+  detectVistaStatus,
+  getAllBitacoras,
+}) {
+  const STATUS = [
+    {
+      code: "A",
+      description: "Activo",
+    },
+    {
+      code: "C",
+      description: "Completada",
+    },
+    {
+      code: "I",
+      description: "Inválida",
+    },
+  ];
 
-export default function ModalVisita({ getAllBitacoras }) {
+  const ANTECEDENTES = [
+    {
+      code: "Si",
+      description: true,
+    },
+    {
+      code: "No",
+      description: false,
+    },
+  ];
+
   const [open, setOpen] = React.useState(false);
-  //COMBOBOX for anfitriones
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   const [allAnfitriones, setAllAnfitriones] = React.useState([]);
   const [openCBAnfitrion, setOpenCBAnfitrion] = React.useState(false);
   const [isLoadingCBAnfitrion, setIsLoadingCBAnfitrion] = React.useState(false);
@@ -62,6 +83,59 @@ export default function ModalVisita({ getAllBitacoras }) {
   const [phone, setPhone] = React.useState("");
   const [email, setEmail] = React.useState("");
 
+  const [statusUser, setStatusUser] = React.useState("");
+  const [hasAntecendtes, setHasAntecendtes] = React.useState(false);
+  const [hasAntecendtesValue, setHasAntecendtesValue] = React.useState("No");
+
+  const [idBitacoraVisita, setIdBitacoraVisita] = React.useState("");
+
+  const [observaciones, setObservaciones] = React.useState("");
+  //0925691503
+  //Cargar los datos inicializados
+  React.useEffect(() => {
+    const {
+      Id,
+      Estado,
+      NombresVisitante,
+      ApellidosVisitante,
+      Codigo,
+      NombresAnfitrion,
+      ApellidosAnfitrion,
+      IdAnfitrion,
+      Telefono,
+      FechaVisita,
+      Antecedentes,
+      IdVisita,
+      Placa,
+      Correo,
+      IdUbicacion,
+      Ubicacion,
+      Observaciones,
+    } = visita;
+
+    setIdBitacoraVisita(Id);
+
+    setNombresCompletos(NombresVisitante);
+    setApellidosCompletos(ApellidosVisitante);
+    setNombresCompletosAnfitrion(NombresAnfitrion);
+    setApellidosCompletosAnfitrion(ApellidosAnfitrion);
+    setIdAnfitrionSelected(IdAnfitrion);
+
+    setIdVisitante(IdVisita);
+    setCedulaVisitante(Codigo);
+    setPhone(Telefono);
+    setPlaca(Placa);
+    setEmail(Correo);
+
+    setSelectedPropiedad(IdUbicacion);
+    setSelectedNamePropiedad(Ubicacion);
+
+    setStatusUser(Estado);
+    setHasAntecendtes(Antecedentes);
+    setHasAntecendtesValue(Antecedentes ? "Si" : "No");
+    setObservaciones(Observaciones);
+  }, []);
+
   React.useEffect(() => {
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().slice(0, 10);
@@ -73,9 +147,6 @@ export default function ModalVisita({ getAllBitacoras }) {
     setFechaVisita(currentDateString);
     setHoraIngreso(currentTimeString);
   }, []);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -127,11 +198,12 @@ export default function ModalVisita({ getAllBitacoras }) {
   };
 
   // Btn Guardar
-  const handleSave = () => {
+  const handleEdit = () => {
     const tE = convertTo12Hour(tiempoEstadia);
     console.log(tiempoEstadia);
     const loadData = {
-      estado: "A",
+      estado: statusUser,
+      antecedentes: hasAntecendtes,
       idAnfitrion: idAnfitrionSelected,
       idUbicacion: selectedPropiedad,
       ubicacion: selectedNamePropiedad,
@@ -143,39 +215,26 @@ export default function ModalVisita({ getAllBitacoras }) {
       idVisitante: idVisitante,
       phone: phone,
       email: email,
-      date: fechaVisita,
-      time: horaIngreso,
-      duration: tE.hours,
       placa: placa,
+      observaciones: observaciones,
     };
-    if (
-      !idAnfitrionSelected ||
-      !selectedPropiedad ||
-      !cedulaVisitante ||
-      !nombresCompletos ||
-      !apellidosCompletos ||
-      !phone ||
-      !fechaVisita ||
-      !horaIngreso ||
-      !tiempoEstadia ||
-      !email
-    ) {
-      alert("Complete los campos que son obligatorios");
-      return;
-    }
+
+    console.log(loadData, "***********");
 
     const response = async () => {
       try {
-        const result = await post("/visitas/registraVisita", loadData);
+        const result = await put(
+          `/visitas/updateVisita/${idBitacoraVisita}`,
+          loadData
+        );
         console.log(result);
-        cleanVisitaData();
-        alert("Visita registrada");
+        // cleanVisitaData();
+        alert("Visita actualizada");
+        await getAllBitacoras();
       } catch (error) {
         console.error(error);
-        alert("Error en registrar la visita", error);
+        alert("Error en actualizar la visita", error);
       }
-
-      await getAllBitacoras();
     };
     try {
       response();
@@ -220,12 +279,7 @@ export default function ModalVisita({ getAllBitacoras }) {
 
   return (
     <div>
-      <Button
-        onClick={handleOpen}
-        className="bg-[#0040AE] hover:bg-[#1B147A] text-white font-sans py-1 px-4 rounded-lg mt-1"
-      >
-        Crear Visita
-      </Button>
+      <Button onClick={handleOpen}>Editar</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -233,31 +287,21 @@ export default function ModalVisita({ getAllBitacoras }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div className="flex justify-between">
-            <h1 className="text-2xl font-sans font-semibold text-[#297DE2] mb-2">
-              Nueva visita
-            </h1>
-            <Button onClick={handleClose}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-[#297DE2] hover:text-gray-700"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </Button>
-          </div>
-
-          <hr />
-          <div style={{ width: "90%", margin: "0 auto", paddingTop: "15px" }}>
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            style={{ marginBottom: "20px" }}
+          >
+            Editar visita
+          </Typography>
+          <div>
             <Autocomplete
+              value={{
+                Id: idAnfitrionSelected,
+                Nombres: nombresCompletosAnfitrion,
+                Apellidos: apellidosCompletosAnfitrion,
+              }}
               style={{ width: "100%" }}
               placeholder="Escoja un anfitrión"
               id="asynchronous-demo"
@@ -398,7 +442,7 @@ export default function ModalVisita({ getAllBitacoras }) {
             </main>
             <main className="flex items-center justify-center sm:p-4 md:w-2/2">
               <div className="w-80 font-sans">
-                <Label className="">
+                {/* <Label className="">
                   <span className="font-sans text-[#001554] font-semibold">
                     Fecha visita
                   </span>
@@ -439,6 +483,82 @@ export default function ModalVisita({ getAllBitacoras }) {
                       setTiempoEstadia(e.target.value);
                     }}
                   />
+                </Label> */}
+                <Label className="">
+                  <span className="font-sans font-semibold text-[#001554]">
+                    Status
+                  </span>
+                  <Box
+                    sx={{
+                      minWidth: 500,
+                      maxWidth: 360,
+                    }}
+                  >
+                    <select
+                      className="mt-1 bg-[#297DE240] rounded-md border-gray-300"
+                      style={{ width: "64%" }}
+                      value={statusUser}
+                      onChange={(e) => {
+                        const selectedId = e.target.value; // Convertir el valor a número si es necesario
+                        console.log(selectedId, "selected");
+                        const selectedStatus = STATUS.find(
+                          (status) => status.code === selectedId
+                        );
+                        setStatusUser(selectedStatus.code);
+                        // setSelectedPropiedad(selectedId);
+                      }}
+                    >
+                      <option value="">Escoja el status</option>
+                      {STATUS.map((status) => (
+                        <option key={status.code} value={status.code}>
+                          {status.description}
+                        </option>
+                      ))}
+                    </select>
+                  </Box>
+                </Label>
+                <Label>
+                  <span>Observaciones</span>
+                  <Textarea
+                    value={observaciones}
+                    className="mt-1"
+                    rows="3"
+                    placeholder="Observaciones"
+                    onChange={(e) => setObservaciones(e.target.value)}
+                  />
+                </Label>
+                <Label className="">
+                  <span className="font-sans font-semibold text-[#001554]">
+                    Antecedentes penales
+                  </span>
+                  <Box
+                    sx={{
+                      minWidth: 500,
+                      maxWidth: 360,
+                    }}
+                  >
+                    <select
+                      className="mt-1 bg-[#297DE240] rounded-md border-gray-300"
+                      style={{ width: "64%" }}
+                      value={hasAntecendtesValue}
+                      onChange={(e) => {
+                        const selectedId = e.target.value; // Convertir el valor a número si es necesario
+                        console.log(selectedId, "selected");
+                        const selectedStatus = ANTECEDENTES.find(
+                          (status) => status.code === selectedId
+                        );
+                        setHasAntecendtesValue(selectedStatus.code);
+                        setHasAntecendtes(selectedStatus?.description);
+                      }}
+                    >
+                      <option value="">Antecedentes penales</option>
+                      {ANTECEDENTES.map((status) => (
+                        <option key={status.code} value={status.code}>
+                          {status.code}
+                        </option>
+                      ))}
+                    </select>
+                  </Box>
                 </Label>
                 <Label className="mt-4">
                   <span className="font-sans text-[#001554] font-semibold">
@@ -481,10 +601,10 @@ export default function ModalVisita({ getAllBitacoras }) {
             </Button>
             <Button
               variant="contained"
-              onClick={handleSave}
+              onClick={handleEdit}
               className="bg-[#0040AE] hover:bg-[#1B147A] text-white font-sans py-1 px-6 rounded-lg"
             >
-              Guardar
+              Editar
             </Button>
           </div>
         </Box>

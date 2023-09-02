@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import PageTitle from "example/components/Typography/PageTitle";
-import Layout from "example/containers/Layout";
+import Layout from "components/layout";
 import { Card, CardBody, Label, Select } from "@roketid/windmill-react-ui";
 import ModalRonda from "./modal-detalle-rondas";
 import { get } from "utils/services/api";

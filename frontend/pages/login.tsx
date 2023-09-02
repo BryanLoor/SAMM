@@ -1,7 +1,12 @@
 import React, { useContext, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {Label,Input,Button,WindmillContext,} from "@roketid/windmill-react-ui";
+import {
+  Label,
+  Input,
+  Button,
+  WindmillContext,
+} from "@roketid/windmill-react-ui";
 import { Alert, AlertColor, AlertTitle } from "@mui/material";
 import { useRouter } from "next/router";
 import { get, post } from "utils/services/api";
@@ -27,8 +32,6 @@ function LoginPage() {
     title: "",
   });
 
- 
-
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setAlert({
@@ -50,19 +53,18 @@ function LoginPage() {
         web: true,
       });
       const usuauth = response as {
-        apellidos: string,
-        codigo: string,
-        descripcion: string,
-        estado: string,
-        nombres: string,
-        access_token: string,
+        apellidos: string;
+        codigo: string;
+        descripcion: string;
+        estado: string;
+        nombres: string;
+        access_token: string;
       };
       localStorage.setItem("userAuth", JSON.stringify(response));
-      const user = localStorage.getItem('userAuth');
-      if (user === null){ 
-      }       
-      else{
-      localStorage.setItem("jwtToken", usuauth.access_token);
+      const user = localStorage.getItem("userAuth");
+      if (user === null) {
+      } else {
+        localStorage.setItem("jwtToken", usuauth.access_token);
       }
 
       const getMenu = await get("/menu/getMenu");
@@ -129,17 +131,18 @@ function LoginPage() {
                 />
               </Label>
 
-              <p className="mb-4 mt-2 flex justify-end">
+              {/* <p className="mb-4 mt-2 flex justify-end">
                 <Link href="/example/forgot-password" legacyBehavior>
                   <a className="text-sm font-sans text-[#1B147A] dark:text-purple-400 hover:underline">
                     ¿Olvidaste tu correo y/o contraseña?
                   </a>
                 </Link>
-              </p>
+              </p> */}
 
               <button
                 className="bg-[#297DE2] font-sans hover:bg-blue-600 text-white font-bold w-full py-2 px-4 rounded"
                 onClick={handleSubmit}
+                style={{ marginTop: "25px" }}
               >
                 Iniciar sesión
               </button>
