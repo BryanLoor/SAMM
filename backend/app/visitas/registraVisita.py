@@ -204,6 +204,49 @@ def registraVisita():
     # return jsonify(visita=temp_user_dict), 201
     return jsonify({"msg":"Visita creada"}), 201
 
+@bp.route('/updateVisita/<int:id>', methods=['PUT'])
+@cross_origin()
+@jwt_required()
+def updateVisita(id):
+    currentUserID =  get_jwt_identity()
+
+    visita = SAMM_BitacoraVisita.query.filter_by(Id=id).first()
+
+    visita.NombresVisitante= request.json['nameVisitante']
+    visita.ApellidosVisitante = request.json['lastNameVisitante']
+    visita.NombresAnfitrion = request.json['nameAnfitrion']
+    visita.ApellidosAnfitrion= request.json['lastNameAnfitrion']
+
+    visita.Codigo = str(request.json['cedula'])
+    # visita.Descripcion = 'Visita de ' + request.json['name'] + ' ' + request.json['lastName'] + ' a ' + anfitrion.Nombres + ' ' + anfitrion.Apellidos
+    visita.IdAnfitrion = request.json['idAnfitrion']
+    visita.IdVisita=  request.json['idVisitante']
+    visita.IdUbicacion = request.json["idUbicacion"]
+    visita.Ubicacion = request.json["ubicacion"]
+    visita.Telefono = request.json["phone"]
+    visita.Correo = request.json["email"]
+
+   
+    visita.UsuarioCrea = currentUserID
+    visita.UsuarioModifica = currentUserID
+    visita.Estado = request.json["estado"]
+    visita.Antecedentes = request.json["antecedentes"]
+    visita.Placa= request.json['placa']
+    visita.Observaciones = request.json['observaciones']
+    
+    db.session.add(visita)
+    db.session.commit()
+
+
+
+
+    samm_bitacora_visita_schema = SAMM_BitacoraVisitaSchema(many=False)
+    registro = samm_bitacora_visita_schema.dump(visita)
+
+    return jsonify(registro),200
+
+
+
 
 # end a visit
 @bp.route('/visita/<int:id>', methods=['PUT'])
