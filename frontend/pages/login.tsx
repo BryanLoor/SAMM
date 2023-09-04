@@ -10,6 +10,7 @@ import {
 import { Alert, AlertColor, AlertTitle } from "@mui/material";
 import { useRouter } from "next/router";
 import { get, post } from "utils/services/api";
+import { BiShow, BiHide } from "react-icons/bi";
 
 // interface UserAuth {
 //   apellidos: string;
@@ -27,10 +28,15 @@ function LoginPage() {
 
   const [codigo, setCodigo] = useState("");
   const [clave, setClave] = useState("");
+  const [showClave, setShowClave] = useState(false);
   const [alert, setAlert] = useState({
     type: "",
     title: "",
   });
+
+  const toggleClaveVisibility = () => {
+    setShowClave((prev) => !prev);
+  };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -122,13 +128,32 @@ function LoginPage() {
 
               <Label className="mt-4">
                 <span className="text-[#001554] font-sans">Contraseña</span>
-                <Input
-                  className="mt-1"
-                  type="password"
-                  placeholder="******"
-                  value={clave}
-                  onChange={(e) => setClave(e.target.value)}
-                />
+                <div style={{ position: "relative", display: "flex" }}>
+                  <Input
+                    className="mt-1"
+                    type={showClave ? "text" : "password"}
+                    placeholder="******"
+                    value={clave}
+                    onChange={(e) => setClave(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    onClick={toggleClaveVisibility}
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                      top: 0,
+                      height: "35px",
+                      backgroundColor: "transparent",
+                      color: "gray",
+                      outline: "none",
+                      border: "none",
+                      marginTop: "5px",
+                    }}
+                  >
+                    {showClave ? <BiHide /> : <BiShow />}
+                  </Button>
+                </div>
               </Label>
 
               {/* <p className="mb-4 mt-2 flex justify-end">
