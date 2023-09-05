@@ -73,7 +73,8 @@ function LoginPage() {
         localStorage.setItem("jwtToken", usuauth.access_token);
       }
 
-      const getMenu = await get("/menu/getMenu");
+      const getMenu = await get("/menu/getMenu/WEB");
+
       localStorage.setItem("menu", JSON.stringify(getMenu));
       // TODO: Handle successful login, e.g., redirect to a dashboard page
       console.log("Login successful");
