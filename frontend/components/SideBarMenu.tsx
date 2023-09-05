@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SideBarMenuCard, SideBarMenuItem } from "types/types";
 import { classNames } from "utils/classes";
-import { VscMenu } from "react-icons/vsc";
+import { GiHamburgerMenu } from "react-icons/gi";
 import { SideBarMenuCardView } from "./SideBarMenuCardView";
 import { SideBarMenuItemView } from "./SideBarMenuItemView";
 import { FiLogOut } from "react-icons/fi";
@@ -23,18 +23,32 @@ export function SideBarMenu({ items, card }: SideBarMenuProps) {
     <div
       className={classNames("SideBarMenu", isOpen ? "expanded" : "collapsed")}
     >
-      <div className="menuButton">
-        <button onClick={() => router.push("/")}>
+      <div
+        className="menuButton"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          marginTop: "15px",
+          paddingRight: "20px",
+          fontSize: "20px",
+        }}
+      >
+        <button
+          onClick={() => router.push("/")}
+          style={{ margin: "0 0 0 auto", marginBottom: "15px" }}
+        >
           <FiLogOut />
         </button>
-        <button className="hamburgerIcon" onClick={handleClick}>
-          <VscMenu />
+        <button onClick={handleClick} style={{ margin: "0 0 0 auto" }}>
+          <GiHamburgerMenu />
         </button>
       </div>
       <SideBarMenuCardView key={card.id} card={card} isOpen={isOpen} />
-      {items.map((item) => (
-        <SideBarMenuItemView key={item.id} item={item} isOpen={isOpen} />
-      ))}
+      <div style={{ marginTop: "15px" }}>
+        {items.map((item) => (
+          <SideBarMenuItemView key={item.id} item={item} isOpen={isOpen} />
+        ))}
+      </div>
     </div>
   );
 }

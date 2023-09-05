@@ -9,6 +9,10 @@
        box-sizing: content-box;
        max-width: 120px;
        margin: auto;
+       &.collapsed{
+        max-width: 80%;
+    }
+    
     }
     .profileInfo{
         overflow: hidden;
