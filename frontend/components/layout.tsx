@@ -57,7 +57,7 @@ function Layout({ children }: LayoutProps) {
   return (
     <div className="layout">
       <SideBarMenu key={card.id} items={items} card={card} />
-      <main className="layout__main-content">{children}</main>;
+      <main className="layout__main-content">{children}</main>
     </div>
   );
 }
