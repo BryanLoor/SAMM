@@ -31,3 +31,10 @@ a {
 .layout__main-content {
   flex-grow: 1;
 }
+
+
+
+.table-header {
+  background-color: #0040AE;
+  color: #FFFFFF;
+}

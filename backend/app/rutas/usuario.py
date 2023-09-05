@@ -4,7 +4,7 @@ from app.models.SAMM_RolUsu import SAMM_RolUsu, SAMM_RolUsuSchema
 from app.models.SAMM_Rol import SAMM_Rol, SAMM_RolSchema
 from flask import jsonify, request
 from flask_cors import cross_origin
-from app.visitas import bp
+from app.rutas import bp
 from app.extensions import db
 from sqlalchemy import text
 import base64

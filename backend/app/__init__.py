@@ -24,15 +24,14 @@ def create_app(config_class=Config):
     from app.login import bp as login_bp
     app.register_blueprint(login_bp, url_prefix='/login')
 
-    from app.visitas import bp as visitas_bp
-    app.register_blueprint(visitas_bp, url_prefix='/visitas')
+
+    from app.rutas import bp as rutas_bp
+    app.register_blueprint(rutas_bp, url_prefix='/rutas')
 
 
     from app.menu import bp as menu_bp
     app.register_blueprint(menu_bp, url_prefix='/menu')
     
-    from app.rondas import bp as rondas_bp
-    app.register_blueprint(rondas_bp, url_prefix='/rondas')
     
     @app.route('/')
     def index():
@@ -55,8 +54,8 @@ def create_app(config_class=Config):
             if user == "SAMM23" and password == "SAMM23$$":
                 # Si el usuario y la contraseña son válidos, crear el token de acceso con el ID del usuario como identidad.
                 # En este caso, se utiliza '123' como ID del usuario, pero puedes cambiarlo según tu lógica de autenticación.
-                user_id = 123
-                access_token = create_access_token(identity=user_id)
+                user_codigo = "admin"
+                access_token = create_access_token(identity=user_codigo)
                 return jsonify({'access_token': access_token}), 200
             else:
                 # Si las credenciales son incorrectas, retornar un error de autenticación
