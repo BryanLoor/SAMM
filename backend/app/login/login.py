@@ -46,7 +46,7 @@ def login():
 
          
         
-        expires = timedelta(hours=3)
+        expires = timedelta(hours=10)
         # #change the fechaultimologin of the user
         #usuario.Fechaultimologin = datetime.now()
         
