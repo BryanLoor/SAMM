@@ -57,7 +57,8 @@ def getMenu(plataforma):
                 'UsuarioModifica': opcion.UsuarioModifica,
                 'FechaUltimoLogin': opcion.FechaUltimoLogin,
                 'Descripcion': opcion.Descripcion,
-                'Icon': opcion.Icon
+                'Icon': opcion.Icon,
+                'path': opcion.Descripcion.replace(" ", "-").lower().replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
             }
             for opcion in opciones
         ]
