@@ -15,6 +15,7 @@ class SAMM_Opcion(db.Model):
     FechaUltimoLogin = db.Column(db.DateTime)
     Descripcion = db.Column(db.String(255))
     Icon=db.Column(db.String(50))
+    Tipo = db.Column(db.String(20))
 
 class SAMM_OpcionSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

@@ -15,10 +15,11 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import date, datetime
 from sqlalchemy import or_, and_
 
-@bp.route('/getMenu', methods=['GET'])
+#plataforma: WEB || MOBILE
+@bp.route('/getMenu/<string:plataforma>', methods=['GET'])
 @cross_origin()
 @jwt_required()
-def getMenu():
+def getMenu(plataforma):
     try:
         # Obtener el ID del usuario autenticado
         current_user = get_jwt_identity()
@@ -39,7 +40,7 @@ def getMenu():
             )
             .join(SAMM_OpRol, SAMM_Opcion.Id == SAMM_OpRol.IdOpcion)
             .join(SAMM_Usuario, SAMM_Usuario.IdPerfil == SAMM_OpRol.idRol)
-            .filter(SAMM_Usuario.Codigo == current_user, SAMM_Opcion.Estado == 'A')
+            .filter(SAMM_Usuario.Codigo == current_user, SAMM_Opcion.Estado == 'A', SAMM_Opcion.Tipo == plataforma)
             .all()
         )
 
