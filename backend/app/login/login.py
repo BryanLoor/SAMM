@@ -38,23 +38,23 @@ def login():
         if not Clave and not Pin:
             return jsonify({'message': 'Ingresa la clave'}), 400
         #usuario = SAMM_Usuario.query.filter_by(Codigo=Codigo).first()
-        usuario = db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado) \
-        .join(Persona, SAMM_Usuario.IdPersona == Persona.Id) \
-        .join(SAMM_Rol, SAMM_Usuario.IdPerfil == SAMM_Rol.Id) \
-        .filter_by(Codigo=SAMM_Usuario.Codigo) \
-        .first()
-
-         
+        usuario = (
+            db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado) 
+            .join(Persona, SAMM_Usuario.IdPersona == Persona.Id) 
+            .join(SAMM_Rol, SAMM_Usuario.IdPerfil == SAMM_Rol.Id)
+            .filter(SAMM_Usuario.Codigo == Codigo)
+            .first()
+        )
         
         expires = timedelta(hours=10)
         # #change the fechaultimologin of the user
         #usuario.Fechaultimologin = datetime.now()
         
-        if not usuario:
+        if usuario is None:
             return jsonify({'message': 'Usuario no existe'}), 400
         # if Pin and not (usuario.Pin == Pin):
         #     return jsonify({'message': 'Pin incorrecto'}), 400
-        if Clave and not check_password_hash(usuario.Clave, Clave):
+        if Clave and not check_password_hash(usuario[1], Clave):
             return jsonify({'message': 'Contraseña incorrecta'}), 400
         if usuario.Estado != 'A':
             return jsonify({'message': 'Usuario inactivo'}), 400
