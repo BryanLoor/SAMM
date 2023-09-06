@@ -27,3 +27,8 @@ a {
   position: relative;
   flex-grow: 1;
 }
+
+.table-header {
+  background-color: #0040ae;
+  color: #ffffff;
+}

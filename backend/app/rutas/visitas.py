@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token
 
 from flask import jsonify, request
 from flask_cors import cross_origin
-from app.visitas import bp
+from app.rutas import bp
 from app.extensions import db
 from sqlalchemy import text
 import base64
