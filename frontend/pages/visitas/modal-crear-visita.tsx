@@ -2,13 +2,14 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-import { Input, Label } from "@roketid/windmill-react-ui";
+import { Input, Label, Textarea } from "@roketid/windmill-react-ui";
 import { get, post } from "utils/services/api";
 import { IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
+import { set } from "date-fns";
 
 const style = {
   position: "absolute" as "absolute",
@@ -43,7 +44,7 @@ export default function ModalVisita({ getAllBitacoras }) {
   const [openCBAnfitrion, setOpenCBAnfitrion] = React.useState(false);
   const [isLoadingCBAnfitrion, setIsLoadingCBAnfitrion] = React.useState(false);
   const [idAnfitrionSelected, setIdAnfitrionSelected] = React.useState("");
-  const [nameAnfitrionSelected, setNameAnfitrionSelected] = React.useState("");
+  const [anfitrionSelected, setAnfitrionSelected] = React.useState(null);
 
   //COMBOBOX for ubicacion
   const [allUbicaciones, setAllUbicaciones] = React.useState([]);
@@ -69,6 +70,9 @@ export default function ModalVisita({ getAllBitacoras }) {
   const [placa, setPlaca] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [hasAntecedentesPenales, setHasAntecedentesPenales] =
+    React.useState(false);
+  const [observaciones, setObservaciones] = React.useState("");
 
   React.useEffect(() => {
     const currentDate = new Date();
@@ -113,7 +117,6 @@ export default function ModalVisita({ getAllBitacoras }) {
         const ubicaciones = await get("/visitas/getUbicaciones");
 
         setAllUbicaciones(ubicaciones);
-        console.log(ubicaciones, "************");
       } catch (err) {
         console.error("Error al cargar datos de urbanizaciones");
       } finally {
@@ -129,7 +132,7 @@ export default function ModalVisita({ getAllBitacoras }) {
     setOpenCBAnfitrion(false);
     setIsLoadingCBAnfitrion(false);
     setIdAnfitrionSelected("");
-    setNameUbicacionSelected("");
+    setAnfitrionSelected(null);
 
     console.log("aquii");
 
@@ -171,11 +174,14 @@ export default function ModalVisita({ getAllBitacoras }) {
     return { hours: formattedHours, minutes: parseInt(minutes, 10), meridiem };
   }
   const cleanVisitaData = () => {
+    setAnfitrionSelected(null);
+    setIdUbicacionSelected("");
+    setObservaciones("");
+    setHasAntecedentesPenales(false);
     setSelectedPropiedad("");
     setCedulaVisitante("");
     setNombresCompletos("");
     setApellidosCompletos("");
-    setFechaVisita("");
     setHoraIngreso("");
     setTiempoEstadia("");
     setPlaca("");
@@ -188,34 +194,34 @@ export default function ModalVisita({ getAllBitacoras }) {
     const tE = convertTo12Hour(tiempoEstadia);
     console.log(tiempoEstadia);
     const loadData = {
-      estado: "A",
-      idAnfitrion: idAnfitrionSelected,
-      idUbicacion: selectedPropiedad,
-      ubicacion: selectedNamePropiedad,
-      cedula: cedulaVisitante,
       nameVisitante: nombresCompletos,
       lastNameVisitante: apellidosCompletos,
-      nameAnfitrion: nombresCompletosAnfitrion,
-      lastNameAnfitrion: apellidosCompletosAnfitrion,
+      cedula: cedulaVisitante,
+      idAnfitrion: idAnfitrionSelected,
       idVisitante: idVisitante,
+      idUbicacion: idUbicacionSelected,
+      antecedentes: hasAntecedentesPenales,
       phone: phone,
       email: email,
+      placa: placa,
+      observaciones: observaciones,
       date: fechaVisita,
       time: horaIngreso,
       duration: tE.hours,
-      placa: placa,
     };
+
+    console.log(loadData, "******");
     if (
+      !idUbicacionSelected ||
       !idAnfitrionSelected ||
-      !selectedPropiedad ||
       !cedulaVisitante ||
       !nombresCompletos ||
       !apellidosCompletos ||
       !phone ||
+      !email ||
       !fechaVisita ||
       !horaIngreso ||
-      !tiempoEstadia ||
-      !email
+      !tiempoEstadia
     ) {
       alert("Complete los campos que son obligatorios");
       return;
@@ -249,10 +255,10 @@ export default function ModalVisita({ getAllBitacoras }) {
         const result = await get(
           `/visitas/buscarPersonaXIden/${cedulaVisitante}`
         );
-        console.log(result["persona"]);
-        setNombresCompletos(result["persona"].Nombres);
-        setApellidosCompletos(result["persona"].Apellidos);
-        setIdVisitante(result["persona"].Identificacion);
+        console.log(result["persona"]), "77777";
+        setNombresCompletos(result.Nombres);
+        setApellidosCompletos(result.Apellidos);
+        setIdVisitante(result.idUsuario);
       } catch (error) {
         alert("Persona no encontrada");
         setNombresCompletos("");
@@ -313,97 +319,96 @@ export default function ModalVisita({ getAllBitacoras }) {
           </div>
 
           <hr />
-          <div style={{ width: "90%", margin: "0 auto", paddingTop: "15px" }}>
-            {/* Ubicacion */}
-            <Autocomplete
-              style={{ width: "100%" }}
-              placeholder="Escoja una ubicacion"
-              id="asynchronous-demo"
-              sx={{ width: 300 }}
-              open={openCBUbicacion}
-              onOpen={() => {
-                setOpenCBUbicacion(true);
-              }}
-              onClose={() => {
-                setOpenCBUbicacion(false);
-              }}
-              // filterOptions={customFilterOptions}
-              getOptionLabel={(option) => option?.Descripcion}
-              onChange={(event, option) => {
-                setIdUbicacionSelected(option?.Id);
-              }}
-              options={allUbicaciones}
-              loading={isLoadingCBUbicacion}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Ubicaciones"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        {isLoadingCBUbicacion ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </React.Fragment>
-                    ),
-                  }}
-                />
-              )}
-            />
-            {/* Anfritrion */}
-            <Autocomplete
-              value={nameAnfitrionSelected}
-              style={{ width: "100%" }}
-              placeholder="Escoja un anfitrión"
-              id="asynchronous-demo"
-              sx={{ width: 300 }}
-              open={openCBAnfitrion}
-              onOpen={() => {
-                setOpenCBAnfitrion(true);
-              }}
-              onClose={() => {
-                setOpenCBAnfitrion(false);
-              }}
-              filterOptions={customFilterOptions}
-              getOptionLabel={(option) => {
-                if (!option) {
-                  return "";
-                } else {
-                  return option.Nombres + " " + option.Apellidos;
-                }
-              }}
-              onChange={(event, option) => {
-                setIdAnfitrionSelected(option?.Id);
-                setNombresCompletosAnfitrion(option?.Nombres);
-                setApellidosCompletosAnfitrion(option?.Apellidos);
-                setNameAnfitrionSelected("aqui");
-              }}
-              options={allAnfitriones}
-              loading={isLoadingCBAnfitrion}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Anfitrión"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        {isLoadingCBAnfitrion ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </React.Fragment>
-                    ),
-                  }}
-                />
-              )}
-            />
-          </div>
+
           <div className="flex flex-col overflow-y-auto md:flex-row">
             <main className="flex items-center justify-center sm:p-4 md:w-1/2">
               <div className="w-80">
+                <div>
+                  {/* Ubicaciones */}
+                  <Autocomplete
+                    style={{ width: "100%" }}
+                    placeholder="Escoja una ubicacion"
+                    id="asynchronous-demo"
+                    sx={{ width: 300, marginBottom: "1rem" }}
+                    open={openCBUbicacion}
+                    onOpen={() => {
+                      setOpenCBUbicacion(true);
+                    }}
+                    onClose={() => {
+                      setOpenCBUbicacion(false);
+                    }}
+                    // filterOptions={customFilterOptions}
+                    getOptionLabel={(option) => option?.Descripcion}
+                    onChange={(event, option) => {
+                      setIdUbicacionSelected(option?.Id);
+                    }}
+                    options={allUbicaciones}
+                    loading={isLoadingCBUbicacion}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Ubicaciones"
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              {isLoadingCBUbicacion ? (
+                                <CircularProgress color="inherit" size={20} />
+                              ) : null}
+                              {params.InputProps.endAdornment}
+                            </React.Fragment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+
+                  {/* Anfritrion */}
+                  <Autocomplete
+                    value={anfitrionSelected}
+                    style={{ width: "100%" }}
+                    placeholder="Escoja un anfitrión"
+                    id="asynchronous-demo"
+                    sx={{ width: 300 }}
+                    open={openCBAnfitrion}
+                    onOpen={() => {
+                      setOpenCBAnfitrion(true);
+                    }}
+                    onClose={() => {
+                      setOpenCBAnfitrion(false);
+                    }}
+                    filterOptions={customFilterOptions}
+                    getOptionLabel={(option) => {
+                      return option.Nombres + " " + option.Apellidos;
+                    }}
+                    onChange={(event, option) => {
+                      setIdAnfitrionSelected(option?.IdUsuario);
+                      setNombresCompletosAnfitrion(option?.Nombres);
+                      setApellidosCompletosAnfitrion(option?.Apellidos);
+                      setAnfitrionSelected(option);
+                    }}
+                    options={allAnfitriones}
+                    loading={isLoadingCBAnfitrion}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Anfitrión"
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              {isLoadingCBAnfitrion ? (
+                                <CircularProgress color="inherit" size={20} />
+                              ) : null}
+                              {params.InputProps.endAdornment}
+                            </React.Fragment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+
                 <Label className="mt-4">
                   <span className="font-sans text-[#001554] font-semibold">
                     Cédula visitante
@@ -457,10 +462,25 @@ export default function ModalVisita({ getAllBitacoras }) {
                   <Input
                     type="text"
                     className="mt-1 bg-[#297DE240] rounded-2xl text-[16px]"
-                    placeholder="Ingrese la placa del visitante"
+                    placeholder="Ingrese el teléfono del visitante"
                     value={phone}
                     onChange={(e) => {
                       setPhone(e.target.value);
+                    }}
+                  />
+                </Label>
+
+                <Label className="mt-4">
+                  <span className="font-sans text-[#001554] font-semibold">
+                    Correo
+                  </span>
+                  <Input
+                    type="text"
+                    className="mt-1 bg-[#297DE240] rounded-2xl text-[16px]"
+                    placeholder="Ingrese el correo del visitante"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
                     }}
                   />
                 </Label>
@@ -468,7 +488,48 @@ export default function ModalVisita({ getAllBitacoras }) {
             </main>
             <main className="flex items-center justify-center sm:p-4 md:w-2/2">
               <div className="w-80 font-sans">
-                <Label className="">
+                <Label className="mt-4">
+                  <span className="font-sans text-[#001554] font-semibold">
+                    Placa (Opcional)
+                  </span>
+                  <Input
+                    type="text"
+                    className="mt-1 bg-[#297DE240] rounded-2xl text-[16px]"
+                    placeholder="Ingrese la placa del visitante"
+                    value={placa}
+                    onChange={(e) => {
+                      setPlaca(e.target.value);
+                    }}
+                  />
+                </Label>
+                <Label className="mt-4">
+                  <div>
+                    <p>¿Tiene antecedentes penales?</p>
+                    <div>
+                      <label className="inline-flex items-center mt-3">
+                        <input
+                          type="radio"
+                          className="form-radio text-blue-500"
+                          value="si"
+                          checked={hasAntecedentesPenales == true}
+                          onChange={() => setHasAntecedentesPenales(true)}
+                        />
+                        <span className="ml-2">Sí</span>
+                      </label>
+                      <label className="inline-flex items-center mt-3 ml-6">
+                        <input
+                          type="radio"
+                          className="form-radio text-blue-500"
+                          value="no"
+                          checked={hasAntecedentesPenales == false}
+                          onChange={() => setHasAntecedentesPenales(false)}
+                        />
+                        <span className="ml-2">No</span>
+                      </label>
+                    </div>
+                  </div>
+                </Label>
+                <Label className="mt-4">
                   <span className="font-sans text-[#001554] font-semibold">
                     Fecha visita
                   </span>
@@ -510,31 +571,19 @@ export default function ModalVisita({ getAllBitacoras }) {
                     }}
                   />
                 </Label>
+
                 <Label className="mt-4">
                   <span className="font-sans text-[#001554] font-semibold">
-                    Placa (Opcional)
+                    Observaciones (Opcional)
                   </span>
-                  <Input
-                    type="text"
-                    className="mt-1 bg-[#297DE240] rounded-2xl text-[16px]"
-                    placeholder="Ingrese la placa del visitante"
-                    value={placa}
+                  <Textarea
+                    style={{ resize: "none" }}
+                    className="mt-1"
+                    rows="3"
+                    placeholder="Ingrese las observaciones del visitante"
+                    value={observaciones}
                     onChange={(e) => {
-                      setPlaca(e.target.value);
-                    }}
-                  />
-                </Label>
-                <Label className="mt-4">
-                  <span className="font-sans text-[#001554] font-semibold">
-                    Correo
-                  </span>
-                  <Input
-                    type="text"
-                    className="mt-1 bg-[#297DE240] rounded-2xl text-[16px]"
-                    placeholder="Ingrese la placa del visitante"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
+                      setObservaciones(e.target.value);
                     }}
                   />
                 </Label>

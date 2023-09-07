@@ -90,7 +90,7 @@ def getUsuariosxUbicacion(idUbicacion):
     codigoUsuario = get_jwt_identity()
 
     query = (
-        db.session.query(Persona)
+        db.session.query(Persona,SAMM_Usuario)
         .join(SAMM_Usuario, SAMM_Usuario.IdPersona == Persona.Id)
         .join(SAMM_UbiUsuario, SAMM_Usuario.Id == SAMM_UbiUsuario.IdUsuario)
         .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
@@ -100,10 +100,11 @@ def getUsuariosxUbicacion(idUbicacion):
 
     schema= [
         {
-            'Id': q.Id,
-            'Identificacion': q.Identificacion,
-            'Nombres' : q.Nombres,
-            'Apellidos' : q.Apellidos
+            'Id': q.Persona.Id,
+            "IdUsuario": q.SAMM_Usuario.Id,
+            'Identificacion': q.Persona.Identificacion,
+            'Nombres' : q.Persona.Nombres,
+            'Apellidos' : q.Persona.Apellidos
         }
         for q in query
     ]
@@ -124,7 +125,7 @@ def getAllBitacoraVisitas():
         .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
         .join(SAMM_UbiUsuario, SAMM_UbiUsuario.IdUbicacion == SAMM_BitacoraVisita.IdUbicacion)
         .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
-        .filter(SAMM_BitacoraVisita.Estado == 'A', SAMM_UbiUsuario.EsAnfitrion==True, SAMM_Usuario.Codigo == codigoUsuario)
+        # .filter(SAMM_BitacoraVisita.Estado == 'A', SAMM_UbiUsuario.EsAnfitrion==True, SAMM_Usuario.Codigo == codigoUsuario)
         .all()
     )
 
@@ -157,6 +158,138 @@ def getAllBitacoraVisitas():
 
 
     return jsonify({'data':schema}),200
+
+@bp.route('/registraVisita', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def registraVisita():
+    
+    currentUserID =  get_jwt_identity() #CODIGO persona
+
+    visita = SAMM_BitacoraVisita()
+
+    # Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    # Descripcion = db.Column(db.String(200))
+    
+    # UsuarioCrea = db.Column(db.String(255))*********
+    # UsuarioModifica = db.Column(db.String(255))*********
+    # FechaCrea = db.Column(db.DateTime)***********
+    # FechaModifica = db.Column(db.DateTime)***********
+
+    #Descripcion = db.Column(db.String(200))********!!!!!!!!
+
+    # Estado = db.Column(db.String(1))*****!!!
+    
+    # Duracion = db.Column(db.Integer)*********!!!!
+
+    # FechaTimeVisitaEstimada = db.Column(db.DateTime)******
+    # FechaTimeVisitaReal = db.Column(db.DateTime)
+    # FechaTimeSalidaEstimada = db.Column(db.DateTime)************
+    # FechaTimeSalidaReal = db.Column(db.DateTime)
+   
+   
+    # Alertas = db.Column(db.String(255))
+
+    print(request.json['nameVisitante'])
+    visita.NombresVisitante= request.json['nameVisitante']
+    visita.ApellidosVisitante = request.json['lastNameVisitante']
+    visita.IdentificacionVisitante = str(request.json['cedula'])
+    # visita.Descripcion = 'Visita de ' + request.json['name'] + ' ' + request.json['lastName'] + ' a ' + anfitrion.Nombres + ' ' + anfitrion.Apellidos
+    visita.IdAnfitrion = request.json['idAnfitrion']
+    visita.IdVisita=  request.json['idVisitante']
+    visita.IdUbicacion = request.json["idUbicacion"]
+    visita.Antecedentes = request.json["antecedentes"]
+    visita.Telefono = request.json["phone"]
+    visita.Correo = request.json["email"]
+    visita.Placa= request.json['placa']
+    visita.Observaciones = request.json['observaciones']
+
+
+    # visita.Estado = request.json["estado"]!!!!!!!
+
+    visita.FechaCrea = datetime.now()
+    visita.FechaModifica = datetime.now()
+
+
+    visita.UsuarioCrea = currentUserID
+    visita.UsuarioModifica = currentUserID
+
+    #transformar fecha de string a date
+    #join time and date
+    date_time_str = request.json['date'] + ' ' + request.json['time']
+    date_time_obj = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M')
+    visita.FechaTimeVisitaEstimada = date_time_obj
+
+    visita.Duracion= request.json['duration']
+
+    # para hora estimada de salida sumarle la duracion a la hora de entrada
+    #transformar duracion de horas a minutos
+    Duracion= request.json['duration']*60
+    FechaSalidaEstimada = date_time_obj + timedelta(minutes=int(Duracion))
+    visita.FechaTimeSalidaEstimada = FechaSalidaEstimada
+    db.session.add(visita)
+    db.session.commit()
+
+    
+    # temp_user_dict={
+    #     'Id':usuario.Id,
+    #     'IdPersona':usuario.IdPersona,
+    #     'Nombres':visitante.Nombres,
+    #     'Apellidos':visitante.Apellidos,
+    #     'Codigo':usuario.Codigo,
+    #     'Clave':usuario.Codigo,
+    #     'IdPerfil':usuario.IdPerfil,
+    #     'Estado':usuario.Estado,
+    #     'FechaCrea':usuario.FechaCrea,
+    #     'access_token': create_access_token(identity=usuario.Codigo),
+    #     'UsuarioCrea':usuario.UsuarioCrea,
+    #     'UsuarioModifica':usuario.UsuarioModifica,
+    #     'Confirmado':usuario.Confirmado,
+    #     'FechaConfirmacion':usuario.FechaConfirmacion,
+    #     "visita": {
+    #         'Id':visita.Id,
+    #         'Codigo':visita.Codigo,
+    #         'Descripcion':visita.Descripcion,
+    #         'IdAnfitrion':visita.IdAnfitrion,
+    #         'IdVisita':visita.IdVisita,
+    #         'IdUbicacion':visita.IdUbicacion,
+    #         'FechaVisita':visita.FechaVisita,
+    #         'FechaSalidaEstimada':visita.FechaSalidaEstimada,
+
+    #     }
+    # }
+    # return the new user and their JWT to the client
+    # return jsonify(visita=temp_user_dict), 201
+    return jsonify({"msg":"Visita creada"}), 201
+
+
+
+
+
+#obtener info de la persona usuando su identificaion
+@bp.route('/buscarPersonaXIden/<cedula>', methods=['GET'])	
+@cross_origin()
+@jwt_required()
+def existePersona(cedula):
+    try:
+        persona = (
+            db.session.query(Persona,SAMM_Usuario)
+            .join(SAMM_Usuario, Persona.Id == SAMM_Usuario.IdPersona)
+            .filter(Persona.Identificacion==cedula)
+            .first()
+            )
+        
+        if persona is None:
+            return jsonify({'message': 'Persona no existe'}), 400
+        
+        schema = {
+            "Nombres": persona.Persona.Nombres,
+            "Apellidos": persona.Persona.Apellidos,
+            "idUsuario": persona.SAMM_Usuario.Id 
+        }
+        return jsonify(schema), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 
 

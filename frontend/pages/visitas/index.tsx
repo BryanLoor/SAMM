@@ -51,20 +51,20 @@ const formatearFecha = (date) => {
 const VisitasPage = () => {
   const columns = [
     { field: "Id", headerName: "ID", width: 90 },
-    {
-      field: "",
-      headerName: "Edición",
-      width: 90,
-      renderCell: (params) => {
-        return (
-          <ModalEditarVisita
-            visita={params.row}
-            detectVistaStatus={detectVistaStatus}
-            getAllBitacoras={getAllBitacoras}
-          />
-        );
-      },
-    },
+    // {
+    //   field: "",
+    //   headerName: "Edición",
+    //   width: 90,
+    //   renderCell: (params) => {
+    //     return (
+    //       <ModalEditarVisita
+    //         visita={params.row}
+    //         detectVistaStatus={detectVistaStatus}
+    //         getAllBitacoras={getAllBitacoras}
+    //       />
+    //     );
+    //   },
+    // },
     {
       field: "Estado",
       headerName: "Status visita",
