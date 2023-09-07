@@ -43,10 +43,18 @@ export default function ModalVisita({ getAllBitacoras }) {
   const [openCBAnfitrion, setOpenCBAnfitrion] = React.useState(false);
   const [isLoadingCBAnfitrion, setIsLoadingCBAnfitrion] = React.useState(false);
   const [idAnfitrionSelected, setIdAnfitrionSelected] = React.useState("");
+  const [nameAnfitrionSelected, setNameAnfitrionSelected] = React.useState("");
+
+  //COMBOBOX for ubicacion
+  const [allUbicaciones, setAllUbicaciones] = React.useState([]);
+  const [openCBUbicacion, setOpenCBUbicacion] = React.useState(false);
+  const [isLoadingCBUbicacion, setIsLoadingCBUbicacion] = React.useState(false);
+  const [idUbicacionSelected, setIdUbicacionSelected] = React.useState("");
+  const [nameUbicacionSelected, setNameUbicacionSelected] = React.useState("");
 
   const [selectedPropiedad, setSelectedPropiedad] = React.useState(""); //id propiedad
   const [selectedNamePropiedad, setSelectedNamePropiedad] = React.useState("");
-  const [propiedades, setPropiedades] = React.useState([] as IPropiedades[]);
+  const [ubicaciones, setUbicaciones] = React.useState([]);
   const [idVisitante, setIdVisitante] = React.useState(null);
   const [cedulaVisitante, setCedulaVisitante] = React.useState("");
   const [nombresCompletos, setNombresCompletos] = React.useState("");
@@ -77,25 +85,74 @@ export default function ModalVisita({ getAllBitacoras }) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  // React.useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setIsLoadingCBAnfitrion(true);
+
+  //       const result1 = await get("/visitas/getUbicaciones");
+  //       const result2 = await get("/visitas/personas");
+
+  //       setPropiedades(result1);
+  //       setAllAnfitriones(result2);
+  //       console.log(result2);
+  //     } catch (err) {
+  //       console.error("Error al cargar datos de anfitrion o urbanizaciones");
+  //     } finally {
+  //       setIsLoadingCBAnfitrion(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
   React.useEffect(() => {
-    const fetchData = async () => {
+    const getAllUbicaciones = async () => {
+      try {
+        setIsLoadingCBUbicacion(true);
+
+        const ubicaciones = await get("/visitas/getUbicaciones");
+
+        setAllUbicaciones(ubicaciones);
+        console.log(ubicaciones, "************");
+      } catch (err) {
+        console.error("Error al cargar datos de urbanizaciones");
+      } finally {
+        setIsLoadingCBUbicacion(false);
+      }
+    };
+    getAllUbicaciones();
+  }, []);
+
+  React.useEffect(() => {
+    //Clean past anfitriones
+    setAllAnfitriones([]);
+    setOpenCBAnfitrion(false);
+    setIsLoadingCBAnfitrion(false);
+    setIdAnfitrionSelected("");
+    setNameUbicacionSelected("");
+
+    console.log("aquii");
+
+    if (!idUbicacionSelected) return;
+
+    const getAllAnfitriones = async () => {
       try {
         setIsLoadingCBAnfitrion(true);
 
-        const result1 = await get("/visitas/getUrbanizaciones");
-        const result2 = await get("/visitas/personas");
+        const anfitriones = await get(
+          `/visitas/getUsuariosxUbicacion/${idUbicacionSelected}`
+        );
 
-        setPropiedades(result1);
-        setAllAnfitriones(result2);
-        console.log(result2);
+        setAllAnfitriones(anfitriones);
+        console.log(anfitriones, "aaaaa************");
       } catch (err) {
-        console.error("Error al cargar datos de anfitrion o urbanizaciones");
+        console.error("Error al cargar datos de urbanizaciones");
       } finally {
         setIsLoadingCBAnfitrion(false);
       }
     };
-    fetchData();
-  }, []);
+    getAllAnfitriones();
+  }, [idUbicacionSelected]);
 
   function convertTo12Hour(time: any) {
     const [hours, minutes] = time.split(":");
@@ -257,7 +314,47 @@ export default function ModalVisita({ getAllBitacoras }) {
 
           <hr />
           <div style={{ width: "90%", margin: "0 auto", paddingTop: "15px" }}>
+            {/* Ubicacion */}
             <Autocomplete
+              style={{ width: "100%" }}
+              placeholder="Escoja una ubicacion"
+              id="asynchronous-demo"
+              sx={{ width: 300 }}
+              open={openCBUbicacion}
+              onOpen={() => {
+                setOpenCBUbicacion(true);
+              }}
+              onClose={() => {
+                setOpenCBUbicacion(false);
+              }}
+              // filterOptions={customFilterOptions}
+              getOptionLabel={(option) => option?.Descripcion}
+              onChange={(event, option) => {
+                setIdUbicacionSelected(option?.Id);
+              }}
+              options={allUbicaciones}
+              loading={isLoadingCBUbicacion}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Ubicaciones"
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <React.Fragment>
+                        {isLoadingCBUbicacion ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </React.Fragment>
+                    ),
+                  }}
+                />
+              )}
+            />
+            {/* Anfritrion */}
+            <Autocomplete
+              value={nameAnfitrionSelected}
               style={{ width: "100%" }}
               placeholder="Escoja un anfitrión"
               id="asynchronous-demo"
@@ -270,13 +367,18 @@ export default function ModalVisita({ getAllBitacoras }) {
                 setOpenCBAnfitrion(false);
               }}
               filterOptions={customFilterOptions}
-              getOptionLabel={(option) =>
-                option.Nombres + " " + option.Apellidos
-              }
+              getOptionLabel={(option) => {
+                if (!option) {
+                  return "";
+                } else {
+                  return option.Nombres + " " + option.Apellidos;
+                }
+              }}
               onChange={(event, option) => {
-                setIdAnfitrionSelected(option.Id);
-                setNombresCompletosAnfitrion(option.Nombres);
-                setApellidosCompletosAnfitrion(option.Apellidos);
+                setIdAnfitrionSelected(option?.Id);
+                setNombresCompletosAnfitrion(option?.Nombres);
+                setApellidosCompletosAnfitrion(option?.Apellidos);
+                setNameAnfitrionSelected("aqui");
               }}
               options={allAnfitriones}
               loading={isLoadingCBAnfitrion}
@@ -302,38 +404,6 @@ export default function ModalVisita({ getAllBitacoras }) {
           <div className="flex flex-col overflow-y-auto md:flex-row">
             <main className="flex items-center justify-center sm:p-4 md:w-1/2">
               <div className="w-80">
-                <Label className="">
-                  <span className="font-sans font-semibold text-[#001554]">
-                    Propiedad
-                  </span>
-                  <Box
-                    sx={{
-                      minWidth: 500,
-                      maxWidth: 360,
-                    }}
-                  >
-                    <select
-                      className="mt-1 bg-[#297DE240] rounded-md border-gray-300"
-                      style={{ width: "64%" }}
-                      value={selectedPropiedad}
-                      onChange={(e) => {
-                        const selectedId = parseInt(e.target.value); // Convertir el valor a número si es necesario
-                        const selectedPropiedad = propiedades.find(
-                          (propiedad) => propiedad.id === selectedId
-                        );
-                        setSelectedNamePropiedad(selectedPropiedad.nombre);
-                        setSelectedPropiedad(selectedId);
-                      }}
-                    >
-                      <option value="">Escoja la propiedad</option>
-                      {propiedades.map((propiedad) => (
-                        <option key={propiedad.id} value={propiedad.id}>
-                          {propiedad.direccion}
-                        </option>
-                      ))}
-                    </select>
-                  </Box>
-                </Label>
                 <Label className="mt-4">
                   <span className="font-sans text-[#001554] font-semibold">
                     Cédula visitante
