@@ -31,7 +31,10 @@ def create_app(config_class=Config):
 
     from app.menu import bp as menu_bp
     app.register_blueprint(menu_bp, url_prefix='/menu')
-    
+
+
+    from app.visitas import bp as visitas_bp
+    app.register_blueprint(visitas_bp, url_prefix='/visitas')
     
     @app.route('/')
     def index():
