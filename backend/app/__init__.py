@@ -35,6 +35,9 @@ def create_app(config_class=Config):
 
     from app.visitas import bp as visitas_bp
     app.register_blueprint(visitas_bp, url_prefix='/visitas')
+
+    from app.rondas import bp as rondas_bp
+    app.register_blueprint(rondas_bp, url_prefix='/rondas')
     
     @app.route('/')
     def index():
