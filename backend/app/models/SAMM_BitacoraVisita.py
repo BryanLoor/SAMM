@@ -16,7 +16,7 @@ class SAMM_BitacoraVisita(db.Model):
     UsuarioModifica = db.Column(db.String(255))
     FechaCrea = db.Column(db.DateTime)
     FechaModifica = db.Column(db.DateTime)
-    Estado = db.Column(db.String(1))
+    Estado = db.Column(db.Integer)
     Observaciones = db.Column(db.String(300))
     IdUbicacion = db.Column(db.Integer)
     Duracion = db.Column(db.Integer)

@@ -3,7 +3,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useDemoData } from "@mui/x-data-grid-generator";
 import Layout from "components/layout";
 import ModalVisita from "./modal-crear-visita";
-import { get } from "utils/services/api";
+import { get, put } from "utils/services/api";
 import { Button } from "@mui/material";
 
 import ModalEditarVisita from "./modalEditarVisita";
@@ -31,24 +31,51 @@ const detectVistaStatus = (status) => {
 };
 
 const formatearFecha = (date) => {
-  const fechaOriginal = date;
-
   // Crear un objeto Date a partir de la fecha original
-  const fecha = new Date(fechaOriginal);
+  const fechaOriginal = new Date(date);
+
+  // Establecer la zona horaria local de Ecuador
+  const zonaHorariaEcuador = "America/Guayaquil";
+  fechaOriginal.setTime(
+    fechaOriginal.getTime() + fechaOriginal.getTimezoneOffset() * 60 * 1000
+  );
 
   // Formatear la fecha en un formato personalizado (por ejemplo, "31 de agosto de 2023, 20:41")
   const options = {
+    timeZone: zonaHorariaEcuador,
     year: "numeric",
     month: "long",
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
   };
-  const fechaFormateada = fecha.toLocaleDateString("es-ES", options);
+
+  const fechaFormateada = fechaOriginal.toLocaleString("es-EC", options);
   return fechaFormateada;
+
+  // return fechaOriginal
 };
 
 const VisitasPage = () => {
+  const marcarLlegada = async (idBitacoraVisita) => {
+    try {
+      await put(`/visitas/marcarLlegadaReal/${idBitacoraVisita}`, {});
+      await getAllBitacoras();
+    } catch (error) {
+      alert("No se pudo registrar la hora de llegada");
+    }
+  };
+
+  const marcarSalida = async (idBitacoraVisita) => {
+    console.log(idBitacoraVisita);
+    try {
+      await put(`/visitas/marcarSalidaReal/${idBitacoraVisita}`, {});
+      await getAllBitacoras();
+    } catch (error) {
+      alert("No se pudo registrar la hora de salida");
+    }
+  };
+
   const columns = [
     { field: "Id", headerName: "ID", width: 90 },
     // {
@@ -68,8 +95,7 @@ const VisitasPage = () => {
     {
       field: "Estado",
       headerName: "Status visita",
-      width: 90,
-      renderCell: (params) => <div>{detectVistaStatus(params.row.Estado)}</div>,
+      width: 100,
     },
     {
       field: "NombresAnfitrion",
@@ -125,7 +151,7 @@ const VisitasPage = () => {
     {
       field: "FechaTimeVisitaReal",
       headerName: "Fecha de llegada marcada",
-      width: 200,
+      width: 250,
       renderCell: (params) => {
         console.log(params.row.FechaTimeVisitaReal, "--------");
         if (params.row.FechaTimeVisitaReal) {
@@ -141,6 +167,7 @@ const VisitasPage = () => {
                   padding: "6px",
                   borderRadius: "5px",
                 }}
+                onClick={() => marcarLlegada(params.row.Id)}
               >
                 Marcar llegada
               </button>
@@ -165,10 +192,9 @@ const VisitasPage = () => {
     {
       field: "FechaTimeSalidaReal",
       headerName: "Fecha de salida marcada",
-      width: 200,
+      width: 250,
       renderCell: (params) => {
-        console.log(params.row.FechaTimeVisitaReal, "--------");
-        if (params.row.FechaTimeVisitaReal) {
+        if (params.row.FechaTimeSalidaReal) {
           const date = formatearFecha(params.row.FechaTimeSalidaReal);
           return <div>{date}</div>;
         } else {
@@ -181,6 +207,7 @@ const VisitasPage = () => {
                   padding: "6px",
                   borderRadius: "5px",
                 }}
+                onClick={() => marcarSalida(params.row.Id)}
               >
                 Marcar salida
               </button>

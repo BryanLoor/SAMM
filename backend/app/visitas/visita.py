@@ -14,6 +14,7 @@ from app.models.SAMM_Ubicacion import SAMM_Ubicacion,SAMM_UbicacionSchema
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
 from app.models.SAMM_Persona import Persona
 from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita
+from app.models.SAMM_Estaddos import SAMM_Estados
 
 # @bp.route('/prueba', methods=['POST'])
 # @cross_origin()
@@ -120,19 +121,20 @@ def getAllBitacoraVisitas():
     codigoUsuario = get_jwt_identity()
 
     query = (
-        db.session.query(SAMM_BitacoraVisita,Persona,SAMM_Ubicacion)
+        db.session.query(SAMM_BitacoraVisita,Persona,SAMM_Ubicacion,SAMM_Estados)
+        .join(SAMM_Estados, SAMM_BitacoraVisita.Estado == SAMM_Estados.Id)
         .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_BitacoraVisita.IdAnfitrion)
         .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
         .join(SAMM_UbiUsuario, SAMM_UbiUsuario.IdUbicacion == SAMM_BitacoraVisita.IdUbicacion)
         .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
-        # .filter(SAMM_BitacoraVisita.Estado == 'A', SAMM_UbiUsuario.EsAnfitrion==True, SAMM_Usuario.Codigo == codigoUsuario)
         .all()
     )
 
     schema= [
         {
             'Id': q.SAMM_BitacoraVisita.Id,
-            "Estado":q.SAMM_BitacoraVisita.Estado,
+            "CodigoEstado":q.SAMM_Estados.Id,
+            "Estado":q.SAMM_Estados.Descripcion,
             "IdAnfitrion":q.SAMM_BitacoraVisita.IdAnfitrion, #idUsuario
             "IdentificacionAnfitrion": q.Persona.Identificacion,
             "NombresAnfitrion":q.Persona.Nombres,
@@ -164,7 +166,7 @@ def getAllBitacoraVisitas():
 @jwt_required()
 def registraVisita():
     
-    currentUserID =  get_jwt_identity() #CODIGO persona
+    currentUserID =  get_jwt_identity() #CODIGO usuario
 
     visita = SAMM_BitacoraVisita()
 
@@ -205,7 +207,7 @@ def registraVisita():
     visita.Observaciones = request.json['observaciones']
 
 
-    # visita.Estado = request.json["estado"]!!!!!!!
+    visita.Estado = 2
 
     visita.FechaCrea = datetime.now()
     visita.FechaModifica = datetime.now()
@@ -290,6 +292,50 @@ def existePersona(cedula):
         return jsonify(schema), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+    
+
+
+@bp.route('/marcarLlegadaReal/<int:idBitacoraVisita>', methods=['PUT'])	
+@cross_origin()
+@jwt_required()
+def marcarLlegadaReal(idBitacoraVisita):
+    print(idBitacoraVisita)
+    codigoUsuario =  get_jwt_identity()
+
+    query = db.session.query(SAMM_BitacoraVisita).filter(SAMM_BitacoraVisita.Id == idBitacoraVisita).first()
+
+    print(query)
+    query.FechaTimeVisitaReal = datetime.now()
+    query.Estado = 3
+    query.UsuarioModifica = codigoUsuario
+    query.FechaModifica = datetime.now()
+
+    db.session.add(query)
+    db.session.commit()
+
+    return jsonify({"msg":"Resgistro exitoso"}), 200
+
+
+@bp.route('/marcarSalidaReal/<int:idBitacoraVisita>', methods=['PUT'])	
+@cross_origin()
+@jwt_required()
+def marcarSalidaReal(idBitacoraVisita):
+    print(idBitacoraVisita)
+    codigoUsuario =  get_jwt_identity()
+
+    query = db.session.query(SAMM_BitacoraVisita).filter(SAMM_BitacoraVisita.Id == idBitacoraVisita).first()
+
+    print(query)
+    query.FechaTimeSalidaReal = datetime.now()
+    query.Estado = 4
+    query.UsuarioModifica = codigoUsuario
+    query.FechaModifica = datetime.now()
+
+    db.session.add(query)
+    db.session.commit()
+
+    return jsonify({"msg":"Resgistro exitoso"}), 200
+
 
 
 
