@@ -264,7 +264,14 @@ const VisitasPage = () => {
       <div style={{ marginTop: "25px", paddingBottom: "25px" }}>
         <ModalVisita getAllBitacoras={getAllBitacoras} />
       </div>
-      <div style={{ height: 400, width: "100%", minHeight: "85vh" }}>
+      <div
+        style={{
+          height: 400,
+          width: "1200px",
+          minHeight: "85vh",
+          alignSelf: "center",
+        }}
+      >
         <DataGrid
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
