@@ -33,12 +33,6 @@ export function SideBarMenu({ items, card }: SideBarMenuProps) {
           fontSize: "20px",
         }}
       >
-        <button
-          onClick={() => router.push("/")}
-          style={{ margin: "0 0 0 auto", marginBottom: "15px" }}
-        >
-          <FiLogOut />
-        </button>
         <button onClick={handleClick} style={{ margin: "0 0 0 auto" }}>
           <GiHamburgerMenu />
         </button>
@@ -49,6 +43,29 @@ export function SideBarMenu({ items, card }: SideBarMenuProps) {
           <SideBarMenuItemView key={item.id} item={item} isOpen={isOpen} />
         ))}
       </div>
+
+      <button
+        onClick={() => router.push("/")}
+        style={{
+          margin: "0 0 0 auto",
+          marginBottom: "15px",
+          position: "absolute",
+          bottom: "0px",
+          right: "15px",
+        }}
+        id="logout"
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <p style={{ marginRight: "15px" }}>Salir</p>
+          <FiLogOut />
+        </div>
+      </button>
     </div>
   );
 }

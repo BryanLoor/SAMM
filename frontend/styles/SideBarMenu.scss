@@ -23,6 +23,12 @@
         min-width: 68px;
         max-width: 68px;
         flex-basis: 68px;
+        & #logout > div {
+            margin: 0 auto;
+        }
+        & #logout > div > p{
+            display: none;
+        }
     }
     .menuButton{
         display:flex;

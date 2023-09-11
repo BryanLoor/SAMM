@@ -98,44 +98,6 @@ const VisitasPage = () => {
       width: 100,
     },
     {
-      field: "NombresAnfitrion",
-      headerName: "Nombres Anfitrion",
-      width: 150,
-    },
-    {
-      field: "ApellidosAnfitrion",
-      headerName: "Apellidos Anfitrion",
-      width: 150,
-    },
-    {
-      field: "NombresVisitante",
-      headerName: "Nombres Visitante",
-      width: 150,
-    },
-    {
-      field: "ApellidosVisitante",
-      headerName: "Apellidos Visitante",
-      width: 150,
-    },
-    {
-      field: "IdentificacionVisitante",
-      headerName: "Identificacion Visitante",
-      width: 150,
-    },
-    {
-      field: "Antecedentes Penales",
-      headerName: "Antecedentes Penales",
-      width: 150,
-      renderCell: (params) => (
-        <div>{params.row.AntecdentesPenales ? "Si" : "No"}</div>
-      ),
-    },
-    {
-      field: "Ubicacion",
-      headerName: "Propiedad",
-      width: 150,
-    },
-    {
       field: "FechaTimeVisitaEstimada",
       headerName: "Fecha de llegada agendada",
       width: 250,
@@ -215,6 +177,44 @@ const VisitasPage = () => {
           );
         }
       },
+    },
+    {
+      field: "NombresAnfitrion",
+      headerName: "Nombres Anfitrion",
+      width: 150,
+    },
+    {
+      field: "ApellidosAnfitrion",
+      headerName: "Apellidos Anfitrion",
+      width: 150,
+    },
+    {
+      field: "NombresVisitante",
+      headerName: "Nombres Visitante",
+      width: 150,
+    },
+    {
+      field: "ApellidosVisitante",
+      headerName: "Apellidos Visitante",
+      width: 150,
+    },
+    {
+      field: "IdentificacionVisitante",
+      headerName: "Identificacion Visitante",
+      width: 150,
+    },
+    {
+      field: "Antecedentes Penales",
+      headerName: "Antecedentes Penales",
+      width: 150,
+      renderCell: (params) => (
+        <div>{params.row.AntecdentesPenales ? "Si" : "No"}</div>
+      ),
+    },
+    {
+      field: "Ubicacion",
+      headerName: "Propiedad",
+      width: 150,
     },
 
     {
