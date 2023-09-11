@@ -78,19 +78,25 @@ const Index = () => {
 
   return (
     <Layout>
-      <div>
-        <div style={{ height: 400, width: "100%", minHeight: "85vh" }}>
-          <DataGrid
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10 } },
-            }}
-            pageSizeOptions={[10, 25, 100]}
-            getRowId={(option) => option.Id}
-            rows={allRondas}
-            columns={columns}
-            slots={{ toolbar: GridToolbar }}
-          />
-        </div>
+      <div
+        style={{
+          height: 400,
+          width: "1200px",
+          minHeight: "85vh",
+          alignSelf: "center",
+          marginTop: "50px",
+        }}
+      >
+        <DataGrid
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10 } },
+          }}
+          pageSizeOptions={[10, 25, 100]}
+          getRowId={(option) => option.Id}
+          rows={allRondas}
+          columns={columns}
+          slots={{ toolbar: GridToolbar }}
+        />
       </div>
     </Layout>
   );
