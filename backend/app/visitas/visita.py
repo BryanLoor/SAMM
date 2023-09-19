@@ -13,7 +13,7 @@ from app.models.SAMM_UbiUsuario import SAMM_UbiUsuario,SAMM_UbiUsuarioSchema
 from app.models.SAMM_Ubicacion import SAMM_Ubicacion,SAMM_UbicacionSchema
 from app.models.SAMM_Usuario import SAMM_Usuario, SAMM_UsuarioSchema
 from app.models.SAMM_Persona import Persona
-from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita
+from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita, SAMM_BitacoraVisitaSchema
 from app.models.SAMM_Estaddos import SAMM_Estados
 
 # @bp.route('/prueba', methods=['POST'])
@@ -119,6 +119,61 @@ def getUsuariosxUbicacion(idUbicacion):
 @jwt_required()
 def getAllBitacoraVisitas():
     codigoUsuario = get_jwt_identity()
+    #TODO:Rol deberia obtnerse del token y no hacerse esta consulta
+    usuario = (
+        db.session.query(SAMM_Usuario.IdPerfil, SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo == codigoUsuario).first()
+    )
+
+    rol = usuario[0]
+    idUsuario = usuario[1]
+    print(idUsuario)
+
+
+    print(rol)
+    #En el caso de que se anfitrion osea id 3
+    if(rol == 3):
+        query = (
+            db.session.query(SAMM_BitacoraVisita,Persona,SAMM_Ubicacion,SAMM_Estados)
+            .join(SAMM_Estados, SAMM_BitacoraVisita.Estado == SAMM_Estados.Id)
+            .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_BitacoraVisita.IdAnfitrion)
+            .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
+            .join(SAMM_UbiUsuario, SAMM_UbiUsuario.IdUbicacion == SAMM_BitacoraVisita.IdUbicacion)
+            .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
+            .filter(SAMM_BitacoraVisita.IdAnfitrion == idUsuario )
+            .all()
+        )
+        schema= [
+            {
+                'Id': q.SAMM_BitacoraVisita.Id,
+                "CodigoEstado":q.SAMM_Estados.Id,
+                "Estado":q.SAMM_Estados.Descripcion,
+                "IdAnfitrion":q.SAMM_BitacoraVisita.IdAnfitrion, #idUsuario
+                "IdentificacionAnfitrion": q.Persona.Identificacion,
+                "NombresAnfitrion":q.Persona.Nombres,
+                "ApellidosAnfitrion":q.Persona.Apellidos,
+                "IdVisitante":q.SAMM_BitacoraVisita.IdVisita,
+                "IdentificacionVisitante": q.SAMM_BitacoraVisita.IdentificacionVisitante,
+                "NombresVisitante":q.SAMM_BitacoraVisita.NombresVisitante,
+                "ApellidosVisitante":q.SAMM_BitacoraVisita.ApellidosVisitante,
+                "AntecdentesPenales": q.SAMM_BitacoraVisita.Antecedentes,
+                "Ubicacion":q.SAMM_Ubicacion.Descripcion,
+                "Celular":q.SAMM_BitacoraVisita.Telefono,
+                "Correo":q.SAMM_BitacoraVisita.Correo,
+                "Placa":q.SAMM_BitacoraVisita.Placa,
+                "Observaciones": q.SAMM_BitacoraVisita.Observaciones,
+                "FechaTimeVisitaEstimada":q.SAMM_BitacoraVisita.FechaTimeVisitaEstimada,
+                "FechaTimeVisitaReal":q.SAMM_BitacoraVisita.FechaTimeVisitaReal,
+                "FechaTimeSalidaEstimada":q.SAMM_BitacoraVisita.FechaTimeSalidaEstimada,
+                "FechaTimeSalidaReal":q.SAMM_BitacoraVisita.FechaTimeSalidaReal,
+                
+            }
+            for q in query
+        ]
+        return jsonify({'data':schema}),200
+
+    
+
+    #Esto traere todas las bitacoras si no es anfitrion
 
     query = (
         db.session.query(SAMM_BitacoraVisita,Persona,SAMM_Ubicacion,SAMM_Estados)
