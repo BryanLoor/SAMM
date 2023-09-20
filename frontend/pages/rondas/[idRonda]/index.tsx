@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Layout from "components/layout";
 import { get } from "utils/services/api";
 import { useRouter } from "next/router";
+import { GlobalContext } from "context/GlobalContext";
 
 const columns = [
   {
@@ -62,12 +63,14 @@ const columns = [
   },
 ];
 
-const Index = () => {
+const PuntosDeRonda = () => {
   const router = useRouter();
   const { idRonda } = router.query;
   const [allRondasPuntos, setAllRondasPuntos] = useState([]);
+  const { rondaSelected } = useContext(GlobalContext);
 
   const getAllRondas = async () => {
+    console.log(rondaSelected);
     try {
       const data = await get(`/rondas/getRonda/${idRonda}`);
       setAllRondasPuntos(data.data);
@@ -96,6 +99,7 @@ const Index = () => {
           marginTop: "50px",
         }}
       >
+        <div>Puntos de ronda {idRonda}</div>
         <DataGrid
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
@@ -110,4 +114,4 @@ const Index = () => {
     </Layout>
   );
 };
-export default Index;
+export default PuntosDeRonda;

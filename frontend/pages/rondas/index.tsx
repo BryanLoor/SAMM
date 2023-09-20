@@ -1,20 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Layout from "components/layout";
 import { get } from "utils/services/api";
 import Link from "next/link";
 import { Button } from "@mui/material";
-
+import ModalEditarRonda from "./ModalEditarRonda";
+import { GlobalContext } from "context/GlobalContext";
 const columns = [
   {
     field: "Id",
     headerName: "Id",
     width: 100,
     renderCell: (params) => {
+      const { setRondaSelected } = useContext(GlobalContext);
+      setRondaSelected(params.row);
+
       return (
         <Link href={`/rondas/${params.row.Id}`}>
           <Button variant="contained">{params.row.Id}</Button>
         </Link>
+      );
+    },
+  },
+  {
+    field: "",
+    headerName: "Edición",
+    width: 90,
+    renderCell: (params) => {
+      return (
+        <ModalEditarRonda visita={params.row} getAllBitacoras={() => {}} />
       );
     },
   },
