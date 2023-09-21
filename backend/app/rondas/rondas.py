@@ -196,8 +196,6 @@ def editarRonda():
     ronda.Desripcion = request.json['Desripcion']
     ronda.Estado = 0
     ronda.IdUbicacion = request.json['IdUbicacion']
-    ronda.FechaCreacion = datetime.now()
-    ronda.UsuCreacion = idUsuario[0]
     ronda.FechaModifica = datetime.now()
     ronda.UsuModifica = idUsuario[0]
     ronda.IdUsuarioSupervisor = request.json['IdUsuarioSupervisor']
