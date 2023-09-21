@@ -107,6 +107,7 @@ class _LoginPageState extends State<LoginPage> {
       var response = await _apiService.postData(endpoint, data, jwtToken);
       if (response['access_token'] != null) {
         _mainProvider.updateToken(response['access_token']);
+        _mainProvider.response=response;
       }
     } catch (e) {
       throw Exception('Fallo metodo posteo de Api Service: $e');
