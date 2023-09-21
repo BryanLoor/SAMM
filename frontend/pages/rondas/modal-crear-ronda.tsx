@@ -37,7 +37,7 @@ interface IPropiedades {
   Estado: string;
 }
 
-export default function ModalEditarRonda({ currentRonda }) {
+export default function ModalCrearRonda() {
   const [open, setOpen] = React.useState(false);
   // Handle modal
 
@@ -60,8 +60,8 @@ export default function ModalEditarRonda({ currentRonda }) {
   };
 
   const [selectedValueCB, setSelectedValueCB] = React.useState({
-    supervisor: currentRonda?.Supervisor,
-    ubicacion: currentRonda?.Ubicacion,
+    supervisor: null,
+    ubicacion: null,
     agente: null,
   });
 
@@ -111,46 +111,37 @@ export default function ModalEditarRonda({ currentRonda }) {
     }
   };
 
-  // Esto lo hago porque necesito que se cargue el combobox de supervisor
-  // solo en el primer redenrizado y luego en los otros cuando cambie
-  // de ubicacion que el valor del combox de supervisor que cargue a null
-  const [primerRenderizado, setPrimerRenderizado] = React.useState(true);
-
   React.useEffect(() => {
-    if (primerRenderizado) setPrimerRenderizado(false);
-
     if (selectedValueCB.ubicacion) {
-      if (!primerRenderizado) handleSetSelectedValueCB("supervisor", null);
+      handleSetSelectedValueCB("supervisor", null);
       getAllSupervisores();
     }
   }, [selectedValueCB.ubicacion]);
 
-  const editRonda = async () => {
+  const saveRonda = async () => {
     try {
       const payload = {
-        IdRonda: currentRonda.Id,
         Desripcion: "",
         IdUbicacion: selectedValueCB?.ubicacion?.id,
         IdUsuarioSupervisor: selectedValueCB?.supervisor?.IdUsuario,
       };
 
-      const response = await post("/rondas/editarRonda", payload);
-      alert("Ronda actualizada");
+      const response = await post("/rondas/crearRonda", payload);
+      alert("Ronda creada");
     } catch (error) {
-      alert("No se pudo actulizar la ronda");
+      alert("No se pudo crear la ronda");
     }
   };
 
   const cleanModalRonda = () => {
     setSelectedValueCB({
-      supervisor: currentRonda?.Supervisor,
-      ubicacion: currentRonda?.Ubicacion,
+      supervisor: null,
+      ubicacion: null,
       agente: null,
     });
-    setPrimerRenderizado(true);
   };
 
-  const handleEdit = () => {
+  const handleSave = () => {
     const idUbicacion = selectedValueCB?.ubicacion?.id;
     const IdSupervisor = selectedValueCB?.supervisor?.IdUsuario;
 
@@ -159,7 +150,7 @@ export default function ModalEditarRonda({ currentRonda }) {
       return;
     }
 
-    editRonda();
+    saveRonda();
     handleClose();
   };
 
@@ -169,7 +160,7 @@ export default function ModalEditarRonda({ currentRonda }) {
         onClick={handleOpen}
         className="bg-[#0040AE] hover:bg-[#1B147A] text-white font-sans py-1 px-4 rounded-lg mt-1"
       >
-        Editar
+        Crear
       </Button>
       <Modal
         open={open}
@@ -180,7 +171,7 @@ export default function ModalEditarRonda({ currentRonda }) {
         <Box sx={style}>
           <div className="flex justify-between">
             <h1 className="text-2xl font-sans font-semibold text-[#297DE2] mb-2">
-              Editar Ronda
+              Crear Ronda
             </h1>
             <Button onClick={handleClose}>
               <svg
@@ -206,9 +197,6 @@ export default function ModalEditarRonda({ currentRonda }) {
             {/* Ubicaciones */}
             <Autocomplete
               value={selectedValueCB.ubicacion}
-              isOptionEqualToValue={(option, value) =>
-                option.descripcion === value.descripcion
-              } // Personaliza la comparación aquí
               style={{ width: "100%", marginTop: "25px", marginBottom: "20px" }}
               placeholder="Escoja un supervisor"
               id="asynchronous-demo"
@@ -299,10 +287,10 @@ export default function ModalEditarRonda({ currentRonda }) {
             </Button>
             <Button
               variant="contained"
-              onClick={handleEdit}
+              onClick={handleSave}
               className="bg-[#0040AE] hover:bg-[#1B147A] text-white font-sans py-1 px-6 rounded-lg"
             >
-              Editar
+              Guardar
             </Button>
           </div>
         </Box>
