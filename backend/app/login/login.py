@@ -39,7 +39,7 @@ def login():
             return jsonify({'message': 'Ingresa la clave'}), 400
         #usuario = SAMM_Usuario.query.filter_by(Codigo=Codigo).first()
         usuario = (
-            db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado) 
+            db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado, SAMM_Usuario.Id) 
             .join(Persona, SAMM_Usuario.IdPersona == Persona.Id) 
             .join(SAMM_Rol, SAMM_Usuario.IdPerfil == SAMM_Rol.Id)
             .filter(SAMM_Usuario.Codigo == Codigo)
@@ -70,7 +70,8 @@ def login():
             "Nombres": usuario[2],
             "Apellidos": usuario[3],
             "Descripcion": usuario[4],
-            "Estado": usuario[5]
+            "Estado": usuario[5],
+            "Id": usuario[6]
                 }
     
         return jsonify(response_data), 200
