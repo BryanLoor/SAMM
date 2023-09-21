@@ -73,42 +73,6 @@ def getAllRondas():
 
     return jsonify({"data":schema}), 200
 
-#obtener info de un ronda especifica por su id
-@bp.route('/getRonda/<int:idRonda>', methods=['GET'])
-@cross_origin()
-@jwt_required()
-def getRonda(idRonda):
-
-    query = (
-        db.session.query(SAMM_Ronda_Punto,SAMM_Ronda, Persona,SAMM_Estados)
-        .join(SAMM_Ronda, SAMM_Ronda.Id == SAMM_Ronda_Punto.Id)
-        .join(SAMM_Usuario, SAMM_Ronda_Punto.UsuModifica == SAMM_Usuario.Id, isouter=True)
-        .join(Persona, SAMM_Usuario.IdPersona == Persona.Id, isouter=True)
-        .join(SAMM_Estados, SAMM_Ronda_Punto.Estado == SAMM_Estados.Id)
-        .filter(SAMM_Ronda_Punto.IdRonda == idRonda)
-        .all()
-    )
-
-    schema = [
-        {
-        "Id" :q.SAMM_Ronda_Punto.Id,
-        "IdRonda" : q.SAMM_Ronda_Punto.IdRonda,
-        "Orden" : q.SAMM_Ronda_Punto.Orden,
-        "Coordenada" : q.SAMM_Ronda_Punto.Coordenada,
-        "Descripcion": q.SAMM_Ronda_Punto.Descripcion,
-        "Estado" : q.SAMM_Ronda_Punto.Estado,
-        "NameEstado" : q.SAMM_Estados.Descripcion,   
-        "FechaCreacion" : q.SAMM_Ronda_Punto.FechaCreacion,
-        "UsuCreacion": q.SAMM_Ronda_Punto.UsuCreacion,
-        "FechaModificacion" : q.SAMM_Ronda_Punto.FechaModificacion,
-        "UsuModifica": q.SAMM_Ronda_Punto.UsuModifica,
-        "NameUsuModifica":f"{q.Persona.Nombres} {q.Persona.Apellidos}" if q.Persona else None
-
-        }
-        for q in query
-    ]
-    return jsonify({"data":schema}),200
-
 
 #Trae todas las ubicaciones(es la misma que esta en visitas)
 @bp.route('/getUbicaciones', methods=['GET'])
