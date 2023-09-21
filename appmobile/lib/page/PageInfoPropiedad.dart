@@ -7,7 +7,7 @@ class PageInfoPropiedad extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,

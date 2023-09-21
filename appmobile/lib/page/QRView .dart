@@ -19,7 +19,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   Widget build(BuildContext context) {  
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Column(
         children: <Widget>[
           Expanded(

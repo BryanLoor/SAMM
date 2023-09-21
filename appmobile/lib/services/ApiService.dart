@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  //final String _baseUrl = 'http://127.0.0.1:5000'; //local
-  final String _baseUrl = 'http://198.38.89.240:8035'; //produccionGrowthly
+  final String _baseUrl = 'http://10.0.2.2:5000'; //local
+  // final String _baseUrl = 'http://198.38.89.240:8035'; //produccionGrowthly
 
   //ip para tlf http://10.0.2.2:5000
 
@@ -68,18 +68,21 @@ class ApiService {
   Future<Map<String, dynamic>> postData(
       String endpoint, Map<String, dynamic> data, String jwtToken) async {
     var url = Uri.parse(_baseUrl + endpoint);
-    //print("data");
+    // print("url: $url");
     var headers = {
       "Content-Type": "application/json",
     };
     if (jwtToken.isNotEmpty) {
       headers["Authorization"] = "Bearer $jwtToken";
     }
+    // print("headers: $headers");
     http.Response response = await http.post(
       url,
       headers: headers,
       body: jsonEncode(data),
     );
+
+    // print(response.body.toString());
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body);

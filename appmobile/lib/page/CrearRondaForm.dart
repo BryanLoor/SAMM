@@ -152,7 +152,7 @@ class _CrearRondaFormState extends State<CrearRondaForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Padding(
         padding: EdgeInsets.all(15.0),
         child: Form(

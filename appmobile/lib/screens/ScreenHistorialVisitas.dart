@@ -38,12 +38,12 @@ class _ScreenHistorialVisitasState extends State<ScreenHistorialVisitas> {
 
   Future<List<Map<String, dynamic>>> getVisitaList(
       ApiService apiService) async {
-    var response = await apiService.getData('/visitas/lista', token);
+    var response = await apiService.getData('/visitas/getAllBitacoraVisitas', token);
 
     // Verifica si la respuesta es una lista
-    if (response is List) {
+    if (response["data"] is List) {
       // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
-      return response.cast<Map<String, dynamic>>();
+      return response["data"].cast<Map<String, dynamic>>();
     }
 
     // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
@@ -54,38 +54,42 @@ class _ScreenHistorialVisitasState extends State<ScreenHistorialVisitas> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columnSpacing: 16.0,
-            headingTextStyle: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: 14,
-                fontWeight: FontWeight.bold),
-            dataTextStyle: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 14), // Cambio aquí
-            columns: const <DataColumn>[
-              DataColumn(label: Text('Codigo')),
-              DataColumn(label: Text('Descripcion')),
-              DataColumn(label: Text('Duracion')),
-              DataColumn(label: Text('Estado')),
-              DataColumn(label: Text('FechaCrea')),
-              DataColumn(label: Text('FechaVisita')),
-              DataColumn(label: Text('Hora')),
-              DataColumn(label: Text('Placa')),
-            ],
-            rows: visitas.map((visita) {
-              return DataRow(cells: <DataCell>[
-                DataCell(Text(visita['Codigo']?.toString() ?? 'N/A')),
-                DataCell(Text(visita['Descripcion']?.toString() ?? 'N/A')),
-                DataCell(Text(visita['Duracion']?.toString() ?? 'N/A')),
-                DataCell(Text(visita['Estado']?.toString() ?? 'N/A')),
-                DataCell(Text(visita['FechaCrea']?.toString() ?? 'N/A')),
-                DataCell(Text(visita['FechaVisita']?.toString() ?? 'N/A')),
-                DataCell(Text(visita['Hora']?.toString() ?? 'N/A')),
-                DataCell(Text(visita['Placa']?.toString() ?? 'N/A')),
-              ]);
-            }).toList(),
+          scrollDirection: Axis.vertical,
+          child: SingleChildScrollView(
+            // controller: ScrollController(),
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              columnSpacing: 16.0,
+              headingTextStyle: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold),
+              dataTextStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 14), // Cambio aquí
+              columns: const <DataColumn>[
+                DataColumn(label: Text('Codigo')),
+                DataColumn(label: Text('Apellido')),
+                DataColumn(label: Text('Duracion')),
+                DataColumn(label: Text('Estado')),
+                DataColumn(label: Text('FechaCrea')),
+                DataColumn(label: Text('FechaVisita')),
+                DataColumn(label: Text('Hora')),
+                DataColumn(label: Text('Placa')),
+              ],
+              rows: visitas.map((visita) {
+                return DataRow(cells: <DataCell>[
+                  DataCell(Text(visita['Codigo']?.toString() ?? 'N/A')),
+                  DataCell(Text(visita['ApellidosVisitante']?.toString() ?? 'N/A')),
+                  DataCell(Text(visita['Duracion']?.toString() ?? 'N/A')),
+                  DataCell(Text(visita['Estado']?.toString() ?? 'N/A')),
+                  DataCell(Text(visita['FechaCrea']?.toString() ?? 'N/A')),
+                  DataCell(Text(visita['FechaVisita']?.toString() ?? 'N/A')),
+                  DataCell(Text(visita['Hora']?.toString() ?? 'N/A')),
+                  DataCell(Text(visita['Placa']?.toString() ?? 'N/A')),
+                ]);
+              }).toList(),
+            ),
           ),
         );
       },
@@ -96,7 +100,7 @@ class _ScreenHistorialVisitasState extends State<ScreenHistorialVisitas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Column(
         children: [
           SizedBox(height: 20.0),

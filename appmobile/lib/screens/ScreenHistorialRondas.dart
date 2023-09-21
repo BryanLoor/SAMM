@@ -40,15 +40,15 @@ class _ScreenHistorialRondasState extends State<ScreenHistorialRondas> {
   }
 
   Future<List<Map<String, dynamic>>> getRondaList(ApiService apiService) async {
-    var response = await apiService.getData('/rondas/rondas', token);
+    var response = await apiService.getData('/rondas/getAllRondas', token);
 
-    if (response is Map<String, dynamic> && response['rondas'] is List) {
+    if (response is Map<String, dynamic> && response['data'] is List) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           isLoading = false;
         });
       });
-      return response['rondas'].cast<Map<String, dynamic>>();
+      return response['data'].cast<Map<String, dynamic>>();
     }
 
     throw Exception("Invalid data format");
@@ -91,7 +91,7 @@ class _ScreenHistorialRondasState extends State<ScreenHistorialRondas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Column(
         children: [
           SizedBox(height: 20.0),

@@ -15,8 +15,10 @@ import 'package:flutter/services.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 import 'package:sammseguridad_apk/widgets/Drawer.dart';
+import 'package:sammseguridad_apk/widgets/TwoColumnsWidget.dart';
+import 'package:sammseguridad_apk/widgets/testfile.dart';
 
-import '../services/ApiService.dart';
+import '../../services/ApiService.dart';
 
 import 'package:provider/provider.dart';
 
@@ -285,115 +287,153 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
 
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
-      //bottomNavigationBar: MyBottomNavigationBar(),
-
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildDatePickerButton(),
-            _buildTimePickerButton(),
-            DropdownButton<int>(
-              value: _selectedDuration,
-              items: [1, 2, 3, 4, 5, 6].map<DropdownMenuItem<int>>((int value) {
-                return DropdownMenuItem<int>(
-                  value: value,
-                  child: Text('$value horas'),
-                );
-              }).toList(),
-              onChanged: (int? val) =>
-                  setState(() => _selectedDuration = val ?? _selectedDuration),
-            ),
-            SizedBox(height: 20),
-            Text('Información del Invitado'),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _idController,
-                    decoration: InputDecoration(
-                      labelText: 'Cédula',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff0040AE)),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa la cédula';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Nombres',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff0040AE)),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa los nombres';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _lastNameController,
-                    decoration: InputDecoration(
-                      labelText: 'Apellidos',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff0040AE)),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa los apellidos';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _plateController,
-                    decoration: InputDecoration(
-                      labelText: 'Placa',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff0040AE)),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa la placa';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () => _generateQRCode(mainProvider, apiService),
-              icon: Icon(Icons.filter_center_focus),
-              label: Text('Generar QR'),
-              style: ElevatedButton.styleFrom(
-                primary: Color(0xff0040AE),
-              ),
-            ),
-          ],
-        ),
+      body: MyForm(
+        cedula: "0924875321",
+        nombre: "Alfred Coloma",
       ),
+      // body: ListView(
+      //   children: [
+      //     ListTile(
+      //       title: Text('Cedula: '),
+      //       subtitle: Text('0924875321'),
+      //       leading: Icon(Icons.credit_card), // Icono a la izquierda
+      //       trailing: Icon(Icons.edit), // Icono a la derecha (icono de editar)
+      //       onTap: () {
+      //         // Aquí puedes manejar la acción cuando se toca el ListTile
+      //       },
+      //     ),
+      //     ListTile(
+      //       title: Text('Nombre: '),
+      //       subtitle: Text('Alfred'),
+      //       leading: Icon(Icons.person), // Icono a la izquierda
+      //       trailing: Icon(Icons.edit), // Icono a la derecha (icono de editar)
+      //       onTap: () {
+      //         // Aquí puedes manejar la acción cuando se toca el ListTile
+      //       },
+      //     ),
+      //     ListTile(
+      //       title: Text('Apellido: '),
+      //       subtitle: Text('Coloma'),
+      //       leading: Icon(Icons.person), // Icono a la izquierda
+      //       trailing: Icon(Icons.edit), // Icono a la derecha (icono de editar)
+      //       onTap: () {
+      //         // Aquí puedes manejar la acción cuando se toca el ListTile
+      //       },
+      //     )
+
+      //   ],
+      // )
     );
   }
 }
+        // child: Column(
+        //   children: [
+        //     ListView(
+        //       children: [
+        //         ListTile(
+        //           title: Text('Título del elemento'),
+        //           subtitle: Text('Subtítulo del elemento'),
+        //           leading: Icon(Icons.info), // Icono a la izquierda
+        //           trailing: Icon(Icons.edit), // Icono a la derecha (icono de editar)
+        //           onTap: () {
+        //             // Aquí puedes manejar la acción cuando se toca el ListTile
+        //           },
+        //         )
+        //       ],
+        //     ),
+        //     TwoColumnsWidget(
+        //       listaDeWidgets: [
+        //         _buildDatePickerButton(),
+        //         _buildTimePickerButton(),
+
+        //       ]
+        //       ),
+            
+        //     SizedBox(height: 20),
+        //     Text('Información del Invitado'),
+        //     Form(
+        //       key: _formKey,
+        //       child: Column(
+        //         children: <Widget>[
+        //           SizedBox(height: 20),
+        //           TextFormField(
+        //             controller: _idController,
+        //             decoration: InputDecoration(
+        //               labelText: 'Cédula',
+        //               enabledBorder: OutlineInputBorder(
+        //                 borderSide: BorderSide(color: Color(0xff0040AE)),
+        //                 borderRadius: BorderRadius.circular(5.0),
+        //               ),
+        //             ),
+        //             validator: (value) {
+        //               if (value == null || value.isEmpty) {
+        //                 return 'Por favor ingresa la cédula';
+        //               }
+        //               return null;
+        //             },
+        //           ),
+        //           SizedBox(height: 20),
+        //           TextFormField(
+        //             controller: _nameController,
+        //             decoration: InputDecoration(
+        //               labelText: 'Nombres',
+        //               enabledBorder: OutlineInputBorder(
+        //                 borderSide: BorderSide(color: Color(0xff0040AE)),
+        //                 borderRadius: BorderRadius.circular(5.0),
+        //               ),
+        //             ),
+        //             validator: (value) {
+        //               if (value == null || value.isEmpty) {
+        //                 return 'Por favor ingresa los nombres';
+        //               }
+        //               return null;
+        //             },
+        //           ),
+        //           SizedBox(height: 20),
+        //           TextFormField(
+        //             controller: _lastNameController,
+        //             decoration: InputDecoration(
+        //               labelText: 'Apellidos',
+        //               enabledBorder: OutlineInputBorder(
+        //                 borderSide: BorderSide(color: Color(0xff0040AE)),
+        //                 borderRadius: BorderRadius.circular(5.0),
+        //               ),
+        //             ),
+        //             validator: (value) {
+        //               if (value == null || value.isEmpty) {
+        //                 return 'Por favor ingresa los apellidos';
+        //               }
+        //               return null;
+        //             },
+        //           ),
+        //           SizedBox(height: 20),
+        //           TextFormField(
+        //             controller: _plateController,
+        //             decoration: InputDecoration(
+        //               labelText: 'Placa',
+        //               enabledBorder: OutlineInputBorder(
+        //                 borderSide: BorderSide(color: Color(0xff0040AE)),
+        //                 borderRadius: BorderRadius.circular(5.0),
+        //               ),
+        //             ),
+        //             validator: (value) {
+        //               if (value == null || value.isEmpty) {
+        //                 return 'Por favor ingresa la placa';
+        //               }
+        //               return null;
+        //             },
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //     SizedBox(height: 20),
+        //     ElevatedButton.icon(
+        //       onPressed: () => _generateQRCode(mainProvider, apiService),
+        //       icon: Icon(Icons.filter_center_focus),
+        //       label: Text('Generar QR'),
+        //       // style: ElevatedButton.styleFrom(
+        //       //   primary: Color(0xff0040AE),
+        //       // ),
+        //     ),
+        //   ],
+        // )

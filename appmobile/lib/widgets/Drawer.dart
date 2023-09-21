@@ -6,9 +6,10 @@ import 'package:sammseguridad_apk/page/PageInfoUrbaSeguridad.dart';
 import 'package:sammseguridad_apk/page/Perfil.dart';
 import 'package:sammseguridad_apk/page/QRView%20.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
-import 'package:sammseguridad_apk/screens/ScreenGenerarVisita.dart';
+import 'package:sammseguridad_apk/screens/generarVisita/ScreenGenerarVisita.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialRondas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
+import 'package:sammseguridad_apk/screens/ScreenHome.dart';
 import 'package:sammseguridad_apk/screens/ScreenRondas.dart';
 import 'package:sammseguridad_apk/screens/ScreenWelcom.dart';
 
@@ -68,7 +69,8 @@ class CustomDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => ScreanMenu(),
+                  // builder: (context) => ScreanMenu(),
+                  builder: (context) => ScreenHome(),
                 ),
               );
             },

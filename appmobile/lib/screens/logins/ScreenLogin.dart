@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
+import 'package:sammseguridad_apk/screens/ScreenHome.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 
 class LoginPage extends StatefulWidget {
@@ -100,7 +101,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> postData(
-      String endpoint, Map<String, dynamic> data, String jwtToken) async {
+    String endpoint, Map<String, dynamic> data, String jwtToken
+  ) async {
     try {
       var response = await _apiService.postData(endpoint, data, jwtToken);
       if (response['access_token'] != null) {
@@ -114,10 +116,11 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> login(String Codigo, String Clave) async {
     try {
       await postData('/login/login', {'Codigo': Codigo, 'Clave': Clave}, '');
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ScreanMenu()),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => ScreenHome()),
+      // );
+      Navigator.popAndPushNamed(context, ScreenHome.routeName);
     } catch (e) {
       showCustomSnackBar(context, 'Error al iniciar sesión: $e', Colors.red);
       _usernameController.clear();

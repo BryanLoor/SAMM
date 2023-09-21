@@ -36,7 +36,7 @@ class ScreenWelcome extends StatelessWidget {
                       iconData: Icons.mail,
                       text: 'Correo & Pass',
                       onPressed: () {
-                        Navigator.pushNamed(context, LoginPage.routeName);
+                        Navigator.popAndPushNamed(context, LoginPage.routeName);
                       },
                     ),
                   ),
@@ -46,7 +46,7 @@ class ScreenWelcome extends StatelessWidget {
                       iconData: Icons.fingerprint,
                       text: 'Face ID/Huella',
                       onPressed: () {
-                        Navigator.pushNamed(
+                        Navigator.popAndPushNamed(
                             context, ScreenFaceID_Huella.routeName);
                       },
                     ),
@@ -57,7 +57,7 @@ class ScreenWelcome extends StatelessWidget {
                       iconData: Icons.lock,
                       text: 'Pin de Seguridad',
                       onPressed: () {
-                        Navigator.pushNamed(context, ScreenLoginPin.routeName);
+                        Navigator.popAndPushNamed(context, ScreenLoginPin.routeName);
                       },
                     ),
                   ),
@@ -112,11 +112,11 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-        primary: Color(0xFF0040AE),
+        foregroundColor: Color(0xFF0040AE),
         backgroundColor: Colors.white,
-        side: BorderSide(color: Color(0xFF0040AE), width: 2),
-        shadowColor: Colors.grey,
-        elevation: 5,
+        // side: BorderSide(color: Color(0xFF0040AE), width: 2),
+        // shadowColor: Colors.grey,
+        // elevation: 5,
       ),
       onPressed: onPressed,
       child: Padding(

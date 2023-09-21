@@ -90,7 +90,7 @@ void _onMapTapped(LatLng position) async {
 
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Stack(
         children: [
           Container(

@@ -12,7 +12,7 @@ class ScreenRondas extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Stack(
         children: [
           Container(

@@ -22,13 +22,13 @@ class _PageInfoUrbaSeguridadState extends State<PageInfoUrbaSeguridad> {
     final mainProviderSave = Provider.of<MainProvider>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
 
-    _personasListFuture =
-        mainProviderSave.getPreferencesToken().then((dataToken) {
-      token = dataToken.toString();
-      mainProviderSave.updateToken(token);
+    // _personasListFuture =
+    //     mainProviderSave.getPreferencesToken().then((dataToken) {
+    //   token = dataToken.toString();
+    //   mainProviderSave.updateToken(token);
 
-      return getPersonasList(apiService);
-    });
+    //   return getPersonasList(apiService);
+    // });
   }
 
   Future<List<Map<String, dynamic>>> getPersonasList(
@@ -48,7 +48,7 @@ class _PageInfoUrbaSeguridadState extends State<PageInfoUrbaSeguridad> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -57,24 +57,24 @@ class _PageInfoUrbaSeguridadState extends State<PageInfoUrbaSeguridad> {
             alignment: Alignment.center,
           ),
         ),
-        child: FutureBuilder<List<Map<String, dynamic>>>(
-          future: _personasListFuture,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              List<Map<String, dynamic>> personas = snapshot.data;
-              return ListView.builder(
-                itemCount: personas.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _buildCard(personas[index]);
-                },
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+        // child: FutureBuilder<List<Map<String, dynamic>>>(
+        //   future: _personasListFuture,
+        //   builder: (BuildContext context, AsyncSnapshot snapshot) {
+        //     if (snapshot.hasData) {
+        //       List<Map<String, dynamic>> personas = snapshot.data;
+        //       return ListView.builder(
+        //         itemCount: personas.length,
+        //         itemBuilder: (BuildContext context, int index) {
+        //           return _buildCard(personas[index]);
+        //         },
+        //       );
+        //     } else if (snapshot.hasError) {
+        //       return Text('Error: ${snapshot.error}');
+        //     } else {
+        //       return Center(child: CircularProgressIndicator());
+        //     }
+        //   },
+        // ),
       ),
     );
   }

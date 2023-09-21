@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
+import 'package:sammseguridad_apk/screens/ScreenHome.dart';
+import 'package:sammseguridad_apk/screens/ScreenPerfil.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenFaceID_Huella.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenLogin.dart';
 import 'package:sammseguridad_apk/screens/crear/ScreenCreascuenta.dart';
@@ -38,11 +40,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue[900]!,
+          
+        // ).copyWith(
+        //   secondary: Colors.blue,
+        ),
+
+        // appBarTheme: AppBarTheme(
+        //   backgroundColor: Color(0xFF0040AE),
+        //   foregroundColor: Colors.white,
+        // ),
+        
+      ),
       debugShowCheckedModeBanner: false,
       title: 'SAMM',
       initialRoute: ScreenSplash.routeName,
       routes: {
         LoginPage.routeName: (context) => const LoginPage(),
+        ScreenPerfil.routeName: (context) => const ScreenPerfil(),
+        ScreenHome.routeName: (context) => ScreenHome(),
         ScreenLoginPin.routeName: (context) => const ScreenLoginPin(),
         ScreenFaceID_Huella.routeName: (context) => const ScreenFaceID_Huella(),
         ScreenSplash.routeName: (context) => const ScreenSplash(),

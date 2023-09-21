@@ -39,25 +39,35 @@ class _ScreanMenuState extends State<ScreanMenu> {
 
   Future<List<Map<String, dynamic>>> _getVisitsForSelectedDay(
       DateTime date) async {
-    final mainProvider = Provider.of<MainProvider>(context, listen: false);
-    final apiService = Provider.of<ApiService>(context, listen: false);
+    // final mainProvider = Provider.of<MainProvider>(context, listen: false);
+    // final apiService = Provider.of<ApiService>(context, listen: false);
 
-    String token = await mainProvider.getPreferencesToken();
-    mainProvider.updateToken(token);
+    // String token = await mainProvider.getPreferencesToken();
+    // mainProvider.updateToken(token);
 
-    Map<String, dynamic> requestBody = {
-      'date': DateFormat('yyyy-MM-dd').format(date),
-    };
+    // Map<String, dynamic> requestBody = {
+    //   'date': DateFormat('yyyy-MM-dd').format(date),
+    // };
 
-    List<Map<String, dynamic>> allVisits = (await apiService.postData(
-        '/visitas/viewList', requestBody, token)) as List<Map<String, dynamic>>;
+    // List<Map<String, dynamic>> allVisits = (await apiService.getData(
+    //     // '/visitas/getAllBitacoraVisitas', token))["data"] as List<Map<String, dynamic>>;
+    //     '/visitas/getAllBitacoraVisitas', token))["data"];
 
-    List<Map<String, dynamic>> visitsForSelectedDay = allVisits.where((visit) {
-      DateTime visitDate = DateTime.parse(visit['hora_ingreso']);
-      return visitDate.year == date.year &&
-          visitDate.month == date.month &&
-          visitDate.day == date.day;
-    }).toList();
+    // List<Map<String, dynamic>> visitsForSelectedDay = allVisits.where((visit) {
+    //   DateTime visitDate = DateTime.parse(visit['FechaTimeVisitaReal']);
+    //   return visitDate.year == date.year &&
+    //       visitDate.month == date.month &&
+    //       visitDate.day == date.day;
+    // }).toList();
+
+    // TODO: averiguar que mismo es lo que trae aqui
+    List<Map<String, dynamic>> visitsForSelectedDay = [{
+      'nombre': 'Juan',
+      'apellido': 'Perez',
+      'hora_ingreso': '10:00',
+      'FechaTimeVisitaReal': DateTime.now(),
+      'placa': 'ABC-123',
+    }];
 
     return visitsForSelectedDay;
   }
@@ -66,7 +76,7 @@ class _ScreanMenuState extends State<ScreanMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      // drawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -127,7 +137,7 @@ class _ScreanMenuState extends State<ScreanMenu> {
       padding: EdgeInsets.all(10),
       child: TableCalendar(
         firstDay: DateTime.utc(2023, 7, 1), // Set first day to July 2023
-        lastDay: DateTime.utc(2023, 7, 31), // Set last day to July 2023
+        lastDay: DateTime.now(), // Set last day to July 2023
         focusedDay: DateTime(2023, 7, 1), // Set focused day to July 1, 2023
         calendarFormat: _calendarFormat,
         selectedDayPredicate: (day) {
