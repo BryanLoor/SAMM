@@ -1,14 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sammseguridad_apk/screens/generarVisita/ScreenGenerarVisita.dart';
-
-// class ModalBottomCreateVisita extends StatelessWidget {
-//   const ModalBottomCreateVisita({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }
+import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.dart';
 
 
 class ModalBottomCreateVisita extends StatefulWidget {
@@ -32,8 +23,6 @@ class _ModalBottomCreateVisita extends State<ModalBottomCreateVisita> {
   bool _obscureText = true;
 
   TextEditingController cedulaController = TextEditingController();
-  TextEditingController nombreController = TextEditingController();
-  TextEditingController apellidoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +35,17 @@ class _ModalBottomCreateVisita extends State<ModalBottomCreateVisita> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Center(
+                child: Icon(Icons.shield),
+              ),
+
+              Center(
+                child: Text(
+                  'Invitar a un visitante',
+                  style: estiloAzul,
+                ),
+              ),
+              SizedBox(height: 16.0),
 
               Container(
                 decoration: BoxDecoration(
@@ -73,49 +73,7 @@ class _ModalBottomCreateVisita extends State<ModalBottomCreateVisita> {
               SizedBox(height: 16.0),
 
 
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0), // Ajusta el valor para redondear más o menos
-                  color: Colors.white, // Color de fondo opcional
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: TextFormField(
-                        controller: nombreController,
-                        decoration: InputDecoration(
-                          hintText: 'Nombre *',
-                          border: InputBorder.none,
-                        ),validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, coloque su Nombre';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: TextFormField(
-                        controller: apellidoController,
-                        decoration: InputDecoration(
-                          hintText: 'Apellido *',
-                          border: InputBorder.none,
-                        ),validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, coloque su Apellido';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-
-              SizedBox(height: 16.0),
+              
               // _buildTextField('Nombre', nombreController),
               // _buildTextField('Apellido', apellidoController),
               
@@ -130,28 +88,49 @@ class _ModalBottomCreateVisita extends State<ModalBottomCreateVisita> {
                     ),
                   ),
                   onPressed: () {
-                    // Aquí puedes implementar la lógica de invitar al usuario
                     String cedula = cedulaController.text;
-                    String nombre = nombreController.text;
-                    String apellido = apellidoController.text;
-                
-                    // Puedes realizar acciones como enviar la invitación
-                    // o mostrar un mensaje de confirmación
-                    print('Invitar a: $nombre $apellido (Cédula: $cedula)');
-                    // Navigator.pop(context);
-                    // Navigator.popAndPushNamed(context, routeName)
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ScreenGenerarVisita(),
-                      ),
-                    );
+
+                    // Validar la cédula
+                    if (cedula.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(cedula)) {
+                      // Si la cédula no tiene 10 dígitos o no son todos números, muestra un mensaje de error
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Error de Cédula'),
+                            content: Text('La cédula debe tener 10 dígitos y contener solo números.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      // Si la cédula es válida, puedes realizar la acción de invitar al usuario
+                      // print('Invitar a: $nombre $apellido (Cédula: $cedula)');
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ScreenGenerarVisita(
+                            cedula: cedula,
+                            nombre: "",
+                          ),
+                        ),
+                      );
+                    }
                   },
+
                   child: Text(
                     'Invitar',
                     style: TextStyle(fontSize: 18.0),
                   ),
                 ),
               ),
+              SizedBox(height: 160.0),
             ],
           ),
         ),

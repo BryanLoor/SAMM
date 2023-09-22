@@ -6,18 +6,23 @@ import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.d
 import 'package:sammseguridad_apk/screens/ScreenHistorialRondas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
 import 'package:sammseguridad_apk/screens/ScreenRondas.dart';
+import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 import 'package:sammseguridad_apk/widgets/Drawer.dart';
 import 'package:sammseguridad_apk/widgets/TwoColumnsWidget.dart';
 import 'package:sammseguridad_apk/widgets/navbar.dart';
 
-class ScreenHome extends StatelessWidget {
-  static const routeName = 'Home';
-  ScreenHome({super.key});
+class HomePage extends StatelessWidget {
+  final Function(int) setIndex;
+  HomePage({
+    required this.setIndex,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
+
 
     final List<Visit> visitas = [
       Visit(nombre: 'Juan', apellido: 'Perez', fecha: DateTime(2023, 9, 15)),
@@ -32,11 +37,7 @@ class ScreenHome extends StatelessWidget {
 
     // int _selectedIndex = 0;
 
-    return Scaffold(
-      appBar: CustomAppBar(),
-      // drawer: CustomDrawer(),
-      // bottomNavigationBar: NavBar(_selectedIndex),
-      body: Center(
+    return Center(
         // child:[
           child: ListView(
             children: [
@@ -160,11 +161,12 @@ class ScreenHome extends StatelessWidget {
                 margin: EdgeInsets.all(10.0),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ScreenHistorialVisitas(),
-                      ),
-                    );
+                    setIndex(1);
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ScreenHistorialVisitas(),
+                    //   ),
+                    // );
                   },
                   child: Column(
                     children: [
@@ -233,11 +235,7 @@ class ScreenHome extends StatelessWidget {
               )
 
             ],
-          ),
-        //   ScreenHistorialVisitas(),
-        //   ScreenHistorialRondas(),
-        // ][_selectedIndex],
-      ),
+          )
     );
   }
 }

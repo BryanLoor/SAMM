@@ -6,7 +6,7 @@ import 'package:sammseguridad_apk/page/PageInfoUrbaSeguridad.dart';
 import 'package:sammseguridad_apk/page/Perfil.dart';
 import 'package:sammseguridad_apk/page/QRView%20.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
-import 'package:sammseguridad_apk/screens/generarVisita/ScreenGenerarVisita.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialRondas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHome.dart';
@@ -79,11 +79,11 @@ class CustomDrawer extends StatelessWidget {
             leading: const Icon(Icons.add, color: kDrawerHeaderColor),
             title: Text('Crear Invitación', style: kListTileTextStyle),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ScreenGenerarVisita(),
-                ),
-              );
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => ScreenGenerarVisita(),
+              //   ),
+              // );
             },
           ),
           ListTile(

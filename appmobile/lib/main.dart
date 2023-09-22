@@ -8,6 +8,7 @@ import 'package:sammseguridad_apk/screens/ScreenPerfil.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenFaceID_Huella.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenLogin.dart';
 import 'package:sammseguridad_apk/screens/crear/ScreenCreascuenta.dart';
+import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 
 import 'screens/logins/ScreenLoginPin.dart';
 import 'screens/ScreenSplash.dart';
@@ -60,8 +61,11 @@ class MyApp extends StatelessWidget {
       initialRoute: ScreenSplash.routeName,
       routes: {
         LoginPage.routeName: (context) => const LoginPage(),
+        Home.routeName: (context) => Home(),
+
+        
         ScreenPerfil.routeName: (context) => const ScreenPerfil(),
-        ScreenHome.routeName: (context) => ScreenHome(),
+        // ScreenHome.routeName: (context) => ScreenHome(),
         ScreenLoginPin.routeName: (context) => const ScreenLoginPin(),
         ScreenFaceID_Huella.routeName: (context) => const ScreenFaceID_Huella(),
         ScreenSplash.routeName: (context) => const ScreenSplash(),

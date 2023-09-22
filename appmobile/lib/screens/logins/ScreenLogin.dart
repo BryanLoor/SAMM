@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
 import 'package:sammseguridad_apk/screens/ScreenHome.dart';
+import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 
 class LoginPage extends StatefulWidget {
@@ -121,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
       //   context,
       //   MaterialPageRoute(builder: (context) => ScreenHome()),
       // );
-      Navigator.popAndPushNamed(context, ScreenHome.routeName);
+      Navigator.popAndPushNamed(context, Home.routeName);
     } catch (e) {
       showCustomSnackBar(context, 'Error al iniciar sesión: $e', Colors.red);
       _usernameController.clear();
