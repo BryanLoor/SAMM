@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/homePage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/visitasPage.dart';
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
@@ -40,6 +42,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    // final visitasProvider = Provider.of<VisitasProvider>(context);
+    // if (!visitasProvider.hasFetchedData) {
+    //   visitasProvider.refreshvisitas(context,visitasProvider);
+    //   visitasProvider.hasFetchedData = true;
+    // }
     return Scaffold(
       appBar: CustomAppBar(),
       bottomNavigationBar: NavigationBar(
@@ -69,8 +76,21 @@ class _HomeState extends State<Home> {
         FloatingActionButton(
           onPressed: () {
             showModalBottomSheet(
+              isScrollControlled: true,
               context: context,
-              builder: (context) => ModalBottomCreateVisita(),
+              builder: (BuildContext context) {
+                return FractionallySizedBox(
+                  heightFactor: 0.75, // Ajusta este valor según tus necesidades.
+                  child: ModalBottomCreateVisita(
+                    cedula: '',
+                    nombre: '',
+                  ),
+                );
+              },
+              // builder: (context) => ModalBottomCreateVisita(
+              //   cedula: '',
+              //   nombre: '',
+              // ),
             );
           },
           child: Icon(Icons.add), // Icono del botón principal
@@ -78,6 +98,9 @@ class _HomeState extends State<Home> {
         : null,
       // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       body: PageView(
+        onPageChanged: (value) {
+          setIndex(value);
+        },
         controller: _pageController,
         children: _pages,
       ),

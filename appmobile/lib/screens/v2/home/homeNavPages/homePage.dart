@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/page/PageInfoSeguRonda.dart';
 import 'package:sammseguridad_apk/page/PageInfoUrbaSeguridad.dart';
 import 'package:sammseguridad_apk/page/QRView%20.dart';
+import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialRondas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
@@ -22,13 +24,18 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final visitasProvider = Provider.of<VisitasProvider>(context);
+    if (!visitasProvider.hasFetchedData) {
+      visitasProvider.refreshvisitas(context,visitasProvider);
+      visitasProvider.hasFetchedData = true;
+    }
 
-
-    final List<Visit> visitas = [
-      Visit(nombre: 'Juan', apellido: 'Perez', fecha: DateTime(2023, 9, 15)),
-      Visit(nombre: 'María', apellido: 'Gomez', fecha: DateTime(2023, 9, 10)),
-      Visit(nombre: 'Pedro', apellido: 'Rodriguez', fecha: DateTime(2023, 9, 5)),
-    ];
+    Future<List<Map<String, dynamic>>> visitas = Provider.of<VisitasProvider>(context).visitaListFuture;
+    // final List<Visit> visitas = [
+    //   Visit(nombre: 'Juan', apellido: 'Perez', fecha: DateTime(2023, 9, 15)),
+    //   Visit(nombre: 'María', apellido: 'Gomez', fecha: DateTime(2023, 9, 10)),
+    //   Visit(nombre: 'Pedro', apellido: 'Rodriguez', fecha: DateTime(2023, 9, 5)),
+    // ];
     final List<Visit> rondas = [
       Visit(nombre: 'Urb. Pacho Salas', apellido: 'Pablo Cedeno', fecha: DateTime(2023, 9, 15)),
       Visit(nombre: 'Urb. Villas del rey', apellido: 'Pablo Cedeno', fecha: DateTime(2023, 9, 10)),
@@ -59,8 +66,21 @@ class HomePage extends StatelessWidget {
                         //   ),
                         // );
                         showModalBottomSheet(
+                          isScrollControlled: true,
                           context: context,
-                          builder: (context) => ModalBottomCreateVisita(),
+                          builder: (BuildContext context) {
+                            return FractionallySizedBox(
+                              heightFactor: 0.75, // Ajusta este valor según tus necesidades.
+                              child: ModalBottomCreateVisita(
+                                cedula: '',
+                                nombre: '',
+                              ),
+                            );
+                          },
+                          // builder: (context) => ModalBottomCreateVisita(
+                          //   cedula: '',
+                          //   nombre: '',
+                          // ),
                         );
                       },
                       child: Text('crear visita'),
@@ -138,8 +158,21 @@ class HomePage extends StatelessWidget {
                         print(value);
               
                         showModalBottomSheet(
+                          isScrollControlled: true,
                           context: context,
-                          builder: (context) => ModalBottomCreateVisita(),
+                          builder: (BuildContext context) {
+                            return FractionallySizedBox(
+                              heightFactor: 0.75, // Ajusta este valor según tus necesidades.
+                              child: ModalBottomCreateVisita(
+                                cedula: '',
+                                nombre: '',
+                              ),
+                            );
+                          },
+                          // builder: (context) => ModalBottomCreateVisita(
+                          //   cedula: '',
+                          //   nombre: '',
+                          // ),
                         );
                       },
                       icon: Icon(Icons.add),
@@ -168,15 +201,36 @@ class HomePage extends StatelessWidget {
                     //   ),
                     // );
                   },
-                  child: Column(
-                    children: [
-                      for (var visita in visitas.take(3))
-                        ListTile(
-                          title: Text('${visita.nombre} ${visita.apellido}'),
-                          subtitle: Text('Fecha de visita: ${visita.fecha.toLocal()}'),
-                        ),
-                    ],
-                  ),
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: visitas, // Supongo que visitas es un Future<List<Map<String, dynamic>>>
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(); // Muestra un indicador de carga mientras se espera la respuesta.
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData) {
+                        return Text('No hay datos disponibles.');
+                      } else {
+                        final visitasList = snapshot.data!; // Obtén la lista de visitas.
+                        final primerasTresVisitas = visitasList.take(3); // Toma las primeras tres visitas.
+                        return ListView(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(), // Evita el desplazamiento
+                          children: [
+                            for (var visita in primerasTresVisitas)
+                              ListTile(
+                                title: Text('${visita['ApellidosVisitante']?.toString() ?? 'N/A'} ${visita['NombresVisitante']?.toString() ?? 'N/A'}'),
+                                subtitle: Text('FechaVisita: ${visita['FechaVisita']?.toString() ?? 'N/A'}'),
+                              ),
+                          ],
+                        );
+                      }
+                    },
+                  )
+
+                  // child: Text("Visitas"),
+
+
                 ),
               ),
               Divider(),

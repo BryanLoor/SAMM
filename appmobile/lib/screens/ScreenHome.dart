@@ -59,7 +59,10 @@ class ScreenHome extends StatelessWidget {
                         // );
                         showModalBottomSheet(
                           context: context,
-                          builder: (context) => ModalBottomCreateVisita(),
+                          builder: (context) => ModalBottomCreateVisita(
+                            cedula: '',
+                            nombre: '',
+                          ),
                         );
                       },
                       child: Text('crear visita'),
@@ -138,7 +141,10 @@ class ScreenHome extends StatelessWidget {
               
                         showModalBottomSheet(
                           context: context,
-                          builder: (context) => ModalBottomCreateVisita(),
+                          builder: (context) => ModalBottomCreateVisita(
+                            cedula: '',
+                            nombre: '',
+                          ),
                         );
                       },
                       icon: Icon(Icons.add),

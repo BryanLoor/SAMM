@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
+import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.dart';
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
@@ -15,55 +16,65 @@ class VisitasPage extends StatefulWidget {
   State<VisitasPage> createState() => _VisitasPage();
 }
 
-String token = "";
 
 
-class _VisitasPage extends State<VisitasPage> {
+class _VisitasPage extends State<VisitasPage>
+  with AutomaticKeepAliveClientMixin<VisitasPage> { // Agrega AutomaticKeepAliveClientMixin
+
+  @override
+  bool get wantKeepAlive => true; // Anula wantKeepAlive y devuelve true
+
   _VisitasPage() {
   print("VisitasPage constructor called");
 }
-  late Future<List<Map<String, dynamic>>> _visitaListFuture;
+  // late Future<List<Map<String, dynamic>>> _visitaListFuture;
   TabMenu tabMenuView = TabMenu.Personas;
-  bool _hasFetchedData = false; // Variable para controlar si los datos ya se han obtenido
+  // bool _hasFetchedData = false; // Variable para controlar si los datos ya se han obtenido
 
   @override
   void initState() {
     super.initState();
 
-    if (!_hasFetchedData) {
-      final mainProviderSave =
-          Provider.of<MainProvider>(context, listen: false);
-      final apiService = Provider.of<ApiService>(context, listen: false);
-
-      _visitaListFuture =
-          mainProviderSave.getPreferencesToken().then((dataToken) {
-        token = dataToken.toString();
-        mainProviderSave.updateToken(token);
-
-        return getVisitaList(apiService);
-      }).whenComplete(() {
-        // Marca que los datos han sido obtenidos
-        setState(() {
-          _hasFetchedData = true;
-        });
-      });
-    }
+    // if (!_hasFetchedData) {
+    //   refreshvisitas(Provider.of<VisitasProvider>(context, listen: false));
+    // }
   }
 
-  Future<List<Map<String, dynamic>>> getVisitaList(
-      ApiService apiService) async {
-    var response = await apiService.getData('/visitas/getAllBitacoraVisitas', token);
-    // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+  // Future<List<Map<String, dynamic>>> refreshvisitas(visitasProvider){
+  //   final mainProviderSave =
+  //         Provider.of<MainProvider>(context, listen: false);
+  //   final apiService = Provider.of<ApiService>(context, listen: false);
+  //   // final visitasProvider = Provider.of<VisitasProvider>(context);
 
-    // Verifica si la respuesta es una lista
-    if (response["data"] is List) {
-      // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
-      return response["data"].cast<Map<String, dynamic>>();
-    }
+  //   visitasProvider.visitaListFuture =
+  //       mainProviderSave.getPreferencesToken().then((dataToken) {
+  //     token = dataToken.toString();
+  //     mainProviderSave.updateToken(token);
 
-    // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-    throw Exception("Invalid data format");
-  }
+  //     return getVisitaList(apiService);
+  //   }).whenComplete(() {
+  //     // Marca que los datos han sido obtenidos
+  //     setState(() {
+  //       _hasFetchedData = true;
+  //     });
+  //   });
+  //   return visitasProvider.visitaListFuture;
+  // }
+
+  // Future<List<Map<String, dynamic>>> getVisitaList(
+  //     ApiService apiService) async {
+  //   var response = await apiService.getData('/visitas/getAllBitacoraVisitas', token);
+  //   // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+  //   // Verifica si la respuesta es una lista
+  //   if (response["data"] is List) {
+  //     // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+  //     return response["data"].cast<Map<String, dynamic>>();
+  //   }
+
+  //   // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+  //   throw Exception("Invalid data format");
+  // }
 
 
 
@@ -127,13 +138,37 @@ class _VisitasPage extends State<VisitasPage> {
                 ),
               trailing: PopupMenuButton(
                 onSelected: (value) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ScreenGenerarVisita(
-                        cedula: visita['IdentificacionVisitante'],
-                        nombre: '${visita['NombresVisitante']} ${visita['ApellidosVisitante']}',
-                      ),
-                    ),
+                  // Navigator.of(context).push(
+                  //   MaterialPageRoute(
+                  //     builder: (context) => ScreenGenerarVisita(
+                  //       cedula: visita['IdentificacionVisitante'],
+                  //       nombre: '${visita['NombresVisitante']} ${visita['ApellidosVisitante']}',
+                  //     ),
+                  //   ),
+                  // );
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   builder: (context) => ModalBottomCreateVisita(
+                  //     cedula: visita['IdentificacionVisitante'],
+                  //     nombre: '${visita['NombresVisitante']} ${visita['ApellidosVisitante']}',
+                  //   ),
+                  // );
+                  showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return FractionallySizedBox(
+                        heightFactor: 0.75, // Ajusta este valor según tus necesidades.
+                        child: ModalBottomCreateVisita(
+                          cedula: visita['IdentificacionVisitante'],
+                          nombre: '${visita['NombresVisitante']} ${visita['ApellidosVisitante']}',
+                        )
+                      );
+                    },
+                    // builder: (context) => ModalBottomCreateVisita(
+                    //   cedula: '',
+                    //   nombre: '',
+                    // ),
                   );
                   // ScreenGenerarVisita()
                   // print(value);
@@ -166,6 +201,10 @@ class _VisitasPage extends State<VisitasPage> {
 
   @override
   Widget build(BuildContext context) {
+    final visitasProvider = Provider.of<VisitasProvider>(context);
+    // if (!_hasFetchedData) {
+      // visitasProvider.refreshvisitas(context,visitasProvider);
+    // }
     // TabMenu tabMenuView = TabMenu.Personas;
     return Column(
       children: [
@@ -205,7 +244,7 @@ class _VisitasPage extends State<VisitasPage> {
         // SizedBox(height: 20.0),
         Expanded(
           child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: _visitaListFuture,
+            future: visitasProvider.visitaListFuture,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (tabMenuView == TabMenu.Historial) {

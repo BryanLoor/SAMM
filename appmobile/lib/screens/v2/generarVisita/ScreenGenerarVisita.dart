@@ -16,11 +16,11 @@ import 'package:sammseguridad_apk/widgets/Appbar.dart';
 
 
 class ScreenGenerarVisita extends StatefulWidget {
-  String cedula;
-  String nombre;
+  String widgetCedula;
+  String widgetNombre;
   ScreenGenerarVisita({
-    required this.cedula,
-    required this.nombre,
+    required this.widgetCedula,
+    required this.widgetNombre,
     Key? key
   }) : super(key: key);
 
@@ -31,14 +31,39 @@ class ScreenGenerarVisita extends StatefulWidget {
 String token = "";
 
 class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
+  bool cedulaIsFiled = false;
   final _formKey = GlobalKey<FormState>();
-  String cedula = '123456789';
-  String nombre = 'John Doe';
+  String stateCedula = '123456789';
+  String stateNombre = 'John Doe';
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   TextEditingController placaController = TextEditingController();
 
   String _qrData = "";
+
+
+  static const _fontSize = 20.0;
+  static const _paddingSize = 15.0;
+  static const _buttonFontSize = 18.0;
+  static const _sizedBoxHeight = 10.0;
+
+
+  TextStyle estiloAzul = TextStyle(
+    fontSize: 20, 
+    fontWeight: FontWeight.bold,
+    color: Colors.blue[900]
+  );
+  ButtonStyle  estiloboton = ElevatedButton.styleFrom(
+    primary: Colors.blue[900],
+    onPrimary: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+  );
+
+  bool _obscureText = true;
+
+  TextEditingController cedulaController = TextEditingController();
 
   // Map<String, dynamic> dataToSend = {
   //   'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
@@ -62,8 +87,14 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   @override
   void initState() {
     super.initState();
-    cedula = widget.cedula;
-    nombre = widget.nombre;
+    stateCedula = widget.widgetCedula;
+    stateNombre = widget.widgetNombre;
+    if (stateCedula.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(stateCedula)){
+      cedulaIsFiled = false;
+    }else{
+      cedulaIsFiled = true;
+    }
+    // cedulaController.text = widget.cedula;
     final mainProviderSave = Provider.of<MainProvider>(context, listen: false);
 
     mainProviderSave.getPreferencesToken().then((dataToken) {
@@ -92,21 +123,35 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
 
   GlobalKey _qrKey = GlobalKey();
 
-  Future<String> _downloadQRCode(GlobalKey qrKey) async {
-    RenderRepaintBoundary boundary =
-        qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    var image = await boundary.toImage();
-    ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
-    Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    // Guarda la imagen en el directorio temporal del dispositivo
-    final directory = await getTemporaryDirectory();
-    final imagePath = '${directory.path}/qr_code.png';
-    File imageFile = File(imagePath);
-    await imageFile.writeAsBytes(pngBytes);
+  Future<String?> _downloadQRCode(GlobalKey qrKey) async {
+    // Solicitar permisos de almacenamiento
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
 
-    return imageFile.path; // Retorna la ruta de la imagen
+    if (statuses[Permission.storage]?.isGranted ?? false) {
+      // Los permisos de almacenamiento fueron concedidos
+      RenderRepaintBoundary boundary =
+          qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      var image = await boundary.toImage();
+      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      // Guarda la imagen en el directorio temporal del dispositivo
+      final directory = await getTemporaryDirectory();
+      final imagePath = '${directory.path}/qr_code.png';
+      File imageFile = File(imagePath);
+      await imageFile.writeAsBytes(pngBytes);
+
+      return imageFile.path; // Retorna la ruta de la imagen
+    } else {
+      // Los permisos de almacenamiento fueron denegados, maneja esta situación de acuerdo a tu flujo de la aplicación
+      // Puedes mostrar un mensaje al usuario o realizar otras acciones necesarias.
+      return null;
+    }
   }
+
 
   void _sendQRCodeByEmail(String qrData) {
     // TODO: Implement send by email functionality
@@ -121,16 +166,16 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
       String formattedTime = DateFormat.Hm().format(DateTime.now());
       String qrData =
           // '${DateFormat('dd/MM/yyyy').format(_selectedDate)},${_selectedTime.format(context)},${_selectedDuration},${_idController.text},${_nameController.text},${_lastNameController.text},${_plateController.text}';
-          '${DateFormat('dd/MM/yyyy').format(selectedDate)},${selectedTime.format(context)},${selectedTime},${cedula},${nombre},${placaController.text}';
+          '${DateFormat('dd/MM/yyyy').format(selectedDate)},${selectedTime.format(context)},${selectedTime},${stateCedula},${stateNombre},${placaController.text}';
 
       Map<String, dynamic> data = {
         'date': formattedDate.toString(),
         'time': formattedTime.toString(),
         'duration': 100,
-        'cedula': cedula,
-        'nameVisitante': nombre.split("")[0],
+        'cedula': stateCedula,
+        'nameVisitante': stateNombre.split(" ")[0],
         'idUbicacion': 1,
-        'lastNameVisitante': nombre.split("")[1],
+        'lastNameVisitante': stateNombre.split(" ")[1]??" ",
         'idAnfitrion': mainProvider.response['Id'],
         'idVisitante': 0,
         'antecedentes': 0,
@@ -166,13 +211,16 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    child: BarcodeWidget(
-                      key: _qrKey,
-                      barcode: Barcode.qrCode(),
-                      data: qrData,
-                      width: 200,
-                      height: 200,
+                  RepaintBoundary(
+                    key: _qrKey,
+                    child: Container(
+                      child: BarcodeWidget(
+                        // key: _qrKey,
+                        barcode: Barcode.qrCode(),
+                        data: qrData,
+                        width: 200,
+                        height: 200,
+                      ),
                     ),
                   ),
                   SizedBox(height: 16),
@@ -188,12 +236,12 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                             ListTile(
                               leading: Icon(Icons.credit_card),
                               title: Text('Cédula'),
-                              subtitle: Text(cedula),
+                              subtitle: Text(stateCedula),
                             ),
                             ListTile(
                               leading: Icon(Icons.person),
                               title: Text('Nombres'),
-                              subtitle: Text(nombre),
+                              subtitle: Text(stateNombre),
                             ),
                             ListTile(
                               leading: Icon(Icons.calendar_today),
@@ -206,17 +254,6 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                               title: Text('Placa'),
                               subtitle: Text(placaController.text),
                             ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            // ListTile(
-                            //   leading: Icon(Icons.person),
-                            //   title: Text('Apellidos'),
-                            //   subtitle: Text(_lastNameController.text),
-                            // ),
                             ListTile(
                               leading: Icon(Icons.access_time),
                               title: Text('Hora'),
@@ -231,6 +268,28 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                           ],
                         ),
                       ),
+                      // Expanded(
+                      //   child: Column(
+                      //     children: [
+                      //       // ListTile(
+                      //       //   leading: Icon(Icons.person),
+                      //       //   title: Text('Apellidos'),
+                      //       //   subtitle: Text(_lastNameController.text),
+                      //       // ),
+                      //       ListTile(
+                      //         leading: Icon(Icons.access_time),
+                      //         title: Text('Hora'),
+                      //         subtitle:
+                      //             Text(DateFormat.Hm().format(DateTime.now())),
+                      //       ),
+                      //       ListTile(
+                      //         leading: Icon(Icons.timer),
+                      //         title: Text('Duración'),
+                      //         subtitle: Text('$selectedTime horas'),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],
@@ -241,7 +300,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                 icon: Icon(Icons.share),
                 onPressed: () async {
                   var imagePath = await _downloadQRCode(_qrKey);
-                  _shareQRData(qrData, imagePath);
+                  _shareQRData(qrData, imagePath??"");
                 },
               ),
               IconButton(
@@ -329,13 +388,20 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                   onChanged: (value) {
                     setState(() {
                       if (fieldName == 'Cédula') {
-                        cedula = value;
+                        stateCedula = value;
                       } else if (fieldName == 'Nombre') {
-                        nombre = value;
+                        stateNombre = value;
                       }
                     });
                   },
                 ),
+              ),
+              ElevatedButton(
+                style: estiloboton,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Guardar'),
               ),
             ],
           ),
@@ -348,94 +414,208 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   Widget build(BuildContext context) {
     final mainProvider = Provider.of<MainProvider>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
-    return Scaffold(
-      appBar: CustomAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: ListView(
-          children: [
-            Card(
-              child: Column(
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.person),
-                    )
-                  ),
-                  Center(
-                    child: Text("invitar a:")
-                  ),
-                  Center(
-                    child: Text(nombre)
-                  ),
-                  Center(
-                    child: Text(cedula)
-                  ),
-                ],
-              ),
-            ),
-            // ListTile(
-            //   title: Text('Cédula'),
-            //   subtitle: Text(cedula),
-            //   // trailing: IconButton(
-            //   //   icon: Icon(Icons.edit),
-            //   //   onPressed: () {
-            //   //     _editField('Cédula');
-            //   //   },
-            //   // ),
-            // ),
-            ListTile(
-              title: Text('Nombre'),
-              subtitle: Text(nombre),
-              trailing: IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () {
-                  _editField('Nombre');
-                },
-              ),
-            ),
-            ListTile(
-              title: Text('Fecha de Visita'),
-              subtitle: Text("${selectedDate.toLocal()}".split(' ')[0]),
-              trailing: IconButton(
-                icon: Icon(Icons.calendar_today),
-                onPressed: () {
-                  _selectDate(context);
-                },
-              ),
-            ),
-            ListTile(
-              title: Text('Hora de Ingreso'),
-              subtitle: Text("${selectedTime.format(context)}"),
-              trailing: IconButton(
-                icon: Icon(Icons.access_time),
-                onPressed: () {
-                  _selectTime(context);
-                },
-              ),
-            ),
-            ListTile(
-              title: Text('Placa'),
-              subtitle: TextField(
-                controller: placaController,
-                decoration: InputDecoration(
-                  hintText: 'Ej. ABC-123',
+    // return Scaffold(
+    //   appBar: CustomAppBar(),
+    //   body: Padding(
+      return Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ListView(
+            children: [
+
+
+              Center(
+                child: Text(
+                  'Invitar a un visitante',
+                  style: estiloAzul,
                 ),
               ),
-            ),
-            ElevatedButton.icon(
-              onPressed: () => _generateQRCode(mainProvider, apiService),
-              icon: Icon(Icons.filter_center_focus),
-              label: Text('Generar QR'),
-              // style: ElevatedButton.styleFrom(
-              //   primary: Color(0xff0040AE),
-              // ),
-            ),
-          ],
-        ),
+              SizedBox(height: 16.0),
 
-      ),
-    );
+              if (!cedulaIsFiled) ...[
+
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0), // Ajusta el valor para redondear más o menos
+                  color: Colors.white, // Color de fondo opcional
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: cedulaController,
+                    decoration: InputDecoration(
+                      hintText: 'Cedula *',
+                      border: InputBorder.none,
+                    ),validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, coloque su Cedula';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 16.0),
+
+
+              
+              // _buildTextField('Nombre', nombreController),
+              // _buildTextField('Apellido', apellidoController),
+              
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue[900],
+                    onPrimary: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    String cedulaescrita = cedulaController.text;
+                    // widget.cedula = cedulaController.text;
+
+                    // Validar la cédula
+                    if (cedulaescrita.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(cedulaescrita)) {
+                      // Si la cédula no tiene 10 dígitos o no son todos números, muestra un mensaje de error
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Error de Cédula'),
+                            content: Text('La cédula debe tener 10 dígitos y contener solo números.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      // Si la cédula es válida, puedes realizar la acción de invitar al usuario
+                      // print('Invitar a: $nombre $apellido (Cédula: $cedula)');
+                      // close the modal
+                      // Navigator.of(context).pop();
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ScreenGenerarVisita(
+                      //       cedula: cedula,
+                      //       nombre: "",
+                      //     ),
+                      //   ),
+                      // );
+                      setState(() {
+                        stateCedula = cedulaescrita;
+                        cedulaIsFiled = true;
+                      });
+                    }
+                  },
+
+                  child: Text(
+                    'verificar',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                ),
+              ),
+
+              ]
+              else ...[
+
+
+
+
+              Card(
+                child: Column(
+                  children: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(Icons.person),
+                      )
+                    ),
+                    Center(
+                      child: Text("invitar a:")
+                    ),
+                    Center(
+                      child: Text(stateNombre)
+                    ),
+                    Center(
+                      child: Text(stateCedula)
+                    ),
+                  ],
+                ),
+              ),
+              // ListTile(
+              //   title: Text('Cédula'),
+              //   subtitle: Text(cedula),
+              //   // trailing: IconButton(
+              //   //   icon: Icon(Icons.edit),
+              //   //   onPressed: () {
+              //   //     _editField('Cédula');
+              //   //   },
+              //   // ),
+              // ),
+              ListTile(
+                title: Text('Nombre *'),
+                subtitle: Text(stateNombre),
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    _editField('Nombre');
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text('Fecha de Visita'),
+                subtitle: Text("${selectedDate.toLocal()}".split(' ')[0]),
+                trailing: IconButton(
+                  icon: Icon(Icons.calendar_today),
+                  onPressed: () {
+                    _selectDate(context);
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text('Hora de Ingreso'),
+                subtitle: Text("${selectedTime.format(context)}"),
+                trailing: IconButton(
+                  icon: Icon(Icons.access_time),
+                  onPressed: () {
+                    _selectTime(context);
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text('Placa'),
+                subtitle: TextField(
+                  controller: placaController,
+                  decoration: InputDecoration(
+                    hintText: 'Ej. ABC-123',
+                  ),
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: stateNombre.length > 1 ? () {
+                  _generateQRCode(mainProvider, apiService);
+                }: null,
+                icon: Icon(Icons.filter_center_focus),
+                label: Text('Invitar'),
+                style: estiloboton
+              ),
+              ],
+            ],
+          ),
+      
+        ),
+      );
+    // );
   }
 }

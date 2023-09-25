@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
+import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHome.dart';
@@ -28,6 +29,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => MainProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => VisitasProvider(),
         ),
       ],
       child: const MyApp(),
