@@ -5,6 +5,7 @@ import Layout from "components/layout";
 import ModalVisita from "./modal-crear-visita";
 import { get, put } from "utils/services/api";
 import { Button } from "@mui/material";
+import ButtonExcelDownload from "components/ButtonExcelDownload";
 
 import ModalEditarVisita from "./modalEditarVisita";
 
@@ -199,6 +200,11 @@ const VisitasPage = () => {
       width: 150,
     },
     {
+      field: "IdentificacionAnfitrion",
+      headerName: "Identificacion Anfitrión",
+      width: 150,
+    },
+    {
       field: "IdentificacionVisitante",
       headerName: "Identificacion Visitante",
       width: 150,
@@ -263,6 +269,7 @@ const VisitasPage = () => {
     <Layout>
       <div style={{ marginTop: "25px", paddingBottom: "25px" }}>
         <ModalVisita getAllBitacoras={getAllBitacoras} />
+        <ButtonExcelDownload data={allBitacoraVisitas} />
       </div>
       <div
         style={{
