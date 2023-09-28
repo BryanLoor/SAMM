@@ -103,7 +103,8 @@ class _VisitasPage extends State<VisitasPage>
         shrinkWrap: true,
         itemCount: visitas.length,
         itemBuilder: (BuildContext context, int index) {
-          final visita = visitas[index];
+          final reversedIndex = visitas!.length - 1 - index;
+          final visita = visitas[reversedIndex];
     
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),

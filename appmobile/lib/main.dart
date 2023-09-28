@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
+import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
@@ -32,6 +33,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => VisitasProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RondasProvider(),
         ),
       ],
       child: const MyApp(),

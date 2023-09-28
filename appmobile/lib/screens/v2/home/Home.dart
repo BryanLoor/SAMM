@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/RondasPage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/homePage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/visitasPage.dart';
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
@@ -29,7 +30,7 @@ class _HomeState extends State<Home> {
     _pages = [
       HomePage(setIndex: setIndex),
       VisitasPage(),
-      Text('Rondas'),
+      RondasPage(),
     ];
   }
 

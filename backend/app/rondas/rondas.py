@@ -179,7 +179,10 @@ def crearRonda():
     db.session.add(ronda)
     db.session.commit()
 
-    return jsonify({"msg":"Ronda creada"}), 201
+    return jsonify({
+        "msg":"Ronda creada",
+        "IdRonda": ronda.Id
+        }), 201
 
 @bp.route('/editarRonda', methods=['POST'])
 @cross_origin()
