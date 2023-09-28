@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapsview.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/RondasPage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/homePage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/visitasPage.dart';
@@ -95,6 +96,16 @@ class _HomeState extends State<Home> {
             );
           },
           child: Icon(Icons.add), // Icono del botón principal
+        )
+        : _selectedIndex == 2?
+        FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MapView()),
+            );
+          },
+          child: Icon(Icons.map), // Icono del botón principal
         )
         : null,
       // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,

@@ -8,8 +8,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
-import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/CrearRonda.dart';
-import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/RondasList.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/MasOptions/CrearRonda.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/MasOptions/RondasList.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapstyle.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewController.dart';
 // import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/crearRonda.dart';
@@ -34,6 +34,12 @@ class MapViewState extends State<MapView> {
   void initState() {
     super.initState();
     mapviewcontroller.getCurrentLocation();
+  }
+
+  @override
+  void dispose() {
+    // mapviewcontroller.dispose();
+    super.dispose();
   }
 
   @override
@@ -136,26 +142,53 @@ class MapViewState extends State<MapView> {
     );
   }
 
-  ChangeNotifierProvider<MapviewController> _buildGoogleMap(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (context) => mapviewcontroller,
-        child: Consumer<MapviewController>(
-          builder: (context, mapviewcontroller, _) => GoogleMap(
-            zoomControlsEnabled: false,
-            mapType: MapType.normal,
-            initialCameraPosition: mapviewcontroller.cameraPosition,
-            markers: mapviewcontroller.markers,
-            myLocationEnabled: true,
-            // onTap: (argument) => mapviewcontroller.addPositionMarker(argument),
-            onMapCreated: (GoogleMapController controller) {
-              controller.setMapStyle(MapStyle.style);
-              _controller.complete(controller);
-            },
+  // ChangeNotifierProvider<MapviewController> _buildGoogleMap(BuildContext context) {
+  //   return ChangeNotifierProvider(
+  //       create: (context) => mapviewcontroller,
+  //       child: Consumer<MapviewController>(
+  //         builder: (context, mapviewcontroller, _) => 
+  //         GoogleMap(
+  //           zoomControlsEnabled: false,
+  //           mapType: MapType.normal,
+  //           initialCameraPosition: mapviewcontroller.cameraPosition,
+  //           markers: mapviewcontroller.markers,
+  //           myLocationEnabled: true,
+  //           // onTap: (argument) => mapviewcontroller.addPositionMarker(argument),
+  //           onMapCreated: (GoogleMapController controller) {
+  //             controller.setMapStyle(MapStyle.style);
+  //             _controller.complete(controller);
+  //           },
               
-          ),
-        ),
-      );
+  //         ),
+  //       ),
+  //     );
+  // }
+  Widget _buildGoogleMap(BuildContext context) {
+    return Consumer<MapviewController>(
+      builder: (context, mapviewcontroller, _) => GoogleMap(
+        zoomControlsEnabled: false,
+        mapType: MapType.normal,
+        initialCameraPosition: mapviewcontroller.cameraPosition,
+        markers: mapviewcontroller.markers,
+        // circles: Set<Circle>.of([
+        //   Circle(
+        //     circleId: CircleId('radius_circle'), // ID único para el círculo
+        //     center: LatLng(-2.1196965,-79.9110527), // Coordenadas del centro del círculo
+        //     radius: 20, // Radio en metros (ejemplo: 1000 metros = 1 km)
+        //     fillColor: Colors.blue.withOpacity(0.2), // Color del relleno
+        //     strokeColor: Colors.blue, // Color del borde
+        //     strokeWidth: 2, // Ancho del borde
+        //   ),
+        // ]),
+        myLocationEnabled: true,
+        onMapCreated: (GoogleMapController controller) {
+          controller.setMapStyle(MapStyle.style);
+          _controller.complete(controller);
+        },
+      ),
+    );
   }
+
 
   BottomNavigationBar _buildNavBar() {
     return BottomNavigationBar(items: [

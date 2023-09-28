@@ -6,7 +6,7 @@ import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.d
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
-import 'package:sammseguridad_apk/widgets/Drawer.dart';
+// import 'package:sammseguridad_apk/widgets/Drawer.dart';
 import 'package:sammseguridad_apk/widgets/TwoColumnsWidget.dart';
 
 class VisitasPage extends StatefulWidget {

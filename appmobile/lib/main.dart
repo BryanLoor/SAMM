@@ -10,6 +10,7 @@ import 'package:sammseguridad_apk/screens/ScreenPerfil.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenFaceID_Huella.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenLogin.dart';
 import 'package:sammseguridad_apk/screens/crear/ScreenCreascuenta.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewController.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 
 import 'screens/logins/ScreenLoginPin.dart';
@@ -37,6 +38,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => RondasProvider(),
         ),
+        // ChangeNotifierProvider(
+        //   create: (_) => MapviewController(),
+        // ),
       ],
       child: const MyApp(),
     ),

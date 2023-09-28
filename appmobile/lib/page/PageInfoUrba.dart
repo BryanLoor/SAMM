@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
-import 'package:sammseguridad_apk/widgets/Drawer.dart';
+// import 'package:sammseguridad_apk/widgets/Drawer.dart';
 
 class PageInfoUrba extends StatelessWidget {
   @override
