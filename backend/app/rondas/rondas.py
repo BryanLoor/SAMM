@@ -27,7 +27,7 @@ from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto
 def getAllRondas():
     
     query = (
-        db.session.query(SAMM_Ronda, Persona, SAMM_Ubicacion,SAMM_Estados)
+        db.session.query(SAMM_Ronda, Persona, SAMM_Ubicacion,SAMM_Estados,SAMM_Usuario)
         .join(SAMM_Usuario, SAMM_Ronda.IdUsuarioSupervisor == SAMM_Usuario.Id, isouter=True)
         .join(Persona, SAMM_Usuario.IdPersona == Persona.Id, isouter=True)
         .join(SAMM_Ubicacion, SAMM_Ronda.IdUbicacion == SAMM_Ubicacion.Id, isouter=True)
@@ -44,7 +44,28 @@ def getAllRondas():
         "IdUbicacion": q.SAMM_Ronda.IdUbicacion,
         "NameUbicacion": q.SAMM_Ubicacion.Descripcion if q.SAMM_Ubicacion else None,
         "FechaCreacion": q.SAMM_Ronda.FechaCreacion,
-        "FechaModifica": q.SAMM_Ronda.FechaModifica
+        "FechaModifica": q.SAMM_Ronda.FechaModifica,
+        "Ubicacion":{
+            'id': q.SAMM_Ubicacion.Id,
+            'codigo': q.SAMM_Ubicacion.Codigo,
+            'tipo': q.SAMM_Ubicacion.Tipo,
+            'descripcion': q.SAMM_Ubicacion.Descripcion,
+            'fecha_crea': q.SAMM_Ubicacion.FechaCrea.strftime('%d-%m-%Y'),
+            'hora_crea': q.SAMM_Ubicacion.FechaCrea.strftime('%H:%M:%S'),
+            'codigo_usuario_crea': q.SAMM_Ubicacion.UsuarioCrea,
+            'fecha_modifica': q.SAMM_Ubicacion.FechaModifica.strftime('%d-%m-%Y'),
+            'hora_modifica': q.SAMM_Ubicacion.FechaModifica.strftime('%H:%M:%S'),
+            'codigo_usuario_modifica': q.SAMM_Ubicacion.UsuarioModifica,
+            'estado': q.SAMM_Ubicacion.Estado
+        },
+        "Supervisor":{
+            'Id': q.Persona.Id,
+            "IdUsuario": q.SAMM_Usuario.Id,
+            'Identificacion': q.Persona.Identificacion,
+            'Nombres' : q.Persona.Nombres,
+            'Apellidos' : q.Persona.Apellidos
+            
+        }
     }
     for q in query
 ]
@@ -52,38 +73,137 @@ def getAllRondas():
 
     return jsonify({"data":schema}), 200
 
-#obtener info de un ronda especifica por su id
-@bp.route('/getRonda/<int:idRonda>', methods=['GET'])
+
+#Trae todas las ubicaciones(es la misma que esta en visitas)
+@bp.route('/getUbicaciones', methods=['GET'])
 @cross_origin()
 @jwt_required()
-def getRonda(idRonda):
+def getUbicaciones():
+    try:
+        # Definir una función para procesar los resultados del join
+        def procesar_resultados(ubicaciones):
+            resultados = []
+            for ubicacion in ubicaciones:
+                resultados.append({
+                    'id': ubicacion.Id,
+                    'codigo': ubicacion.Codigo,
+                    'tipo': ubicacion.Tipo,
+                    'descripcion': ubicacion.Descripcion,
+                    'fecha_crea': ubicacion.FechaCrea.strftime('%d-%m-%Y'),
+                    'hora_crea': ubicacion.FechaCrea.strftime('%H:%M:%S'),
+                    'codigo_usuario_crea': ubicacion.CodigoUsCrea,
+                    'fecha_modifica': ubicacion.FechaModifica.strftime('%d-%m-%Y'),
+                    'hora_modifica': ubicacion.FechaModifica.strftime('%H:%M:%S'),
+                    'codigo_usuario_modifica': ubicacion.CodigoUsMod,
+                    'estado': ubicacion.Estado
+                })
+            return resultados
+        
+        usuario_creador_alias = db.aliased(SAMM_Usuario)
+        usuario_modificador_alias = db.aliased(SAMM_Usuario)
+
+        # Realizar el join
+        ubicaciones = db.session.query(SAMM_Ubicacion.Id,
+                                    SAMM_Ubicacion.Codigo,
+                                    SAMM_Ubicacion.Tipo,
+                                    SAMM_Ubicacion.Descripcion,
+                                    SAMM_Ubicacion.FechaCrea,
+                                    usuario_creador_alias.Codigo.label("CodigoUsCrea"),
+                                    SAMM_Ubicacion.FechaModifica,
+                                    usuario_modificador_alias.Codigo.label("CodigoUsMod"),
+                                    SAMM_Ubicacion.Estado
+                                   ) \
+            .join(usuario_creador_alias, SAMM_Ubicacion.UsuarioCrea == usuario_creador_alias.Id) \
+            .join(usuario_modificador_alias, SAMM_Ubicacion.UsuarioModifica == usuario_modificador_alias.Id) \
+            .all()
+
+        # Procesar los resultados
+        resultados = procesar_resultados(ubicaciones)
+
+        return jsonify(resultados), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+    
+
+#Obtener los supervisores anfitriones que pertenecen a cierta ubicacion
+@bp.route('/getSupervisoresxUbicacion/<int:idUbicacion>', methods=['GET'])
+@cross_origin()
+@jwt_required()
+def getSupervisoresxUbicacion(idUbicacion):
 
     query = (
-        db.session.query(SAMM_Ronda_Punto,SAMM_Ronda, Persona,SAMM_Estados)
-        .join(SAMM_Ronda, SAMM_Ronda.Id == SAMM_Ronda_Punto.Id)
-        .join(SAMM_Usuario, SAMM_Ronda_Punto.UsuModifica == SAMM_Usuario.Id, isouter=True)
-        .join(Persona, SAMM_Usuario.IdPersona == Persona.Id, isouter=True)
-        .join(SAMM_Estados, SAMM_Ronda_Punto.Estado == SAMM_Estados.Id)
-        .filter(SAMM_Ronda_Punto.IdRonda == idRonda)
+        db.session.query(Persona,SAMM_Usuario)
+        .join(SAMM_Usuario, SAMM_Usuario.IdPersona == Persona.Id)
+        .join(SAMM_UbiUsuario, SAMM_Usuario.Id == SAMM_UbiUsuario.IdUsuario)
+        .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
+        .filter(SAMM_UbiUsuario.EsAnfitrion == True, SAMM_Ubicacion.Id == idUbicacion, SAMM_Usuario.Estado == "A", SAMM_Usuario.IdPerfil == 4)
         .all()
     )
 
-    schema = [
+    schema= [
         {
-        "Id" :q.SAMM_Ronda_Punto.Id,
-        "IdRonda" : q.SAMM_Ronda_Punto.IdRonda,
-        "Orden" : q.SAMM_Ronda_Punto.Orden,
-        "Coordenada" : q.SAMM_Ronda_Punto.Coordenada,
-        "Descripcion": q.SAMM_Ronda_Punto.Descripcion,
-        "Estado" : q.SAMM_Ronda_Punto.Estado,
-        "NameEstado" : q.SAMM_Estados.Descripcion,   
-        "FechaCreacion" : q.SAMM_Ronda_Punto.FechaCreacion,
-        "UsuCreacion": q.SAMM_Ronda_Punto.UsuCreacion,
-        "FechaModificacion" : q.SAMM_Ronda_Punto.FechaModificacion,
-        "UsuModifica": q.SAMM_Ronda_Punto.UsuModifica,
-        "NameUsuModifica":f"{q.Persona.Nombres} {q.Persona.Apellidos}" if q.Persona else None
-
+            'Id': q.Persona.Id,
+            "IdUsuario": q.SAMM_Usuario.Id,
+            'Identificacion': q.Persona.Identificacion,
+            'Nombres' : q.Persona.Nombres,
+            'Apellidos' : q.Persona.Apellidos
         }
         for q in query
     ]
-    return jsonify({"data":schema}),200
+
+    return jsonify(schema),200
+
+
+@bp.route('/crearRonda', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def crearRonda():
+    
+    currentUserID =  get_jwt_identity() #CODIGO usuario
+    idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
+
+    ronda = SAMM_Ronda()
+
+    ronda.Desripcion = request.json['Desripcion']
+    ronda.Estado = 0
+    ronda.IdUbicacion = request.json['IdUbicacion']
+    ronda.FechaCreacion = datetime.now()
+    ronda.UsuCreacion = idUsuario[0]
+    ronda.FechaModifica = datetime.now()
+    ronda.UsuModifica = idUsuario[0]
+    ronda.IdUsuarioSupervisor = request.json['IdUsuarioSupervisor']
+
+   
+   
+   
+    db.session.add(ronda)
+    db.session.commit()
+
+    return jsonify({"msg":"Ronda creada"}), 201
+
+@bp.route('/editarRonda', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def editarRonda():
+    
+    currentUserID =  get_jwt_identity() #CODIGO usuario
+    idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
+
+    IdRonda = request.json["IdRonda"]
+
+    ronda = db.session.query(SAMM_Ronda).filter(SAMM_Ronda.Id == IdRonda).first()
+
+    ronda.Desripcion = request.json['Desripcion']
+    ronda.Estado = 0
+    ronda.IdUbicacion = request.json['IdUbicacion']
+    ronda.FechaModifica = datetime.now()
+    ronda.UsuModifica = idUsuario[0]
+    ronda.IdUsuarioSupervisor = request.json['IdUsuarioSupervisor']
+
+   
+   
+   
+    db.session.add(ronda)
+    db.session.commit()
+
+    return jsonify({"msg":"Ronda actualizada"}), 201

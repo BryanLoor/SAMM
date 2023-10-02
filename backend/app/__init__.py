@@ -38,6 +38,9 @@ def create_app(config_class=Config):
 
     from app.rondas import bp as rondas_bp
     app.register_blueprint(rondas_bp, url_prefix='/rondas')
+
+    from app.rondaPunto import bp as rondaPunto_bp
+    app.register_blueprint(rondaPunto_bp, url_prefix='/rondaPunto')
     
     @app.route('/')
     def index():
