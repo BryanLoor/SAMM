@@ -30,9 +30,9 @@ class _RondasListState extends State<RondasList> {
     ApiService apiService = Provider.of<ApiService>(context);
     // MapviewController mapviewController = Provider.of<MapviewController>(context);
     return DraggableScrollableSheet(
-      initialChildSize: 0.1,
+      initialChildSize: 1,
       minChildSize: 0.1,
-      maxChildSize: 0.4,
+      maxChildSize: 1,
       builder: (context, scrollController) => Container(
 
         decoration: BoxDecoration(
@@ -80,9 +80,11 @@ class _RondasListState extends State<RondasList> {
                         setState(() {
                           selectedIndex = index;
                         });
+                        rondasProvider.selectedItem = item!;
                         var listarondas = await rondasProvider.getRondaPoints(apiService, id.toString());
                         final positionList = await setRondasPoint(listarondas);
                         widget.mapviewController.setMarkersByPositionList(positionList);
+                        // widget.mapviewController.menuselection = 4;
                         // mover la camara hacia el punto seleccionado
                         // widget.mapviewController.cameraPosition = CameraPosition(
                         //   target: positionList[0],
@@ -95,6 +97,8 @@ class _RondasListState extends State<RondasList> {
                             positionList[0]
                           );
 
+                        }else {
+                          // rondasProvider.cleanSelectedItem();
                         }
                           
                       },

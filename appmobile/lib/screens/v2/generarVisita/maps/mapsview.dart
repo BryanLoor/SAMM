@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/MasOptions/CrearRonda.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/MasOptions/RealizarRecorrido.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/MasOptions/RondaSeleccionada.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/MasOptions/RondasList.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapstyle.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewController.dart';
@@ -44,6 +46,7 @@ class MapViewState extends State<MapView> {
 
   @override
   Widget build(BuildContext context) {
+    RondasProvider rondasprovider = Provider.of<RondasProvider>(context);
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text('Rondas'),
@@ -72,8 +75,18 @@ class MapViewState extends State<MapView> {
                 controller: _controller,
                 mapviewController: mapviewcontroller,
               ),
-              if (mapviewcontroller.menuselection == 3)
+              if (mapviewcontroller.menuselection == 3 || mapviewcontroller.menuselection == 2)
               CrearRonda(
+                controller: _controller,
+                mapviewController: mapviewcontroller,
+              ),
+              if (mapviewcontroller.menuselection == 1)
+              RealizarRecorrido(
+                controller: _controller,
+                mapviewController: mapviewcontroller,
+              ),
+              if (mapviewcontroller.menuselection == 4)
+              RondaSeleccionada(
                 controller: _controller,
                 mapviewController: mapviewcontroller,
               ),
@@ -81,7 +94,7 @@ class MapViewState extends State<MapView> {
                 right: 0,   // Para alinear a la derecha
                 bottom: 0,
                 // bottom: MediaQuery.of(context).size.height / 2, // Para alinear en el centro verticalmente
-                child: acciones(),
+                child: acciones(rondasprovider),
               ),
             ], 
           ),
@@ -91,7 +104,7 @@ class MapViewState extends State<MapView> {
     );
   }
 
-  PopupMenuButton acciones() {
+  PopupMenuButton acciones(rondasprovider) {
     return PopupMenuButton(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -118,14 +131,22 @@ class MapViewState extends State<MapView> {
           child: Text("Rondas"),
           value: 0,
         ),
-        PopupMenuItem(
+
+
+        if(rondasprovider.hasSelectedItem)
+        const PopupMenuItem(
           child: Text("Realizar Recorrido"),
           value: 1,
         ),
+
+
+        if(rondasprovider.hasSelectedItem)
         PopupMenuItem(
           child: Text("Editar Ronda"),
           value: 2,
         ),
+
+
         PopupMenuItem(
           child: Text("Crear Ronda"),
           value: 3,
@@ -134,8 +155,11 @@ class MapViewState extends State<MapView> {
       onSelected: (value) {
         setState(() {
           print("value: $value");
-          mapviewcontroller.cleanMarkers();
-          mapviewcontroller.menuselection = value;
+          if (value == 0 || value == 3) {
+            rondasprovider.cleanSelectedItem();
+            mapviewcontroller.cleanMarkers();
+          }
+            mapviewcontroller.menuselection = value;
           
         });
       },

@@ -34,9 +34,9 @@ class _CrearRondaState extends State<CrearRonda> {
     
     // MapviewController mapviewController = Provider.of<MapviewController>(context);
     return DraggableScrollableSheet(
-      initialChildSize: 0.4,
+      initialChildSize: 0.25,
       minChildSize: 0.1,
-      maxChildSize: 0.4,
+      maxChildSize: 0.25,
       builder: (context, scrollController) => Container(
 
         decoration: BoxDecoration(
@@ -59,7 +59,7 @@ class _CrearRondaState extends State<CrearRonda> {
             controller: scrollController,
             children: [
               ElevatedButton.icon(
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.add_location_alt_outlined),
                 label: const Text("Agregar Punto"),
                 onPressed: () {
                   widget.mapviewController.addMyPosition();
@@ -107,6 +107,7 @@ class _CrearRondaState extends State<CrearRonda> {
                             // final List<LatLng> posiciones = widget.mapviewController.markers.map(
                             //   (marker) => marker.position
                             // ).toList();
+                            //TODO: ver como hacer para editar tambien la ronda desde aqui
                             //TODO: esos 1 s se llenan con algo no se con que
                             rondasProvider.GenerarYenviarNuevaRonda(
                               apiService,

@@ -6,7 +6,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 class RondasProvider with ChangeNotifier {
   // String token = "";
   // rondaSelected
-  int rondaselected = 0;
+  // int rondaselected = 0;
+  Map<String, dynamic> _selectedItem = {};
+  Map<String, dynamic> get selectedItem => _selectedItem;
+  set selectedItem(Map<String, dynamic> item) {
+    _selectedItem = item;
+    notifyListeners();
+  }
+
+  void cleanSelectedItem() {
+    _selectedItem = {};
+    notifyListeners();
+  }
+
+  bool get hasSelectedItem => _selectedItem.isNotEmpty;
+
 
   Future<List<Map<String, dynamic>>> getRondasList(
       ApiService apiService) async {
@@ -15,7 +29,7 @@ class RondasProvider with ChangeNotifier {
     var token = sharedPreferences.getString("token") ?? "";
     var response = await apiService.getData('/rondas/getAllRondas', token);
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
-
+    print(response);
     // Verifica si la respuesta es una lista
     if (response["data"] is List) {
       // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>

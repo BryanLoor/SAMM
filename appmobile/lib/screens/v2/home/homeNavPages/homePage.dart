@@ -54,72 +54,72 @@ class HomePage extends StatelessWidget {
                 child: Center(child: Text("Ubicacion - cuenta")),
               ),
               SizedBox.square(dimension: 10.0),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TwoColumnsWidget(
-                  listaDeWidgets: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (context) => ScreenGenerarVisita(),
-                        //   ),
-                        // );
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return FractionallySizedBox(
-                              heightFactor: 0.75, // Ajusta este valor según tus necesidades.
-                              child: ModalBottomCreateVisita(
-                                cedula: '',
-                                nombre: '',
-                              ),
-                            );
-                          },
-                          // builder: (context) => ModalBottomCreateVisita(
-                          //   cedula: '',
-                          //   nombre: '',
-                          // ),
-                        );
-                      },
-                      child: Text('crear visita'),
-                    ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TwoColumnsWidget(
+              //     listaDeWidgets: [
+              //       ElevatedButton(
+              //         onPressed: () {
+              //           // Navigator.of(context).push(
+              //           //   MaterialPageRoute(
+              //           //     builder: (context) => ScreenGenerarVisita(),
+              //           //   ),
+              //           // );
+              //           showModalBottomSheet(
+              //             isScrollControlled: true,
+              //             context: context,
+              //             builder: (BuildContext context) {
+              //               return FractionallySizedBox(
+              //                 heightFactor: 0.75, // Ajusta este valor según tus necesidades.
+              //                 child: ModalBottomCreateVisita(
+              //                   cedula: '',
+              //                   nombre: '',
+              //                 ),
+              //               );
+              //             },
+              //             // builder: (context) => ModalBottomCreateVisita(
+              //             //   cedula: '',
+              //             //   nombre: '',
+              //             // ),
+              //           );
+              //         },
+              //         child: Text('crear visita'),
+              //       ),
                     
                     
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ScreenHistorialRondas(),
-                          ),
-                        );
-                      },
-                      child: Text('historial rondas'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => PageInfoSeguRonda(),
-                          ),
-                        );
-                      },
-                      child: Text('seguridad rondas'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => QRViewExample(),
-                          ),
-                        );
-                      },
-                      child: Text('QR'),
-                    ),
-                  ],
-                ),
-              ),
+              //       ElevatedButton(
+              //         onPressed: () {
+              //           Navigator.of(context).push(
+              //             MaterialPageRoute(
+              //               builder: (context) => ScreenHistorialRondas(),
+              //             ),
+              //           );
+              //         },
+              //         child: Text('historial rondas'),
+              //       ),
+              //       ElevatedButton(
+              //         onPressed: () {
+              //           Navigator.of(context).push(
+              //             MaterialPageRoute(
+              //               builder: (context) => PageInfoSeguRonda(),
+              //             ),
+              //           );
+              //         },
+              //         child: Text('seguridad rondas'),
+              //       ),
+              //       ElevatedButton(
+              //         onPressed: () {
+              //           Navigator.of(context).push(
+              //             MaterialPageRoute(
+              //               builder: (context) => QRViewExample(),
+              //             ),
+              //           );
+              //         },
+              //         child: Text('QR'),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -194,7 +194,7 @@ class HomePage extends StatelessWidget {
                         return Text('No hay datos disponibles.');
                       } else {
                         final visitasList = snapshot.data!; // Obtén la lista de visitas.
-                        final primerasTresVisitas = visitasList.take(3); // Toma las primeras tres visitas.
+                        final primerasTresVisitas = visitasList.take(7); // Toma las primeras tres visitas.
                         return ListView(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(), // Evita el desplazamiento
@@ -218,57 +218,57 @@ class HomePage extends StatelessWidget {
               Divider(),
 
               
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("Rondas", style: 
-                  TextStyle(
-                    fontSize: 20, 
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900]),
-                ),
-              ),
-              Card(
-                margin: EdgeInsets.all(10.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ScreenHistorialRondas(),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      for (var ronda in rondas.take(3))
-                        ListTile(
-                          title: Text('${ronda.nombre}'),
-                          subtitle: Text('supervisor:${ronda.apellido} - Fecha: ${ronda.fecha.toLocal()}'),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                margin: EdgeInsets.all(10.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ScreenHistorialVisitas(),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      for (var ronda in rondas.take(3))
-                        ListTile(
-                          title: Text('${ronda.nombre}'),
-                          subtitle: Text('supervisor:${ronda.apellido} - Fecha: ${ronda.fecha.toLocal()}'),
-                        ),
-                    ],
-                  ),
-                ),
-              )
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text("Rondas", style: 
+              //     TextStyle(
+              //       fontSize: 20, 
+              //       fontWeight: FontWeight.bold,
+              //       color: Colors.blue[900]),
+              //   ),
+              // ),
+              // Card(
+              //   margin: EdgeInsets.all(10.0),
+              //   child: InkWell(
+              //     onTap: () {
+              //       Navigator.of(context).push(
+              //         MaterialPageRoute(
+              //           builder: (context) => ScreenHistorialRondas(),
+              //         ),
+              //       );
+              //     },
+              //     child: Column(
+              //       children: [
+              //         for (var ronda in rondas.take(3))
+              //           ListTile(
+              //             title: Text('${ronda.nombre}'),
+              //             subtitle: Text('supervisor:${ronda.apellido} - Fecha: ${ronda.fecha.toLocal()}'),
+              //           ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // Card(
+              //   margin: EdgeInsets.all(10.0),
+              //   child: InkWell(
+              //     onTap: () {
+              //       Navigator.of(context).push(
+              //         MaterialPageRoute(
+              //           builder: (context) => ScreenHistorialVisitas(),
+              //         ),
+              //       );
+              //     },
+              //     child: Column(
+              //       children: [
+              //         for (var ronda in rondas.take(3))
+              //           ListTile(
+              //             title: Text('${ronda.nombre}'),
+              //             subtitle: Text('supervisor:${ronda.apellido} - Fecha: ${ronda.fecha.toLocal()}'),
+              //           ),
+              //       ],
+              //     ),
+              //   ),
+              // )
 
             ],
           )

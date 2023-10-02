@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -26,6 +28,7 @@ class MapviewController with ChangeNotifier{
   }
 
   Future<void> goTo(GoogleMapController controller,LatLng coordenada) async {
+    menuselection = 4;
     _CameraPosition = CameraPosition(
       target: coordenada,
       zoom: 17.0,
@@ -46,6 +49,10 @@ class MapviewController with ChangeNotifier{
 
   void addMarker(Marker marker){
     _markers[marker.markerId] = marker;
+    notifyListeners();
+  }
+  void removeMarker(MarkerId markerId){
+    _markers.remove(markerId);
     notifyListeners();
   }
 
@@ -149,5 +156,41 @@ class MapviewController with ChangeNotifier{
     } 
 
     return await Geolocator.getCurrentPosition();
+  }
+
+  double calcularDistanciaHaversine(LatLng punto1, LatLng punto2) {
+    const double radioTierra = 6371000; // Radio de la Tierra en metros
+    double latitud1 = punto1.latitude;
+    double longitud1 = punto1.longitude;
+    double latitud2 = punto2.latitude;
+    double longitud2 = punto2.longitude;
+
+    double dLat = (latitud2 - latitud1) * (pi / 180);
+    double dLon = (longitud2 - longitud1) * (pi / 180);
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(latitud1 * (pi / 180)) *
+            cos(latitud2 * (pi / 180)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return radioTierra * c;
+  }
+
+  bool estaCercaDeUnMarcador(LatLng  ubicacion, Set<Marker> markers,double distanciaMinima) {
+    for (Marker marker in markers) {
+      double distancia = calcularDistanciaHaversine(
+        ubicacion,
+        marker.position,
+      );
+
+      if (distancia < distanciaMinima) {
+        removeMarker(marker.markerId);
+        return true;
+      }
+    }
+    return false;
   }
 }
