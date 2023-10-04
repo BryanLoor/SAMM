@@ -5,7 +5,32 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapviewController with ChangeNotifier{
-  final Map<MarkerId,Marker> _markers = {};
+  Map<MarkerId,Marker> _markers = {};
+
+  Marker _markerSelected = Marker(
+    markerId: MarkerId(''),
+    position: LatLng(0, 0),
+    icon: BitmapDescriptor.defaultMarkerWithHue(200),
+    infoWindow: InfoWindow(
+      title: '',
+      snippet: '',
+    ),
+  );
+
+  Marker get markerSelected => _markerSelected;
+  set markerSelected(Marker newMarkerSelected){
+    _markerSelected = newMarkerSelected;
+    notifyListeners();
+  }
+
+  bool _cercaDeunPunto = false;
+
+  bool get cercaDeunPunto => _cercaDeunPunto;
+
+  set cercaDeunPunto(bool newCercaDeunPunto){
+    _cercaDeunPunto = newCercaDeunPunto;
+    notifyListeners();
+  }
   
   CameraPosition _CameraPosition = CameraPosition(
     target: LatLng(-2.0187734,-78.886048), // Coordenadas iniciales en (0, 0)
@@ -54,6 +79,13 @@ class MapviewController with ChangeNotifier{
   void removeMarker(MarkerId markerId){
     _markers.remove(markerId);
     notifyListeners();
+  }
+
+  void replaceMarker(MarkerId markerId,Marker newMarker){
+    _markers.remove(markerId);
+    addMarker(newMarker);
+    // _markers[markerId] = newMarker;
+    // notifyListeners();
   }
 
   List<LatLng> getMarkersPositionList(){
@@ -179,18 +211,95 @@ class MapviewController with ChangeNotifier{
     return radioTierra * c;
   }
 
-  bool estaCercaDeUnMarcador(LatLng  ubicacion, Set<Marker> markers,double distanciaMinima) {
+  bool estaCercaDeUnMarcador(LatLng ubicacion,Set<Marker> markers, double distanciaMinima) {
+    _cercaDeunPunto = false;
+    final BitmapDescriptor azul = BitmapDescriptor.defaultMarkerWithHue(200);
+    final BitmapDescriptor rojo = BitmapDescriptor.defaultMarkerWithHue(0);
+    final BitmapDescriptor amarillo = BitmapDescriptor.defaultMarkerWithHue(50);
+    final BitmapDescriptor verde = BitmapDescriptor.defaultMarkerWithHue(100);
+
     for (Marker marker in markers) {
       double distancia = calcularDistanciaHaversine(
         ubicacion,
         marker.position,
       );
-
-      if (distancia < distanciaMinima) {
-        removeMarker(marker.markerId);
-        return true;
+      // print("aun sin comprovacion");
+      // print(marker.icon.toJson().toString());
+      // print(verde.toJson().toString());
+      // print(marker.icon.toString() == azul.toString());
+      
+      
+      if (marker.icon.toJson().toString() == verde.toJson().toString()) {
+        // print("Caso cuando el icono es verde (Hue = 100)");
+        // Caso cuando el icono es verde (Hue = 100)
+      } else if (marker.icon.toString() == amarillo.toString()) {
+        if (distancia < distanciaMinima) {
+          _cercaDeunPunto = true;
+          _markerSelected = marker;
+          // Caso cuando el icono es amarillo (Hue = 50) y la distancia es menor que la distancia mínima
+        } else {
+          // Caso cuando el icono es amarillo (Hue = 50) pero la distancia es mayor o igual a la distancia mínima
+          replaceMarker(
+            marker.markerId,
+            marker.copyWith(
+              iconParam: BitmapDescriptor.defaultMarkerWithHue(0), // Cambiar a Rojo (Hue = 0)
+            ),
+          );
+        }
+      } 
+      if (marker.icon.toJson().toString() == rojo.toJson().toString()) {
+        // print("solo rojo");
+        if (distancia < distanciaMinima) {
+          // print("Caso cuando el icono es rojo (Hue = 0) y la distancia es menor que la distancia mínima");
+          // Caso cuando el icono es rojo (Hue = 0) y la distancia es menor que la distancia mínima
+          _cercaDeunPunto = true;
+          _markerSelected = marker;
+          replaceMarker(
+            marker.markerId,
+            marker.copyWith(
+              iconParam: BitmapDescriptor.defaultMarkerWithHue(50), // Cambiar a Amarillo (Hue = 50)
+            ),
+          );
+        }
+        
       }
+      if(marker.icon.toJson().toString() == azul.toJson().toString()){
+        // print("Caso cuando el icono es azul (Hue = 200)");
+          // Caso cuando el icono es azul (Hue = 200)
+        replaceMarker(
+          marker.markerId,
+          marker.copyWith(
+            iconParam: BitmapDescriptor.defaultMarkerWithHue(0), // Cambiar a Amarillo (Hue = 50)
+          ),
+        );
+      }
+
+
     }
-    return false;
+    
+    notifyListeners();
+    return _cercaDeunPunto;
+  }
+
+
+
+  void repintarMarkers(){
+    _markers.forEach((key, value) {
+      replaceMarker(
+        key,
+        value.copyWith(
+          iconParam: BitmapDescriptor.defaultMarkerWithHue(0),
+        ),
+      );
+    });
+  }
+
+  void registrarMarkerComoVisitado() {
+    replaceMarker(
+      _markerSelected.markerId,
+      _markerSelected.copyWith(
+        iconParam: BitmapDescriptor.defaultMarkerWithHue(100),//verde
+      ),
+    );
   }
 }

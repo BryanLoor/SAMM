@@ -31,7 +31,8 @@ class _HomeState extends State<Home> {
     _pages = [
       HomePage(setIndex: setIndex),
       VisitasPage(),
-      RondasPage(),
+      // RondasPage(),
+      MapView(),
     ];
   }
 
@@ -97,17 +98,21 @@ class _HomeState extends State<Home> {
           },
           child: Icon(Icons.add), // Icono del botón principal
         )
-        : _selectedIndex == 2?
-        FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MapView()),
-            );
-          },
-          child: Icon(Icons.map), // Icono del botón principal
-        )
         : null,
+        // : _selectedIndex == 2?
+        // FloatingActionButton(
+        //   onPressed: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (context) => MapView(
+        //         // initialMenuselection: 0,
+        //         // initialMarkersPositionList: [],
+        //       )),
+        //     );
+        //   },
+        //   child: Icon(Icons.map), // Icono del botón principal
+        // )
+        // : null,
       // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       body: PageView(
         onPageChanged: (value) {

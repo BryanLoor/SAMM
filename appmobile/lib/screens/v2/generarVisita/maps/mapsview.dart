@@ -47,22 +47,10 @@ class MapViewState extends State<MapView> {
   @override
   Widget build(BuildContext context) {
     RondasProvider rondasprovider = Provider.of<RondasProvider>(context);
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Rondas'),
-      //   actions: [
-      //     IconButton(
-      //       onPressed: () {},
-      //       icon: const Icon(Icons.search),
-      //     ),
-      //     IconButton(
-      //       onPressed: () {},
-      //       icon: const Icon(Icons.more_vert),
-      //     ),
-      //   ],
-      // ),
-      appBar: CustomAppBar(),
-      body: ChangeNotifierProvider(
+    // return Scaffold(
+    //   appBar: CustomAppBar(),
+    //   body: ChangeNotifierProvider(
+      return ChangeNotifierProvider(
         create: (context) => mapviewcontroller,
         child: Consumer<MapviewController>(
           builder: (context, mapviewcontroller, _) => Stack(
@@ -99,9 +87,10 @@ class MapViewState extends State<MapView> {
             ], 
           ),
         )
-      ),
+      );
+      // ),
       // bottomNavigationBar: _buildNavBar(),
-    );
+    // );
   }
 
   PopupMenuButton acciones(rondasprovider) {
