@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
-import 'package:sammseguridad_apk/widgets/Drawer.dart';
+// import 'package:sammseguridad_apk/widgets/Drawer.dart';
 
 class QRViewExample extends StatefulWidget {
   @override

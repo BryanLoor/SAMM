@@ -3,8 +3,11 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:http/http.dart';
+
 class ApiService {
   final String _baseUrl = 'http://10.0.2.2:5000'; //local
+  // final String _baseUrl = 'http://192.168.100.5'; //local
   // final String _baseUrl = 'http://198.38.89.240:8035'; //produccionGrowthly
 
   //ip para tlf http://10.0.2.2:5000
@@ -31,20 +34,31 @@ class ApiService {
   }
 
   Future<dynamic> getData(String endpoint, String jwtToken) async {
-    var url = Uri.parse(_baseUrl + endpoint);
-    http.Response response = await http.get(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $jwtToken",
-      },
-    );
+    try {
+      var url = Uri.parse(_baseUrl + endpoint);
+      http.Response response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $jwtToken",
+        },
+      );
 
-    if (response.statusCode == 200) {
-      log(response.body.toString());
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Fallo al cargar datos');
+      if (response.statusCode == 200) {
+        // log(response.body.toString());+
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Fallo al cargar datos: ${response.statusCode}');
+      }
+    } on ClientException catch (e) {
+      // Manejar el error de conexión cerrada inesperadamente
+      print('Error de conexión: $e');
+      return {};
+      // throw Exception('Fallo de conexión: $e');
+    } catch (e) {
+      // Manejar otros errores
+      print('Error desconocido: $e');
+      throw Exception('Error desconocido: $e');
     }
   }
 

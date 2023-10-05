@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
 import 'package:sammseguridad_apk/screens/ScreenHome.dart';
+import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 
 class LoginPage extends StatefulWidget {
@@ -107,6 +108,7 @@ class _LoginPageState extends State<LoginPage> {
       var response = await _apiService.postData(endpoint, data, jwtToken);
       if (response['access_token'] != null) {
         _mainProvider.updateToken(response['access_token']);
+        _mainProvider.response=response;
       }
     } catch (e) {
       throw Exception('Fallo metodo posteo de Api Service: $e');
@@ -120,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
       //   context,
       //   MaterialPageRoute(builder: (context) => ScreenHome()),
       // );
-      Navigator.popAndPushNamed(context, ScreenHome.routeName);
+      Navigator.popAndPushNamed(context, Home.routeName);
     } catch (e) {
       showCustomSnackBar(context, 'Error al iniciar sesión: $e', Colors.red);
       _usernameController.clear();

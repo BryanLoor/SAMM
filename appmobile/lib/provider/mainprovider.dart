@@ -9,11 +9,28 @@ class MainProvider extends ChangeNotifier {
 
   bool get isAuth => _token.isNotEmpty;
 
+
+  Map<String,dynamic> _response = {};
+
+  Map<String,dynamic> get response => _response;
+
+  set response(Map<String,dynamic> newResponse) {
+    _response = newResponse;
+    // save_response(_response.toString());
+    notifyListeners();
+  }
+
   set token(String newToken) {
     _token = newToken;
     updateToken(_token);
     notifyListeners();
   }
+
+  // Future<void> save_response(String response) async{
+  //   // prefs = await SharedPreferences.getInstance();
+  //   // await prefs.setString("response", response);
+
+  // }
 
   Future<void> updateToken(String token) async {
     prefs = await SharedPreferences.getInstance();
