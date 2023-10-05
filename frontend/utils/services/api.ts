@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 //const API_URL = 'https://flask-production-f285.up.railway.app';
-const API_URL = 'http://127.0.0.1:5000';
+// const API_URL = 'http://127.0.0.1:5000';
+const API_URL = "http://198.38.89.240:8035/"
 // Create an Axios instance with default headers
 const axiosInstance = axios.create({
     baseURL: API_URL,
