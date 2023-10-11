@@ -18,6 +18,8 @@ from app.models.SAMM_Estaddos import SAMM_Estados
 
 from app.models.SAMM_Ronda import SAMM_Ronda
 from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto
+from app.models.SAMM_Ronda_Detalle import SAMM_Ronda_Detalle
+from app.models.SAMM_Ronda_Usuario import SAMM_Ronda_Usuario
 
 #pensado para admin y supervisor
 
@@ -210,3 +212,117 @@ def editarRonda():
     db.session.commit()
 
     return jsonify({"msg":"Ronda actualizada"}), 201
+
+
+@bp.route('/guardarPuntoRealizado', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def guardarPuntoRealizado():
+    
+    currentUserID =  get_jwt_identity() #CODIGO usuario
+    idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
+
+    IdRonda = request.json["IdRonda"]
+
+    rondaDetalle = SAMM_Ronda_Detalle()
+
+    rondaDetalle.IdUsuario = idUsuario[0]
+    rondaDetalle.IdRonda = IdRonda
+    rondaDetalle.Estado = 0
+    rondaDetalle.IdPuntoRonda = request.json['IdPuntoRonda']
+    rondaDetalle.Codigo = request.json['Codigo']
+    rondaDetalle.Descripcion = request.json['Descripcion']
+    rondaDetalle.FotoURL = request.json['FotoURL']
+
+   
+    db.session.add(rondaDetalle)
+    db.session.commit()
+
+    return jsonify({
+        "msg":"punto registrado",
+        "IdRonda": rondaDetalle.Id
+        }), 201
+
+
+@bp.route('/guardarRondaRealizadaXUsuario', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def guardarRondaRealizadaXUsuario():
+    
+    currentUserID =  get_jwt_identity() #CODIGO usuario
+    idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
+
+    IdRonda = request.json["IdRonda"]
+
+    rondaUsuario = SAMM_Ronda_Usuario()
+
+    rondaUsuario.IdUsuario = idUsuario[0]
+    rondaUsuario.IdRonda = IdRonda
+    rondaUsuario.Estado = 0
+    rondaUsuario.FechaCrea = datetime.now()
+    rondaUsuario.UsuCrea = idUsuario[0]
+    rondaUsuario.FechaMod = datetime.now()
+    rondaUsuario.UsuMod = idUsuario[0]
+
+   
+    db.session.add(rondaUsuario)
+    db.session.commit()
+
+    return jsonify({
+        "msg":"Ronda creada",
+        "IdRonda": rondaUsuario.Id
+        }), 201
+
+
+
+# @bp.route('/getMisRondas', methods=['GET'])
+# @cross_origin()
+# @jwt_required()
+# def getMisRondas():
+    
+#     query = (
+#         db.session.query(SAMM_Ronda, Persona, SAMM_Ubicacion,SAMM_Estados,SAMM_Usuario)
+#         .join(SAMM_Usuario, SAMM_Ronda.IdUsuarioSupervisor == SAMM_Usuario.Id, isouter=True)
+#         .join(Persona, SAMM_Usuario.IdPersona == Persona.Id, isouter=True)
+#         .join(SAMM_Ubicacion, SAMM_Ronda.IdUbicacion == SAMM_Ubicacion.Id, isouter=True)
+#         .join(SAMM_Estados, SAMM_Ronda.Estado == SAMM_Estados.Id)
+#         .all()
+#         )
+    
+#     schema = [
+#         {
+#             "Id": q.SAMM_Ronda.Id,
+#             "IdUsuarioSupervisor": q.SAMM_Ronda.IdUsuarioSupervisor,
+#             "NombreSupervisor": f"{q.Persona.Nombres} {q.Persona.Apellidos}" if q.Persona else None,
+#             "Estado": q.SAMM_Estados.Descripcion,
+#             "IdUbicacion": q.SAMM_Ronda.IdUbicacion,
+#             "NameUbicacion": q.SAMM_Ubicacion.Descripcion if q.SAMM_Ubicacion else None,
+#             "FechaCreacion": q.SAMM_Ronda.FechaCreacion,
+#             "FechaModifica": q.SAMM_Ronda.FechaModifica,
+#             "Ubicacion":{
+#                 'id': q.SAMM_Ubicacion.Id,
+#                 'codigo': q.SAMM_Ubicacion.Codigo,
+#                 'tipo': q.SAMM_Ubicacion.Tipo,
+#                 'descripcion': q.SAMM_Ubicacion.Descripcion,
+#                 'fecha_crea': q.SAMM_Ubicacion.FechaCrea.strftime('%d-%m-%Y'),
+#                 'hora_crea': q.SAMM_Ubicacion.FechaCrea.strftime('%H:%M:%S'),
+#                 'codigo_usuario_crea': q.SAMM_Ubicacion.UsuarioCrea,
+#                 'fecha_modifica': q.SAMM_Ubicacion.FechaModifica.strftime('%d-%m-%Y'),
+#                 'hora_modifica': q.SAMM_Ubicacion.FechaModifica.strftime('%H:%M:%S'),
+#                 'codigo_usuario_modifica': q.SAMM_Ubicacion.UsuarioModifica,
+#                 'estado': q.SAMM_Ubicacion.Estado
+#             },
+#             "Supervisor":{
+#                 'Id': q.Persona.Id,
+#                 "IdUsuario": q.SAMM_Usuario.Id,
+#                 'Identificacion': q.Persona.Identificacion,
+#                 'Nombres' : q.Persona.Nombres,
+#                 'Apellidos' : q.Persona.Apellidos
+                
+#             }
+#         }
+#         for q in query
+#     ]
+
+
+#     return jsonify({"data":schema}), 200

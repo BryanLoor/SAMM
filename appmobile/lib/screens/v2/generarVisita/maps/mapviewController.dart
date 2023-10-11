@@ -98,6 +98,25 @@ class MapviewController with ChangeNotifier{
     ).toList();
   }
 
+  Future<void> addPositionMarkerWithId(LatLng position,String id) async {
+    final markerId = MarkerId(id);
+    final marker = Marker(
+      markerId: markerId,
+      position: position,
+      // icon: await BitmapDescriptor.fromAssetImage(
+      //   ImageConfiguration(),
+      //   'assets/images/marker.png',
+      // ),
+      icon:BitmapDescriptor.defaultMarkerWithHue(200),
+      infoWindow: InfoWindow(
+        title: markerId.value,
+        snippet: '*',
+      ),
+    );
+    addMarker(marker);
+  }
+
+
   Future<void> addPositionMarker(LatLng position) async {
     final markerId = MarkerId(position.toString());
     final marker = Marker(
@@ -121,12 +140,46 @@ class MapviewController with ChangeNotifier{
     notifyListeners();
   }
 
-  void setMarkersByPositionList(List<LatLng> positionList) {
+  // void setMarkersByPositionList(List<LatLng> positionList) {
+  List<LatLng> setMarkersByPositionList(List<Map<String, dynamic>> listarondas) {
     cleanMarkers();
-    positionList.forEach((position) {
-      addPositionMarker(position);
+    List<LatLng> latLngList = [];
+    final data = listarondas;
+    data.forEach((e) {
+      final coordenadaSplit = e["Coordenada"].split(',');
+      if (coordenadaSplit.length == 2) {
+        final lat = double.tryParse(coordenadaSplit[0]);
+        final lng = double.tryParse(coordenadaSplit[1]);
+        final markid = e["Id"];
+        if (lat != null && lng != null) {
+          latLngList.add(LatLng(lat, lng));
+          addPositionMarkerWithId(LatLng(lat, lng), markid.toString());
+        }
+      }
     });
+    return latLngList;
+    // latLngList.forEach((position) {
+    //   addPositionMarker(position);
+    // });
   }
+
+  // Future<List<LatLng>> setRondasPoint(List<Map<String, dynamic>> listarondas) async {
+  //   final data = await listarondas;
+  //   List<LatLng> latLngList = [];
+
+  //   data.forEach((e) {
+  //     final coordenadaSplit = e["Coordenada"].split(',');
+  //     if (coordenadaSplit.length == 2) {
+  //       final lat = double.tryParse(coordenadaSplit[0]);
+  //       final lng = double.tryParse(coordenadaSplit[1]);
+  //       if (lat != null && lng != null) {
+  //         latLngList.add(LatLng(lat, lng));
+  //       }
+  //     }
+  //   });
+
+  //   return latLngList;
+  // }
 
   Future<CameraPosition> getCurrentLocation() async {
     try {
