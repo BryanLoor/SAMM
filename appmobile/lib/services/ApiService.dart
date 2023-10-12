@@ -59,6 +59,8 @@ class ApiService {
     } catch (e) {
       // Manejar otros errores
       print('Error desconocido: $e');
+      // lanzar sbackbar
+      
       throw Exception('Error desconocido: $e');
     }
   }

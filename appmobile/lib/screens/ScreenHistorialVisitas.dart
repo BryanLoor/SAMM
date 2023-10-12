@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
+import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 // import 'package:sammseguridad_apk/widgets/Drawer.dart';
@@ -25,29 +26,16 @@ class _ScreenHistorialVisitasState extends State<ScreenHistorialVisitas> {
       final mainProviderSave =
           Provider.of<MainProvider>(context, listen: false);
       final apiService = Provider.of<ApiService>(context, listen: false);
+      final visitasProvider = Provider.of<VisitasProvider>(context, listen: false);
 
       _visitaListFuture =
           mainProviderSave.getPreferencesToken().then((dataToken) {
         token = dataToken.toString();
         mainProviderSave.updateToken(token);
 
-        return getVisitaList(apiService);
+        return visitasProvider.getVisitaList(apiService);
       });
     }
-  }
-
-  Future<List<Map<String, dynamic>>> getVisitaList(
-      ApiService apiService) async {
-    var response = await apiService.getData('/visitas/getAllBitacoraVisitas', token);
-
-    // Verifica si la respuesta es una lista
-    if (response["data"] is List) {
-      // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
-      return response["data"].cast<Map<String, dynamic>>();
-    }
-
-    // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-    throw Exception("Invalid data format");
   }
 
   Widget _buildTable(List<Map<String, dynamic>> visitas) {

@@ -32,45 +32,63 @@ class RondasProvider with ChangeNotifier {
 
 
   Future<List<Map<String, dynamic>>> getRondasList(
-      ApiService apiService) async {
-    // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
-    var sharedPreferences = await SharedPreferences.getInstance();
-    var token = sharedPreferences.getString("token") ?? "";
-    var response = await apiService.getData('/rondas/getAllRondas', token);
-    // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
-    // print(response);
-    // Verifica si la respuesta es una lista
-    if (response["data"] is List) {
-      // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
-      // return response["data"].cast<Map<String, dynamic>>();
-      var RondasMaps = response["data"].cast<Map<String, dynamic>>();
+      ApiService apiService
+  ) async {
+    List<Map<String, dynamic>> RondasMaps = [];
+
+    try{
+      // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
+      var sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString("token") ?? "";
+      var response = await apiService.getData('/rondas/getAllRondas', token);
+      // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+      // print(response);
+      // Verifica si la respuesta es una lista
+      if (response["data"] is List) {
+        // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+        // return response["data"].cast<Map<String, dynamic>>();
+        RondasMaps = response["data"].cast<Map<String, dynamic>>();
+      }
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      print(e);
+    }finally{
       return RondasMaps;
     }
 
-    // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-    throw Exception("Invalid data format");
   }
 
 
   Future<List<Map<String, dynamic>>> getRondaPoints(
-      ApiService apiService,String rondaID) async {
-    // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
-    var sharedPreferences = await SharedPreferences.getInstance();
-    var token = sharedPreferences.getString("token") ?? "";
-    var response = await apiService.getData('/rondaPunto/getRondaPuntosxRonda/$rondaID', token);
-    // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+      ApiService apiService,String rondaID
+  ) async {
+    
+    List<Map<String, dynamic>> puntos = [];
+    
+    try{
+      var sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString("token") ?? "";
+      var response = await apiService.getData('/rondaPunto/getRondaPuntosxRonda/$rondaID', token);
+      // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
 
-    // Verifica si la respuesta es una lista
-    if (response["data"] is List) {
-      // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
-      // return response["data"].cast<Map<String, dynamic>>();
-      var puntos = response["data"].cast<Map<String, dynamic>>();
-      ItemPuntos = puntos;
+      // Verifica si la respuesta es una lista
+      if (response["data"] is List) {
+        // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+        // return response["data"].cast<Map<String, dynamic>>();
+        puntos = response["data"].cast<Map<String, dynamic>>();
+        ItemPuntos = puntos;
+      }
+
+      
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      print(e);
+    }finally{
       return puntos;
     }
-
-    // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-    throw Exception("Invalid data format");
+    // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
   }
 
 

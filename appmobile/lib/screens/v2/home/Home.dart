@@ -31,8 +31,8 @@ class _HomeState extends State<Home> {
     _pages = [
       HomePage(setIndex: setIndex),
       VisitasPage(),
-      // RondasPage(),
-      MapView(),
+      RondasPage(),
+      // MapView(),
     ];
   }
 
@@ -45,11 +45,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // final visitasProvider = Provider.of<VisitasProvider>(context);
-    // if (!visitasProvider.hasFetchedData) {
-    //   visitasProvider.refreshvisitas(context,visitasProvider);
-    //   visitasProvider.hasFetchedData = true;
-    // }
     return Scaffold(
       appBar: CustomAppBar(),
       bottomNavigationBar: NavigationBar(

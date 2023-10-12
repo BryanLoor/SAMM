@@ -20,30 +20,8 @@ class _PageInfoSeguRondaState extends State<PageInfoSeguRonda> {
   @override
   void initState() {
     super.initState();
-    // final mainProviderSave = Provider.of<MainProvider>(context, listen: false);
-    // final apiService = Provider.of<ApiService>(context, listen: false);
-
-    // _personasListFuture =
-    //     mainProviderSave.getPreferencesToken().then((dataToken) {
-    //   token = dataToken.toString();
-    //   mainProviderSave.updateToken(token);
-
-    //   return getPersonasList(apiService);
-    // });
   }
 
-  // Future<List<Map<String, dynamic>>> getPersonasList(
-  //     ApiService apiService) async {
-  //   var response = await apiService.getData('/visitas/personas/Guardia', token);
-
-  //   if (response is Map<String, dynamic>) {
-  //     if (response['personas'] is List) {
-  //       return response['personas'].cast<Map<String, dynamic>>();
-  //     }
-  //   }
-
-  //   throw Exception("Invalid data format");
-  // }
 
   @override
   Widget build(BuildContext context) {
