@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
         
       ),
       debugShowCheckedModeBanner: false,
-      title: 'SAMM',
+      title: 'SAM',
       initialRoute: ScreenSplash.routeName,
       routes: {
         LoginPage.routeName: (context) => const LoginPage(),

@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ScreenWelcom.dart';
+import 'logins/ScreenLogin.dart';
+import 'v2/home/Home.dart';
 
 class ScreenSplash extends StatefulWidget {
   static const String routeName = '/splash';
@@ -17,12 +20,24 @@ class _ScreenSplashState extends State<ScreenSplash> {
   void initState() {
     super.initState();
 
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const ScreenWelcome()),
-      );
+    Timer(const Duration(seconds: 2), () {
+    //   Navigator.pushReplacementNamed(context, LoginPage.routeName);
+    //   // Navigator.pushReplacement(
+    //   //   context,
+    //   //   MaterialPageRoute(builder: (context) => const LoginPage()),
+    //   // );
+      verifySession();
     });
+  }
+
+  void verifySession() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null) {
+      Navigator.pushReplacementNamed(context, Home.routeName);
+    } else {
+      Navigator.pushReplacementNamed(context, LoginPage.routeName);
+    }
   }
 
   @override
@@ -69,7 +84,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
                 CircularProgressIndicator(),
                 SizedBox(height: 20),
                 Text(
-                  'SAMM',
+                  'SAM',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 255, 255, 255),

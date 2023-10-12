@@ -77,6 +77,41 @@ def login():
         return jsonify(response_data), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+
+
+@app.route('/get_user_data', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def get_user_data():
+    try:
+        current_user = get_jwt_identity()
+        # Verifica que el usuario correspondiente al token actual exista en tu base de datos o sistema.
+        # Puedes buscar el usuario por su código de usuario (en este caso, el campo 'Codigo' en los datos del usuario).
+        usuario = (
+            db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado, SAMM_Usuario.Id) 
+            .join(Persona, SAMM_Usuario.IdPersona == Persona.Id) 
+            .join(SAMM_Rol, SAMM_Usuario.IdPerfil == SAMM_Rol.Id)
+            .filter(SAMM_Usuario.Codigo == current_user)
+            .first()
+        )
+
+        if usuario is None:
+            return jsonify({'message': 'Usuario no encontrado'}), 404
+
+        response_data = {
+            "Codigo": usuario[0],
+            "Nombres": usuario[2],
+            "Apellidos": usuario[3],
+            "Descripcion": usuario[4],
+            "Estado": usuario[5],
+            "Id": usuario[6]
+        }
+
+        return jsonify(response_data), 200
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
     
 
 @app.route('/loginPin', methods=['POST'])

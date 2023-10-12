@@ -53,6 +53,7 @@ class ApiService {
     } on ClientException catch (e) {
       // Manejar el error de conexión cerrada inesperadamente
       print('Error de conexión: $e');
+      throw Exception('Error de conexión: $e');
       return {};
       // throw Exception('Fallo de conexión: $e');
     } catch (e) {

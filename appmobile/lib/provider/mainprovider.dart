@@ -1,9 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:sammseguridad_apk/screens/logins/LoginResponse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainProvider extends ChangeNotifier {
   static late SharedPreferences prefs;
   String _token = "";
+
+  Map<String, dynamic> _userinfo = {};
+
+  Map<String, dynamic> get userinfo => _userinfo;
+
+  set userinfo(Map<String, dynamic> newuserinfo) {
+    _userinfo = newuserinfo;
+    notifyListeners();
+  }
 
   String get token => _token;
 
@@ -31,11 +43,61 @@ class MainProvider extends ChangeNotifier {
   //   // await prefs.setString("response", response);
 
   // }
+  Future<void> updateUserInfo(LoginResponse loginResponse) async {
+    // print(userinfo.toString());
+    prefs = await SharedPreferences.getInstance();
+    await prefs.setString("Apellidos", loginResponse.apellidos);
+    await prefs.setString("Codigo", loginResponse.codigo);
+    await prefs.setString("Descripcion", loginResponse.descripcion);
+    await prefs.setString("Estado", loginResponse.estado);
+    await prefs.setInt("Id", loginResponse.id);
+    await prefs.setString("Nombres", loginResponse.nombres);
+    await prefs.setString("access_token", loginResponse.accessToken);
+
+  }
+
+  Future<LoginResponse> getUserInfo() async {
+    prefs = await SharedPreferences.getInstance();
+    final apellidos = prefs.getString("Apellidos");
+    final codigo = prefs.getString("Codigo");
+    final descripcion = prefs.getString("Descripcion");
+    final estado = prefs.getString("Estado");
+    final id = prefs.getInt("Id");
+    final nombres = prefs.getString("Nombres");
+    final accessToken = prefs.getString("access_token");
+    // print(userInfoString);
+    if (accessToken != null) {
+      final usInfo = LoginResponse(
+        apellidos: apellidos ?? "",
+        codigo: codigo ?? "",
+        descripcion: descripcion ?? "",
+        estado: estado ?? "",
+        id: id ?? 0,
+        nombres: nombres ?? "",
+        accessToken: accessToken ?? "",
+      );
+      return usInfo;
+      // return <String, dynamic>{};
+    } else {
+      // Manejo de caso en el que no se encuentra la información del usuario en las preferencias
+      return LoginResponse(
+        apellidos: "",
+        codigo: "",
+        descripcion: "",
+        estado: "",
+        id: 0,
+        nombres: "",
+        accessToken: "",
+      );
+    }
+  }
+
 
   Future<void> updateToken(String token) async {
     prefs = await SharedPreferences.getInstance();
     await prefs.setString("token", token);
   }
+
 
   Future<String> getPreferencesToken() async {
     try {
@@ -58,3 +120,13 @@ class MainProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+// {
+//   "Apellidos": "Choez Velez",
+//   "Codigo": "admin",
+//   "Descripcion": "Administrador",
+//   "Estado": "A",
+//   "Id": 1,
+//   "Nombres": "Richard Michael",
+//   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NzA2MTk4MCwianRpIjoiYmM4N2VmMGUtNzdhMS00ZjUzLWJmNDYtNDQ4ZjAzNzQyYTJhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNjk3MDYxOTgwLCJleHAiOjE2OTcwOTc5ODB9.PzC9NKMTq7qmKv53gVToNRx4rmt3QwkecEYytcEJjxU"
+// }

@@ -11,7 +11,7 @@ class ExtendedFabButton extends StatelessWidget {
         child: FloatingActionButton.extended(
           onPressed: () {
             // Acción cuando se hace clic en el botón
-            print('Botón presionado');
+            // print('Botón presionado');
           },
           label: Text('Botón'),
           icon: Icon(Icons.star), // Cambia esto por el icono que desees

@@ -188,14 +188,14 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
       };
 
       try {
-        print('Data: $data');
+        // print('Data: $data');
         var response =
             await apiService.postData('/visitas/registraVisita', data, token);
-        print('Data: $data');
+        // print('Data: $data');
 
-        print(response);
+        // print(response);
       } catch (e) {
-        print('Failed to post data: $e');
+        // print('Failed to post data: $e');
       }
 
       setState(() {
@@ -317,7 +317,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                   if (status.isGranted) {
                     _downloadQRCode(_qrKey);
                   } else {
-                    print("Permission denied.");
+                    // print("Permission denied.");
                   }
                 },
               ),

@@ -38,7 +38,7 @@ class RondasProvider with ChangeNotifier {
     var token = sharedPreferences.getString("token") ?? "";
     var response = await apiService.getData('/rondas/getAllRondas', token);
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
-    print(response);
+    // print(response);
     // Verifica si la respuesta es una lista
     if (response["data"] is List) {
       // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
