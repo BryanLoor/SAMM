@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -10,17 +11,23 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 class ScreenGenerarVisita extends StatefulWidget {
   String widgetCedula;
   String widgetNombre;
+  String widgetApellido;
+  
   ScreenGenerarVisita({
     required this.widgetCedula,
     required this.widgetNombre,
+    required this.widgetApellido,
+
     Key? key
   }) : super(key: key);
 
@@ -33,8 +40,9 @@ String token = "";
 class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   bool cedulaIsFiled = false;
   final _formKey = GlobalKey<FormState>();
-  String stateCedula = '123456789';
-  String stateNombre = 'John Doe';
+  String stateCedula = '';
+  String stateNombre = '';
+  String stateApellido = '';
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   TextEditingController placaController = TextEditingController();
@@ -46,6 +54,8 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   static const _paddingSize = 15.0;
   static const _buttonFontSize = 18.0;
   static const _sizedBoxHeight = 10.0;
+  late List<dynamic> ubicaciones =[];
+  final ApiService _apiService = ApiService();
 
 
   TextStyle estiloAzul = TextStyle(
@@ -64,6 +74,10 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   bool _obscureText = true;
 
   TextEditingController cedulaController = TextEditingController();
+  TextEditingController ubicacionController = TextEditingController();
+  Map<String,dynamic> ubicacionSelected = {};
+
+  
 
   // Map<String, dynamic> dataToSend = {
   //   'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
@@ -83,12 +97,24 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   //   // 'lastName': _lastNameController.text,
   //   'placa': "N/A",
   // };
-
+Future<void> getUbicaciones() async {
+    try {
+      const String url = "/visitas/getUbicaciones";
+      String response = await _apiService.getDataJson(url, token);
+      setState(() {
+        
+        ubicaciones = jsonDecode(response);
+      });
+    } catch (e) {
+      print('Error al obtener datos: $e');
+    }
+  }
   @override
   void initState() {
     super.initState();
     stateCedula = widget.widgetCedula;
     stateNombre = widget.widgetNombre;
+    stateApellido = widget.widgetApellido;
     if (stateCedula.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(stateCedula)){
       cedulaIsFiled = false;
     }else{
@@ -103,6 +129,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
         mainProviderSave.updateToken(token);
       });
     });
+    getUbicaciones();
   }
 
   void _shareQRData(String qrData, String imagePath) async {
@@ -117,7 +144,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   void _copyQRDataToClipboard(String qrData) {
     Clipboard.setData(ClipboardData(text: qrData));
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('QR data copied to clipboard')),
+      const SnackBar(content: Text('QR data copied to clipboard')),
     );
   }
 
@@ -157,6 +184,32 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
     // TODO: Implement send by email functionality
     // You can use a package like 'url_launcher' to open the email client with pre-filled data
   }
+  Future<void> _shareQRImage(data) async {
+    final image = await QrPainter(
+      data: data,
+      version: QrVersions.auto,
+      gapless: false,
+      
+      dataModuleStyle: const QrDataModuleStyle(
+        dataModuleShape: QrDataModuleShape.circle
+        
+      ),
+      color: Colors.black,
+      emptyColor: Colors.white,
+      
+
+    ).toImageData(50); // Generate QR code image data
+
+    const filename = 'qr_code.png';
+    final tempDir = await getTemporaryDirectory();// Get temporary directory to store the generated image
+    final file = await File('${tempDir!.path}/$filename').create(); // Create a file to store the generated image
+    
+    var bytes = image!.buffer.asUint8List(); // Get the image bytes
+    await file.writeAsBytes(bytes); // Write the image bytes to the file
+   //Share.share('check out my website https://example.com', subject: 'Look what I made!');
+    final path = await Share.shareFiles([file.path], text: 'QR code for ${data}', subject: 'QR Code', mimeTypes: ['image/png']); // Share the generated image using the share_plus package
+   
+ } 
 
 
   Future<void> _generateQRCode(
@@ -167,16 +220,18 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
       String qrData =
           // '${DateFormat('dd/MM/yyyy').format(_selectedDate)},${_selectedTime.format(context)},${_selectedDuration},${_idController.text},${_nameController.text},${_lastNameController.text},${_plateController.text}';
           '${DateFormat('dd/MM/yyyy').format(selectedDate)},${selectedTime.format(context)},${selectedTime},${stateCedula},${stateNombre},${placaController.text}';
-
+      print("++++++++++++++++++++++++++++");
+      print(MainProvider.prefs.getInt("Id"));
       Map<String, dynamic> data = {
         'date': formattedDate.toString(),
         'time': formattedTime.toString(),
         'duration': 100,
         'cedula': stateCedula,
-        'nameVisitante': stateNombre.split(" ")[0],
-        'idUbicacion': 1,
-        'lastNameVisitante': stateNombre.split(" ")[1]??" ",
-        'idAnfitrion': mainProvider.response['Id'],
+        'nameVisitante': stateNombre,
+        'idUbicacion': ubicacionSelected["Id"],
+        'lastNameVisitante': stateApellido,
+        //'idAnfitrion': mainProvider.response['Id'],
+        'idAnfitrion':MainProvider.prefs.getInt("Id"),
         'idVisitante': 0,
         'antecedentes': 0,
         'phone': "0000",
@@ -202,11 +257,15 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
         _qrData = qrData;
       });
 
+      // ignore: use_build_context_synchronously
       showDialog(
+        
         context: context,
+
         builder: (context) {
           return AlertDialog(
             content: SingleChildScrollView(
+              
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
@@ -223,46 +282,46 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
-                  Text('Datos de la invitación:',
+                  const SizedBox(height: 16),
+                  const Text('Datos de la invitación:',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
                         child: Column(
                           children: [
                             ListTile(
-                              leading: Icon(Icons.credit_card),
-                              title: Text('Cédula'),
+                              leading: const Icon(Icons.credit_card),
+                              title: const Text('Cédula'),
                               subtitle: Text(stateCedula),
                             ),
                             ListTile(
-                              leading: Icon(Icons.person),
-                              title: Text('Nombres'),
+                              leading: const Icon(Icons.person),
+                              title: const Text('Nombres'),
                               subtitle: Text(stateNombre),
                             ),
                             ListTile(
-                              leading: Icon(Icons.calendar_today),
-                              title: Text('Fecha'),
+                              leading: const Icon(Icons.calendar_today),
+                              title: const Text('Fecha'),
                               subtitle: Text(DateFormat('yyyy-MM-dd')
                                   .format(selectedDate)),
                             ),
                             ListTile(
-                              leading: Icon(Icons.directions_car),
-                              title: Text('Placa'),
+                              leading: const Icon(Icons.directions_car),
+                              title: const Text('Placa'),
                               subtitle: Text(placaController.text),
                             ),
                             ListTile(
-                              leading: Icon(Icons.access_time),
-                              title: Text('Hora'),
+                              leading: const Icon(Icons.access_time),
+                              title: const Text('Hora'),
                               subtitle:
                                   Text(DateFormat.Hm().format(DateTime.now())),
                             ),
                             ListTile(
-                              leading: Icon(Icons.timer),
-                              title: Text('Duración'),
+                              leading: const Icon(Icons.timer),
+                              title: const Text('Duración'),
                               subtitle: Text('$selectedTime horas'),
                             ),
                           ],
@@ -296,19 +355,27 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
               ),
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.share),
-                onPressed: () async {
-                  var imagePath = await _downloadQRCode(_qrKey);
-                  _shareQRData(qrData, imagePath??"");
-                },
+            
+              Container(
+                width: MediaQuery.of(context).size.width,
+                color: Colors.blue[900],
+                child: IconButton(
+                  
+                  icon: const Icon(Icons.share, color: Colors.white),
+                  onPressed: () async {
+                    var imagePath = await _downloadQRCode(_qrKey);
+              
+                    //_shareQRData(qrData, imagePath??"");
+                    _shareQRImage(qrData);
+                  },
+                ),
               ),
-              IconButton(
-                icon: Icon(Icons.copy),
+              /*IconButton(
+                icon: const Icon(Icons.copy),
                 onPressed: () => _copyQRDataToClipboard(qrData),
               ),
               IconButton(
-                icon: Icon(Icons.download),
+                icon: const Icon(Icons.download),
                 onPressed: () async {
                   var status = await Permission.photos.status;
                   if (!status.isGranted) {
@@ -322,9 +389,9 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.email),
+                icon: const Icon(Icons.email),
                 onPressed: () => _sendQRCodeByEmail(qrData),
-              ),
+              ),*/
             ],
           );
         },
@@ -380,7 +447,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                 title: Text('Editar $fieldName'),
               ),
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   decoration: InputDecoration(
                     labelText: '$fieldName',
@@ -401,12 +468,50 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Guardar'),
+                child: const Text('Guardar'),
               ),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildDropListUbicacion() {
+    return DropdownButtonFormField(
+      padding: const EdgeInsets.all(10),
+      decoration: const InputDecoration(
+        filled: true,
+        //fillColor: Colors.white,
+      ),
+      //value: _nombreSalonController.text.isNotEmpty?_nombreSalonController.text:"Seleccione Salon...",
+      hint: const Text("Seleccione una ubicacion...",style: TextStyle(color: Colors.black),),
+      //dropdownColor: Colors.white,
+      borderRadius: const BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20)),
+      //iconEnabledColor: Colors.black,
+      items: ubicaciones.map((item) {
+
+        return DropdownMenuItem(
+
+          value: item["Descripcion"],
+          child: Text(
+            item["Descripcion"],
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.black),
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          ubicacionController.text = value.toString();
+          int selectedIndex = ubicaciones.indexWhere((item) => item["Descripcion"] == value);
+          ubicacionSelected=ubicaciones[selectedIndex];
+          print(selectedIndex);
+          print(ubicacionSelected["Id"]);
+        });
+      },
+      isDense: true,
+      isExpanded: true,
     );
   }
 
@@ -431,7 +536,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                   style: estiloAzul,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
               if (!cedulaIsFiled) ...[
 
@@ -445,7 +550,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                   child: TextFormField(
                     keyboardType: TextInputType.number,
                     controller: cedulaController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Cedula *',
                       border: InputBorder.none,
                     ),validator: (value) {
@@ -458,7 +563,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                 ),
               ),
 
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
 
               
@@ -486,14 +591,14 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text('Error de Cédula'),
-                            content: Text('La cédula debe tener 10 dígitos y contener solo números.'),
+                            title: const Text('Error de Cédula'),
+                            content: const Text('La cédula debe tener 10 dígitos y contener solo números.'),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('OK'),
+                                child: const Text('OK'),
                               ),
                             ],
                           );
@@ -519,7 +624,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                     }
                   },
 
-                  child: Text(
+                  child: const Text(
                     'verificar',
                     style: TextStyle(fontSize: 18.0),
                   ),
@@ -535,13 +640,13 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
               Card(
                 child: Column(
                   children: [
-                    Center(
+                    const Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: Icon(Icons.person),
                       )
                     ),
-                    Center(
+                    const Center(
                       child: Text("invitar a:")
                     ),
                     Center(
@@ -563,41 +668,52 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
               //   //   },
               //   // ),
               // ),
+              _buildDropListUbicacion(),
               ListTile(
-                title: Text('Nombre *'),
+                title: const Text('Nombres *'),
                 subtitle: Text(stateNombre),
                 trailing: IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   onPressed: () {
                     _editField('Nombre');
                   },
                 ),
               ),
               ListTile(
-                title: Text('Fecha de Visita'),
+                title: const Text('Apellidos *'),
+                subtitle: Text(stateApellido),
+                trailing: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    _editField('Apellido');
+                  },
+                ),
+              ),
+              ListTile(
+                title: const Text('Fecha de Visita'),
                 subtitle: Text("${selectedDate.toLocal()}".split(' ')[0]),
                 trailing: IconButton(
-                  icon: Icon(Icons.calendar_today),
+                  icon: const Icon(Icons.calendar_today),
                   onPressed: () {
                     _selectDate(context);
                   },
                 ),
               ),
               ListTile(
-                title: Text('Hora de Ingreso'),
+                title: const Text('Hora de Ingreso'),
                 subtitle: Text("${selectedTime.format(context)}"),
                 trailing: IconButton(
-                  icon: Icon(Icons.access_time),
+                  icon: const Icon(Icons.access_time),
                   onPressed: () {
                     _selectTime(context);
                   },
                 ),
               ),
               ListTile(
-                title: Text('Placa'),
+                title: const Text('Placa'),
                 subtitle: TextField(
                   controller: placaController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Ej. ABC-123',
                   ),
                 ),
@@ -606,8 +722,8 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                 onPressed: stateNombre.length > 1 ? () {
                   _generateQRCode(mainProvider, apiService);
                 }: null,
-                icon: Icon(Icons.filter_center_focus),
-                label: Text('Invitar'),
+                icon: const Icon(Icons.filter_center_focus),
+                label: const Text('Invitar'),
                 style: estiloboton
               ),
               ],

@@ -53,15 +53,24 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: CustomAppBar(),
       bottomNavigationBar: NavigationBar(
+        //backgroundColor: Colors.blue[900],
+        //indicatorColor: Colors.white,
+        
         onDestinationSelected: (int index) {
           setIndex(index);
         },
         selectedIndex: _selectedIndex,
+        
         destinations: const <Widget>[
+
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
+          
+            icon: Icon(Icons.home_outlined,),
             selectedIcon: Icon(Icons.home_outlined),
             label: 'Home',
+            
+            
+            
           ),
           NavigationDestination(
             icon: Icon(Icons.car_crash_outlined),
@@ -77,6 +86,8 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: _selectedIndex == 1?
         FloatingActionButton(
+          backgroundColor: Colors.blue[900],
+          foregroundColor: Colors.white,
           onPressed: () {
             showModalBottomSheet(
               isScrollControlled: true,
@@ -87,6 +98,7 @@ class _HomeState extends State<Home> {
                   child: ModalBottomCreateVisita(
                     cedula: '',
                     nombre: '',
+                    apellido: '',
                   ),
                 );
               },

@@ -62,6 +62,7 @@ class ScreenHome extends StatelessWidget {
                           builder: (context) => ModalBottomCreateVisita(
                             cedula: '',
                             nombre: '',
+                            apellido: '',
                           ),
                         );
                       },
@@ -144,6 +145,7 @@ class ScreenHome extends StatelessWidget {
                           builder: (context) => ModalBottomCreateVisita(
                             cedula: '',
                             nombre: '',
+                            apellido: '',
                           ),
                         );
                       },
