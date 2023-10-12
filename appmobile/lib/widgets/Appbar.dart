@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sammseguridad_apk/screens/ScreenPerfil.dart';
+import 'package:sammseguridad_apk/screens/ScreenSplash.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenLogin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({Key? key}) : super(key: key);
@@ -24,8 +26,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           // ),
           // width: 150,
           height: 50,
-          // child: Image.asset("assets/images/SAMM.png"),
-          child: Image.asset("assets/images/logo_horizontal1.png"),
+          child: Image.asset("assets/images/SAMM.png"),
+          // child: Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Image.asset("assets/images/SAMM.png"),
+          //     SizedBox(width: 10),
+          //     Text(
+          //         'SAM',
+          //         style: TextStyle(
+          //             fontWeight: FontWeight.bold,
+          //             // color: Color.fromARGB(255, 255, 255, 255),
+          //             fontSize: 18.0),
+          //       ),
+          //   ],
+          // ),
         ),
       ),
       actions: [
@@ -69,7 +84,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (value == "Perfil") {
               Navigator.pushNamed(context, ScreenPerfil.routeName);
             } else if (value == "Cerrar sesion") {
-              Navigator.popAndPushNamed(context, LoginPage.routeName);
+              // borrar datos de sharedpreference
+              SharedPreferences.getInstance().then((value) {
+                value.clear();
+              });
+
+              Navigator.popAndPushNamed(context, ScreenSplash.routeName);
             }
           },
         ),

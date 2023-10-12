@@ -60,17 +60,17 @@ class _HomeState extends State<Home> {
         destinations: const <Widget>[
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.shield_outlined),
+            selectedIcon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
           NavigationDestination(
             icon: Icon(Icons.car_crash_outlined),
-            selectedIcon: Icon(Icons.shield_outlined),
+            selectedIcon: Icon(Icons.car_crash_outlined),
             label: 'Visitas',
           ),
           NavigationDestination(
             icon: Icon(Icons.change_circle_outlined),
-            selectedIcon: Icon(Icons.shield_outlined),
+            selectedIcon: Icon(Icons.change_circle_outlined),
             label: 'Rondas',
           ),
         ],

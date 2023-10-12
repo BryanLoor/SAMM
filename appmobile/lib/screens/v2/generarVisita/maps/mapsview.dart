@@ -143,7 +143,7 @@ class MapViewState extends State<MapView> {
       ],
       onSelected: (value) {
         setState(() {
-          print("value: $value");
+          // print("value: $value");
           if (value == 0 || value == 3) {
             rondasprovider.cleanSelectedItem();
             mapviewcontroller.cleanMarkers();

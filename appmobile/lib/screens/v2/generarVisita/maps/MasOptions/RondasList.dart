@@ -82,8 +82,9 @@ class _RondasListState extends State<RondasList> {
                         });
                         rondasProvider.selectedItem = item!;
                         var listarondas = await rondasProvider.getRondaPoints(apiService, id.toString());
-                        final positionList = await setRondasPoint(listarondas);
-                        widget.mapviewController.setMarkersByPositionList(positionList);
+                        // final positionList = await setRondasPoint(listarondas);
+                        // widget.mapviewController.setMarkersByPositionList(positionList);
+                        final positionList = widget.mapviewController.setMarkersByPositionList(listarondas);
                         // widget.mapviewController.menuselection = 4;
                         // mover la camara hacia el punto seleccionado
                         // widget.mapviewController.cameraPosition = CameraPosition(

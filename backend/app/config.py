@@ -7,7 +7,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv()
 
 class Config:
-   
+    UPLOAD_FOLDER = os.path.join(basedir, 'statics')
+    # UPLOAD_FOLDER = 'statics'
     SECRET_KEY = config_env('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = 'mssql+pymssql://' + \
         config_env('DB_USER') + ':' + \

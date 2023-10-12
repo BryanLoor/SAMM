@@ -41,6 +41,11 @@ def create_app(config_class=Config):
 
     from app.rondaPunto import bp as rondaPunto_bp
     app.register_blueprint(rondaPunto_bp, url_prefix='/rondaPunto')
+
+    from app.uploads import bp as uploads_bp
+    app.register_blueprint(uploads_bp, url_prefix='/uploads')
+
+    
     
     @app.route('/')
     def index():
@@ -73,6 +78,7 @@ def create_app(config_class=Config):
 
         except Exception as e:
             return jsonify({'message': str(e)}), 500
+
 
     
     return app

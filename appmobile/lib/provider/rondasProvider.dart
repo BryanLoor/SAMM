@@ -8,6 +8,15 @@ class RondasProvider with ChangeNotifier {
   // rondaSelected
   // int rondaselected = 0;
   Map<String, dynamic> _selectedItem = {};
+  List<Map<String, dynamic>> _ItemPuntos = [];
+
+  List<Map<String, dynamic>> get ItemPuntos => _ItemPuntos;
+
+  set ItemPuntos(List<Map<String, dynamic>> item) {
+    _ItemPuntos = item;
+    notifyListeners();
+  }
+
   Map<String, dynamic> get selectedItem => _selectedItem;
   set selectedItem(Map<String, dynamic> item) {
     _selectedItem = item;
@@ -29,7 +38,7 @@ class RondasProvider with ChangeNotifier {
     var token = sharedPreferences.getString("token") ?? "";
     var response = await apiService.getData('/rondas/getAllRondas', token);
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
-    print(response);
+    // print(response);
     // Verifica si la respuesta es una lista
     if (response["data"] is List) {
       // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
@@ -55,8 +64,9 @@ class RondasProvider with ChangeNotifier {
     if (response["data"] is List) {
       // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
       // return response["data"].cast<Map<String, dynamic>>();
-      var RondasMaps = response["data"].cast<Map<String, dynamic>>();
-      return RondasMaps;
+      var puntos = response["data"].cast<Map<String, dynamic>>();
+      ItemPuntos = puntos;
+      return puntos;
     }
 
     // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
@@ -138,6 +148,27 @@ class RondasProvider with ChangeNotifier {
       });
     });
     
+  }
+
+  Future<void> registrarPresencia(
+    ApiService apiService,
+    int idRonda,
+    int idPuntoRonda,
+    String codigo,
+    String descripcion,
+    String fotoURL
+
+  ) async {
+    var sharedPreferences = await SharedPreferences.getInstance();
+    var token = sharedPreferences.getString("token") ?? "";
+    var data = {
+      "IdRonda": idRonda,
+      "IdPuntoRonda": idPuntoRonda,
+      "Codigo": codigo,
+      "Descripcion": descripcion,
+      "FotoURL": fotoURL
+    };
+    var response = await apiService.postData('/rondas/guardarPuntoRealizado', data,token);
   }
     //   ronda.Desripcion = request.json['Desripcion']
     // ronda.Estado = 0

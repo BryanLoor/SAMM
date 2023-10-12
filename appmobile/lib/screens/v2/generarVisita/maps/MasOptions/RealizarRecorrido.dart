@@ -24,13 +24,20 @@ class RealizarRecorrido extends StatefulWidget {
 
 class _RealizarRecorridoState extends State<RealizarRecorrido> {
 
-  // late Timer _timer;
+  late Timer _timer;
   bool _estaCerca = false;
 
   @override
   void initState() {
     super.initState();
-    _actualizarProximidad();
+    _iniciarActualizacionProximidad();
+  }
+
+  void _iniciarActualizacionProximidad() {
+    // Iniciar el temporizador de actualización de proximidad.
+    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      _actualizarProximidad();
+    });
   }
 
   void _actualizarProximidad() async {
@@ -45,11 +52,6 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
         _estaCerca = estaCerca;
       });
     }
-
-    // Vuelve a llamar a la función después de 5 segundos.
-    Future.delayed(Duration(seconds: 5), () {
-      _actualizarProximidad();
-    });
   }
 
   @override
@@ -104,7 +106,7 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
                     10
                   );
                   if (estaCerca) {
-                    registrarpresenciadialog(context);
+                    registrarpresenciadialog(context,widget.mapviewController);
                     
                     // La ubicación está cerca de un marcador
                     if (widget.mapviewController.markers.isEmpty){
@@ -128,6 +130,7 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
                 label: const Text("Terminar recorrido"),
                 onPressed: () {
                   widget.mapviewController.menuselection = 0;
+                  widget.mapviewController.cleanMarkers();
                   //  mostrar snackbar que diga ronda finalizada
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -145,7 +148,8 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
     );
   }
 
-  Future<dynamic> registrarpresenciadialog(BuildContext context,) {
+  Future<dynamic> registrarpresenciadialog(BuildContext context,MapviewController mapviewController) {
+    TextEditingController observacionescontroller =TextEditingController();
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -156,6 +160,7 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
             const Text("registrar su presencia en este punto"),
             const SizedBox(height: 10,),
             TextField(
+              controller: observacionescontroller,
               decoration: const InputDecoration(
                 labelText: "observaciones",
                 border: OutlineInputBorder(),
@@ -170,13 +175,17 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
         actions: [
           TextButton(
             onPressed: ()  {
-              // await apiService.registrarPresencia(
-              //   rondasProvider.selectedItem!.id,
-              //   rondasProvider.selectedItem!.nombre,
-              //   ubication.latitude,
-              //   ubication.longitude,
-              //   rondanombre.text
-              // );
+              RondasProvider rondasProvider = Provider.of<RondasProvider>(context,listen: false);
+              ApiService apiService = Provider.of<ApiService>(context,listen: false);
+              rondasProvider.registrarPresencia(
+                apiService,
+                rondasProvider.selectedItem!["Id"],
+                int.parse(mapviewController.markerSelected.markerId.value),
+                "A",
+                observacionescontroller.text,
+                "foto"
+
+              );
               widget.mapviewController.registrarMarkerComoVisitado();
               Navigator.pop(context);
             },
@@ -210,7 +219,7 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
   @override
   void dispose() {
     // Detener el temporizador al salir de la pantalla.
-    // _timer.cancel();
+    _timer.cancel();
     super.dispose();
   }
 }
