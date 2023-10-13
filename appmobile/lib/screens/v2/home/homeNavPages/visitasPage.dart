@@ -34,7 +34,47 @@ class _VisitasPage extends State<VisitasPage>
   @override
   void initState() {
     super.initState();
+
+    // if (!_hasFetchedData) {
+    //   refreshvisitas(Provider.of<VisitasProvider>(context, listen: false));
+    // }
   }
+
+  // Future<List<Map<String, dynamic>>> refreshvisitas(visitasProvider){
+  //   final mainProviderSave =
+  //         Provider.of<MainProvider>(context, listen: false);
+  //   final apiService = Provider.of<ApiService>(context, listen: false);
+  //   // final visitasProvider = Provider.of<VisitasProvider>(context);
+
+  //   visitasProvider.visitaListFuture =
+  //       mainProviderSave.getPreferencesToken().then((dataToken) {
+  //     token = dataToken.toString();
+  //     mainProviderSave.updateToken(token);
+
+  //     return getVisitaList(apiService);
+  //   }).whenComplete(() {
+  //     // Marca que los datos han sido obtenidos
+  //     setState(() {
+  //       _hasFetchedData = true;
+  //     });
+  //   });
+  //   return visitasProvider.visitaListFuture;
+  // }
+
+  // Future<List<Map<String, dynamic>>> getVisitaList(
+  //     ApiService apiService) async {
+  //   var response = await apiService.getData('/visitas/getAllBitacoraVisitas', token);
+  //   // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+  //   // Verifica si la respuesta es una lista
+  //   if (response["data"] is List) {
+  //     // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+  //     return response["data"].cast<Map<String, dynamic>>();
+  //   }
+
+  //   // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+  //   throw Exception("Invalid data format");
+  // }
 
   List<Map<String, dynamic>> removeDuplicateVisits(
       List<Map<String, dynamic>> visits) {
@@ -184,21 +224,6 @@ class _VisitasPage extends State<VisitasPage>
     // TabMenu tabMenuView = TabMenu.Personas;
     return Column(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-          ),
-           width: double.infinity,
-          child: Center(
-            child: Text(
-              'Visitas',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
         Container(
             decoration: const BoxDecoration(
               color: Colors.white,
