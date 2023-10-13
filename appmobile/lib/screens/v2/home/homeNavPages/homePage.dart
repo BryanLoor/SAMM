@@ -149,6 +149,7 @@ class HomePage extends StatelessWidget {
                               child: ModalBottomCreateVisita(
                                 cedula: '',
                                 nombre: '',
+                                apellido: '',
                               ),
                             );
                           },
