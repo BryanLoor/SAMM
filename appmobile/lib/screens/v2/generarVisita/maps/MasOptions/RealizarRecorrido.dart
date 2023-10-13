@@ -10,11 +10,9 @@ import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewControlle
 import 'package:sammseguridad_apk/services/ApiService.dart';
 
 class RealizarRecorrido extends StatefulWidget {
-  MapviewController mapviewController;
-  Completer<GoogleMapController> controller;
-  RealizarRecorrido({
+  final MapviewController mapviewController;
+  const RealizarRecorrido({
     required this.mapviewController,
-    required this.controller,
     super.key
   });
 
@@ -56,9 +54,9 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
 
   @override
   Widget build(BuildContext context) {
-    RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
-    ApiService apiService = Provider.of<ApiService>(context);
-    TextEditingController rondanombre = TextEditingController();
+    // RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
+    // ApiService apiService = Provider.of<ApiService>(context);
+    // TextEditingController rondanombre = TextEditingController();
     // widget.mapviewController.cleanMarkers();
     
     // MapviewController mapviewController = Provider.of<MapviewController>(context);
@@ -179,7 +177,7 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
               ApiService apiService = Provider.of<ApiService>(context,listen: false);
               rondasProvider.registrarPresencia(
                 apiService,
-                rondasProvider.selectedItem!["Id"],
+                rondasProvider.selectedItem["Id"],
                 int.parse(mapviewController.markerSelected.markerId.value),
                 "A",
                 observacionescontroller.text,
@@ -207,7 +205,8 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
     final ImagePicker _picker = ImagePicker();
 
     // Call the pickImage method using the instance
-    var picture = _picker.pickImage(
+    // var picture = 
+    _picker.pickImage(
       source: ImageSource.camera,
       maxWidth: 500,
       maxHeight: 500,

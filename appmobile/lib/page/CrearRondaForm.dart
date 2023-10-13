@@ -12,7 +12,7 @@ const _buttonColor = Color(0xFF0040AE);
 class CrearRondaForm extends StatefulWidget {
   final LatLng position;
 
-  CrearRondaForm({required this.position});
+  const CrearRondaForm({required this.position});
 
   @override
   _CrearRondaFormState createState() => _CrearRondaFormState();
@@ -66,7 +66,7 @@ class _CrearRondaFormState extends State<CrearRondaForm> {
         final apiService = Provider.of<ApiService>(context, listen: false);
 
         String? dataToken = await mainProvider.getPreferencesToken();
-        if (dataToken == null) throw Exception("Error al obtener el token");
+        // if (dataToken == null) throw Exception("Error al obtener el token");
 
         String token = dataToken;
         mainProvider.updateToken(token);

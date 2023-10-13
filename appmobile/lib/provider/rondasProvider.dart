@@ -107,7 +107,7 @@ class RondasProvider with ChangeNotifier {
       "Descripcion": descripcion,
       "Orden": orden
     };
-    var response = await apiService.postData('/rondaPunto/createRondaPuntoxRonda', data,token);
+    await apiService.postData('/rondaPunto/createRondaPuntoxRonda', data,token);
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
 
   }
@@ -116,6 +116,50 @@ class RondasProvider with ChangeNotifier {
     // rondaPunto.Coordenada = request.json['Coordenada']
     // rondaPunto.Descripcion = request.json['Descripcion']
 
+
+  Future<List<Map<String, dynamic>>> getRondaUbicaciones(
+      ApiService apiService
+  ) async {
+    
+    List<Map<String, dynamic>> ubicaciones = [];
+    
+    try{
+      var sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString("token") ?? "";
+      var response = await apiService.getData('/rondas/getUbicaciones', token);
+      // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+      // Verifica si la respuesta es una lista
+      if (response is List) {
+        // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+        // return response["data"].cast<Map<String, dynamic>>();
+        ubicaciones = response.cast<Map<String, dynamic>>();
+        // ItemPuntos = puntos;
+      }
+
+      
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      print(e);
+    }finally{
+      return ubicaciones;
+    }
+    // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
+  }
+  // {
+  //   "codigo": "09855504",
+  //   "codigo_usuario_crea": "admin",
+  //   "codigo_usuario_modifica": "admin",
+  //   "descripcion": "Urb. Pacho Salas",
+  //   "estado": "A",
+  //   "fecha_crea": "06-07-2023",
+  //   "fecha_modifica": "06-07-2023",
+  //   "hora_crea": "08:31:39",
+  //   "hora_modifica": "08:31:39",
+  //   "id": 1,
+  //   "tipo": "URBANIZACION"
+  // },
 
   Future<int> enviarNuevaRonda(
     ApiService apiService,
@@ -150,9 +194,9 @@ class RondasProvider with ChangeNotifier {
   ) async {
      enviarNuevaRonda(
       apiService, 
-      idUsuarioSupervisor, 
-      idUbicacion, 
-      descripcion
+      idUsuarioSupervisor, // es el usuario logeado por que el supervisor crea rondas
+      idUbicacion, // se selecciona las ubicaciones 
+      descripcion // se escribe
     ).then((idRonda){
       coordenadas.forEach((coordenada) {
         String coordString = coordenada.latitude.toString() + "," + coordenada.longitude.toString();
@@ -167,6 +211,8 @@ class RondasProvider with ChangeNotifier {
     });
     
   }
+
+
 
   Future<void> registrarPresencia(
     ApiService apiService,
@@ -186,7 +232,7 @@ class RondasProvider with ChangeNotifier {
       "Descripcion": descripcion,
       "FotoURL": fotoURL
     };
-    var response = await apiService.postData('/rondas/guardarPuntoRealizado', data,token);
+    await apiService.postData('/rondas/guardarPuntoRealizado', data,token);
   }
     //   ronda.Desripcion = request.json['Desripcion']
     // ronda.Estado = 0

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'ScreenWelcom.dart';
+// import 'ScreenWelcom.dart';
 import 'logins/ScreenLogin.dart';
 import 'v2/home/Home.dart';
 

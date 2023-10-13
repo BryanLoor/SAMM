@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapsview.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/NuevaRondaFormulario.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/RondasPage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/homePage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/visitasPage.dart';
@@ -70,46 +71,80 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      floatingActionButton: _selectedIndex == 1?
-        FloatingActionButton(
-          onPressed: () {
-            showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (BuildContext context) {
-                return FractionallySizedBox(
-                  heightFactor: 0.75, // Ajusta este valor según tus necesidades.
-                  child: ModalBottomCreateVisita(
-                    cedula: '',
-                    nombre: '',
-                  ),
-                );
-              },
-              // builder: (context) => ModalBottomCreateVisita(
-              //   cedula: '',
-              //   nombre: '',
-              // ),
-            );
-          },
-          child: Icon(Icons.add), // Icono del botón principal
-        )
+      floatingActionButton: 
+
+        _selectedIndex == 0?
+          null
+
+
+        :_selectedIndex == 1?
+          FloatingActionButton.extended(
+            onPressed: () {
+              showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                builder: (BuildContext context) {
+                  return FractionallySizedBox(
+                    heightFactor: 0.75, // Ajusta este valor según tus necesidades.
+                    child: ModalBottomCreateVisita(
+                      cedula: '',
+                      nombre: '',
+                    ),
+                  );
+                },
+                // builder: (context) => ModalBottomCreateVisita(
+                //   cedula: '',
+                //   nombre: '',
+                // ),
+              );
+            },
+            label: Row(
+              children: [
+                Icon(Icons.car_crash_rounded),
+                Icon(Icons.add),
+              ],
+            ), // Icono del botón principal
+          )
+
+
+
+        :_selectedIndex == 2?
+          FloatingActionButton.extended(
+            onPressed: () {
+              showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                builder: (BuildContext context) {
+                  return FractionallySizedBox(
+                    heightFactor: 0.75, // Ajusta este valor según tus necesidades.
+                    child: NuevaRondaFormulario()
+                  );
+                },
+                // builder: (context) => ModalBottomCreateVisita(
+                //   cedula: '',
+                //   nombre: '',
+                // ),
+              );
+            },
+            label: Row(
+              children: [
+                Icon(Icons.route_rounded),
+                Icon(Icons.add),
+              ],
+            ),
+            // child: Center(
+            //   child: Row(
+            //     children: [
+            //       Icon(Icons.route_rounded),
+            //       Icon(Icons.add),
+            //     ],
+            //   )
+            // ), // Icono del botón principal
+          )
         : null,
-        // : _selectedIndex == 2?
-        // FloatingActionButton(
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => MapView(
-        //         // initialMenuselection: 0,
-        //         // initialMarkersPositionList: [],
-        //       )),
-        //     );
-        //   },
-        //   child: Icon(Icons.map), // Icono del botón principal
-        // )
-        // : null,
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      body: PageView(
+        
+        
+        body: PageView(
         onPageChanged: (value) {
           setIndex(value);
         },

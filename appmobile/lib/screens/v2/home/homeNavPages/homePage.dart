@@ -26,6 +26,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final visitasProvider = Provider.of<VisitasProvider>(context);
     if (!visitasProvider.hasFetchedData) {
+      print("pidiendo ");
       visitasProvider.refreshvisitas(context,visitasProvider);
       visitasProvider.hasFetchedData = true;
     }
@@ -195,6 +196,7 @@ class HomePage extends StatelessWidget {
                       } else {
                         final visitasList = snapshot.data!; // Obtén la lista de visitas.
                         final primerasTresVisitas = visitasList.take(7); // Toma las primeras tres visitas.
+                        print(primerasTresVisitas);
                         return ListView(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(), // Evita el desplazamiento

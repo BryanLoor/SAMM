@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -16,6 +17,24 @@ class MapviewController with ChangeNotifier{
       snippet: '',
     ),
   );
+
+  Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+
+  Completer<GoogleMapController> get completerController => _controller;
+
+  set completerController(Completer<GoogleMapController> newCompleterController){
+    _controller = newCompleterController;
+    notifyListeners();
+  }
+
+  List<LatLng> _positionList = [];
+
+  List<LatLng> get positionList => _positionList;
+
+  set positionList(List<LatLng> newPositionList){
+    _positionList = newPositionList;
+    notifyListeners();
+  }
 
   Marker get markerSelected => _markerSelected;
   set markerSelected(Marker newMarkerSelected){
@@ -52,10 +71,32 @@ class MapviewController with ChangeNotifier{
     notifyListeners();
   }
 
+  void completarcompleter(GoogleMapController cont){
+    if(!_controller.isCompleted){
+      _controller.complete(cont);
+    }
+  }
+
   Future<void> goTo(GoogleMapController controller,LatLng coordenada) async {
     menuselection = 4;
     _CameraPosition = CameraPosition(
       target: coordenada,
+      zoom: 17.0,
+    );
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        // await _getCurrentLocation()
+        _CameraPosition,
+      )
+    );
+  }
+  Future<void> goToFirst(GoogleMapController controller) async {
+    if (positionList.isEmpty) {
+      return;
+    }
+    menuselection = 4;
+    _CameraPosition = CameraPosition(
+      target: positionList[0],
       zoom: 17.0,
     );
     await controller.animateCamera(
@@ -145,6 +186,7 @@ class MapviewController with ChangeNotifier{
     cleanMarkers();
     List<LatLng> latLngList = [];
     final data = listarondas;
+
     data.forEach((e) {
       final coordenadaSplit = e["Coordenada"].split(',');
       if (coordenadaSplit.length == 2) {
@@ -157,6 +199,7 @@ class MapviewController with ChangeNotifier{
         }
       }
     });
+    positionList = latLngList;
     return latLngList;
     // latLngList.forEach((position) {
     //   addPositionMarker(position);

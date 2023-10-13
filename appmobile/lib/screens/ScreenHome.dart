@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sammseguridad_apk/page/PageInfoSeguRonda.dart';
 // import 'package:sammseguridad_apk/page/PageInfoUrbaSeguridad.dart';
 import 'package:sammseguridad_apk/page/QRView%20.dart';
-import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.dart';
+// import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialRondas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
 // import 'package:sammseguridad_apk/screens/ScreenRondas.dart';
@@ -10,7 +10,7 @@ import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 // import 'package:sammseguridad_apk/widgets/Drawer.dart';
 import 'package:sammseguridad_apk/widgets/TwoColumnsWidget.dart';
-import 'package:sammseguridad_apk/widgets/navbar.dart';
+// import 'package:sammseguridad_apk/widgets/navbar.dart';
 
 class ScreenHome extends StatelessWidget {
   static const routeName = 'Home';
