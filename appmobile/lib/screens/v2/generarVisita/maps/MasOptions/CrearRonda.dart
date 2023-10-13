@@ -1,18 +1,14 @@
-import 'dart:async';
+// import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewController.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 
 class CrearRonda extends StatefulWidget {
-  MapviewController mapviewController;
-  Completer<GoogleMapController> controller;
   CrearRonda({
-    required this.mapviewController,
-    required this.controller,
     super.key,
   });
 
@@ -29,6 +25,7 @@ class _CrearRondaState extends State<CrearRonda> {
   Widget build(BuildContext context) {
     RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
     ApiService apiService = Provider.of<ApiService>(context);
+    MapviewController mapviewController = Provider.of<MapviewController>(context);
     TextEditingController rondanombre = TextEditingController();
     // widget.mapviewController.cleanMarkers();
     
@@ -62,7 +59,7 @@ class _CrearRondaState extends State<CrearRonda> {
                 icon: const Icon(Icons.add_location_alt_outlined),
                 label: const Text("Agregar Punto"),
                 onPressed: () {
-                  widget.mapviewController.addMyPosition();
+                  mapviewController.addMyPosition();
                   // .then(
                   //   (value) => latLngList.add(value)
                   // );
@@ -72,7 +69,7 @@ class _CrearRondaState extends State<CrearRonda> {
                 icon: const Icon(Icons.backspace_outlined),
                 label: const Text("Eliminar punto"),
                 onPressed: () {
-                  widget.mapviewController.removeLastPosition();
+                  mapviewController.removeLastPosition();
                 }
               ),
               ElevatedButton.icon(
@@ -115,7 +112,7 @@ class _CrearRondaState extends State<CrearRonda> {
                               1,
                               1,
                               rondanombre.text,
-                              widget.mapviewController.getMarkersPositionList(),
+                              mapviewController.getMarkersPositionList(),
                             ).then(
                               (value) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -124,8 +121,8 @@ class _CrearRondaState extends State<CrearRonda> {
                                     content: Text('Ronda creada'),
                                   ),
                                 );
-                                widget.mapviewController.cleanMarkers();
-                                widget.mapviewController.menuselection = 0;
+                                mapviewController.cleanMarkers();
+                                mapviewController.menuselection = 0;
                                 // setState(() {
                                   
                                 // });

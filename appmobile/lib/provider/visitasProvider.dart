@@ -21,7 +21,7 @@ class VisitasProvider with ChangeNotifier {
     // notifyListeners();
   }
 
-    Future<List<Map<String, dynamic>>> refreshvisitas(context,visitasProvider){
+  Future<List<Map<String, dynamic>>> refreshvisitas(context,visitasProvider){
     final mainProviderSave =
           Provider.of<MainProvider>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
@@ -34,28 +34,26 @@ class VisitasProvider with ChangeNotifier {
 
       return getVisitaList(apiService);
     });
-    // .whenComplete(() {
-    //   // Marca que los datos han sido obtenidos
-    //   setState(() {
-    //     _hasFetchedData = true;
-    //   });
-    // });
     return visitasProvider.visitaListFuture;
   }
 
   Future<List<Map<String, dynamic>>> getVisitaList(
-      ApiService apiService) async {
-    var response = await apiService.getData('/visitas/getAllBitacoraVisitas', token);
-    // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+      ApiService apiService
+  ) async {
+    List<Map<String, dynamic>> res = [];
+    try{
+      var response = await apiService.getData('/visitas/getAllBitacoraVisitas', token);
+      if (response["data"] is List) {
+        res =  response["data"].cast<Map<String, dynamic>>();
+        
+      }
 
-    // Verifica si la respuesta es una lista
-    if (response["data"] is List) {
-      // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
-      return response["data"].cast<Map<String, dynamic>>();
+
+    }catch(e){
+      print(e);
+    }finally{
+      return res;
     }
-
-    // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-    throw Exception("Invalid data format");
   }
 
 

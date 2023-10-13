@@ -8,8 +8,8 @@ import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewControlle
 import 'package:sammseguridad_apk/services/ApiService.dart';
 
 class RondasList extends StatefulWidget {
-  MapviewController mapviewController;
-  Completer<GoogleMapController> controller;
+  final MapviewController mapviewController;
+  final Completer<GoogleMapController> controller;
   RondasList({
     required this.mapviewController,
     required this.controller,
@@ -68,11 +68,11 @@ class _RondasListState extends State<RondasList> {
                   itemCount: todosLosElementos?.length ?? 0,
                   itemBuilder: (context, index) {
                     final reversedIndex = todosLosElementos!.length - 1 - index;
-                    final item = todosLosElementos?[reversedIndex];
+                    final item = todosLosElementos[reversedIndex];
                     final id = item?['Id'];
                     final ubi = item?['NameUbicacion'];
-                    final descripcion = item?['Descripcion'];
-                    final fechaCrea = item?['Ubicacion']['fecha_crea'];
+                    // final descripcion = item?['Descripcion'];
+                    final fechaCrea = item['Ubicacion']['fecha_crea'];
 
                     return GestureDetector(
                       onTap: () async{

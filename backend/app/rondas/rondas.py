@@ -47,6 +47,7 @@ def getAllRondas():
         "NameUbicacion": q.SAMM_Ubicacion.Descripcion if q.SAMM_Ubicacion else None,
         "FechaCreacion": q.SAMM_Ronda.FechaCreacion,
         "FechaModifica": q.SAMM_Ronda.FechaModifica,
+        "descripcion": q.SAMM_Ronda.Desripcion,
         "Ubicacion":{
             'id': q.SAMM_Ubicacion.Id,
             'codigo': q.SAMM_Ubicacion.Codigo,
@@ -60,14 +61,14 @@ def getAllRondas():
             'codigo_usuario_modifica': q.SAMM_Ubicacion.UsuarioModifica,
             'estado': q.SAMM_Ubicacion.Estado
         },
-        "Supervisor":{
-            'Id': q.Persona.Id,
-            "IdUsuario": q.SAMM_Usuario.Id,
-            'Identificacion': q.Persona.Identificacion,
-            'Nombres' : q.Persona.Nombres,
-            'Apellidos' : q.Persona.Apellidos
+        # "Supervisor":{
+        #     'Id': q.Persona.Id,
+        #     "IdUsuario": q.SAMM_Usuario.Id,
+        #     'Identificacion': q.Persona.Identificacion,
+        #     'Nombres' : q.Persona.Nombres,
+        #     'Apellidos' : q.Persona.Apellidos
             
-        }
+        # }
     }
     for q in query
 ]

@@ -5,7 +5,6 @@ import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
-import 'package:sammseguridad_apk/screens/ScreenHome.dart';
 import 'package:sammseguridad_apk/screens/ScreenPerfil.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenFaceID_Huella.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenLogin.dart';
@@ -38,9 +37,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => RondasProvider(),
         ),
-        // ChangeNotifierProvider(
-        //   create: (_) => MapviewController(),
-        // ),
+        ChangeNotifierProvider(
+          create: (_) => MapviewController(),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -73,7 +72,7 @@ class MyApp extends StatelessWidget {
       initialRoute: ScreenSplash.routeName,
       routes: {
         LoginPage.routeName: (context) => const LoginPage(),
-        Home.routeName: (context) => Home(),
+        Home.routeName: (context) => const Home(),
 
         
         ScreenPerfil.routeName: (context) => const ScreenPerfil(),

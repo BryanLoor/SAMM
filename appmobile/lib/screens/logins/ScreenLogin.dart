@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
-import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
-import 'package:sammseguridad_apk/screens/ScreenHome.dart';
+// import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
+// import 'package:sammseguridad_apk/screens/ScreenHome.dart';
 import 'package:sammseguridad_apk/screens/logins/LoginResponse.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
@@ -19,7 +19,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  static const _fontSize = 20.0;
+  // static const _fontSize = 20.0;
   static const _paddingSize = 15.0;
   static const _buttonFontSize = 18.0;
   static const _sizedBoxHeight = 10.0;
@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   late MainProvider _mainProvider;
 
   // Añade esta línea
-  bool _obscureText = true;
+  // bool _obscureText = true;
 
   @override
   void didChangeDependencies() {
@@ -333,9 +333,9 @@ class CustomTextField extends StatefulWidget {
 class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
-    const _fontSize = 20.0;
-    const _paddingSize = 15.0;
-    const _buttonFontSize = 18.0;
+    // const _fontSize = 20.0;
+    // const _paddingSize = 15.0;
+    // const _buttonFontSize = 18.0;
     const _sizedBoxHeight = 5.0;
     bool _obscureText = true;
     return Column(

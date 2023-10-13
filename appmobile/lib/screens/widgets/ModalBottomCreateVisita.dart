@@ -5,10 +5,13 @@ import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.d
 class ModalBottomCreateVisita extends StatefulWidget {
   String cedula;
   String nombre;
+  String apellido;
   
   ModalBottomCreateVisita({
     required this.cedula, 
-    required this.nombre
+    required this.nombre,
+    required this.apellido
+
   });
   
   @override
@@ -37,6 +40,7 @@ class _ModalBottomCreateVisita extends State<ModalBottomCreateVisita> {
     return ScreenGenerarVisita(
             widgetCedula: widget.cedula,
             widgetNombre: widget.nombre,
+            widgetApellido: widget.apellido,
           );
     // return SingleChildScrollView(
     //   child: Padding(
