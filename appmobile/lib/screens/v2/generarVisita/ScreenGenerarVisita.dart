@@ -15,6 +15,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 
@@ -38,11 +39,15 @@ class ScreenGenerarVisita extends StatefulWidget {
 String token = "";
 
 class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
+  final _screenshotController = ScreenshotController();
+
   bool cedulaIsFiled = false;
   final _formKey = GlobalKey<FormState>();
   String stateCedula = '';
   String stateNombre = '';
   String stateApellido = '';
+  String idVisitanteEncontrado='';
+  Map<String,dynamic> visitanteEncontrado={};
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   TextEditingController placaController = TextEditingController();
@@ -55,6 +60,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   static const _buttonFontSize = 18.0;
   static const _sizedBoxHeight = 10.0;
   late List<dynamic> ubicaciones =[];
+  late List<dynamic> resultadosBusqueda =[];
   final ApiService _apiService = ApiService();
 
 
@@ -74,6 +80,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   bool _obscureText = true;
 
   TextEditingController cedulaController = TextEditingController();
+  TextEditingController busquedaController = TextEditingController();
   TextEditingController ubicacionController = TextEditingController();
   Map<String,dynamic> ubicacionSelected = {};
 
@@ -101,6 +108,7 @@ Future<void> getUbicaciones() async {
     try {
       const String url = "/visitas/getUbicaciones";
       String response = await _apiService.getDataJson(url, token);
+
       setState(() {
         
         ubicaciones = jsonDecode(response);
@@ -109,12 +117,37 @@ Future<void> getUbicaciones() async {
       print('Error al obtener datos: $e');
     }
   }
+
+Future<void> consultarExisteVisitante(String cedulaNombre ) async {
+    try {
+      String url = "/visitas/getPersonaByCED_and_NAME/$cedulaNombre";
+      String response = await _apiService.getDataJson(url, "");
+      setState(() {
+        resultadosBusqueda= jsonDecode(response)["data"];
+        //ubicaciones = jsonDecode(response);
+      });
+    } catch (e) {
+      setState(() {
+        resultadosBusqueda = [];
+      });
+      print('Error al obtener datos: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    busquedaController.dispose();
+  }
   @override
   void initState() {
     super.initState();
     stateCedula = widget.widgetCedula;
     stateNombre = widget.widgetNombre;
     stateApellido = widget.widgetApellido;
+    ubicacionSelected={};
+    ubicaciones=[];
     if (stateCedula.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(stateCedula)){
       cedulaIsFiled = false;
     }else{
@@ -216,15 +249,15 @@ Future<void> getUbicaciones() async {
       MainProvider mainProvider, ApiService apiService) async {
     // if (_formKey.currentState!.validate()) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-      String formattedTime = DateFormat.Hm().format(DateTime.now());
-      String qrData =
-          // '${DateFormat('dd/MM/yyyy').format(_selectedDate)},${_selectedTime.format(context)},${_selectedDuration},${_idController.text},${_nameController.text},${_lastNameController.text},${_plateController.text}';
-          '${DateFormat('dd/MM/yyyy').format(selectedDate)},${selectedTime.format(context)},${selectedTime},${stateCedula},${stateNombre},${placaController.text}';
-      print("++++++++++++++++++++++++++++");
-      print(MainProvider.prefs.getInt("Id"));
+      //String formattedTime = DateFormat.Hm().format(DateTime.now());
+      String formattedTime = '${selectedTime.hour}:${selectedTime.minute}';
+      
+      //poner en qr ID de registro
+      String qrData ='${DateFormat('dd/MM/yyyy').format(selectedDate)},${selectedTime.format(context)},${selectedTime},${stateCedula},${stateNombre},${placaController.text}';
+      //String qrData =visitanteEncontrado["Id"].toString();
       Map<String, dynamic> data = {
         'date': formattedDate.toString(),
-        'time': formattedTime.toString(),
+        'time': formattedTime,
         'duration': 100,
         'cedula': stateCedula,
         'nameVisitante': stateNombre,
@@ -232,20 +265,21 @@ Future<void> getUbicaciones() async {
         'lastNameVisitante': stateApellido,
         //'idAnfitrion': mainProvider.response['Id'],
         'idAnfitrion':MainProvider.prefs.getInt("Id"),
-        'idVisitante': 0,
+        'idVisitante': visitanteEncontrado["IdPersona"]??"",
         'antecedentes': 0,
-        'phone': "0000",
-        'email': "0000",
+        'phone': visitanteEncontrado["Cel_Persona"]??"9999999999",
+        'email': visitanteEncontrado["Correo_Personal"]??"correo@ejemplo.com",
         'observaciones': "0000",
-        
         // 'lastName': _lastNameController.text,
         'placa': placaController.text,
       };
 
       try {
         // print('Data: $data');
-        var response =
-            await apiService.postData('/visitas/registraVisita', data, token);
+        
+        var response = await apiService.postData('/visitas/registraVisita', data, token);
+        print(response);
+        print("==============================");
         // print('Data: $data');
 
         // print(response);
@@ -300,7 +334,7 @@ Future<void> getUbicaciones() async {
                             ListTile(
                               leading: const Icon(Icons.person),
                               title: const Text('Nombres'),
-                              subtitle: Text(stateNombre),
+                              subtitle: Text('$stateNombre $stateApellido'),
                             ),
                             ListTile(
                               leading: const Icon(Icons.calendar_today),
@@ -317,7 +351,7 @@ Future<void> getUbicaciones() async {
                               leading: const Icon(Icons.access_time),
                               title: const Text('Hora'),
                               subtitle:
-                                  Text(DateFormat.Hm().format(DateTime.now())),
+                                  Text(formattedTime),
                             ),
                             ListTile(
                               leading: const Icon(Icons.timer),
@@ -327,28 +361,6 @@ Future<void> getUbicaciones() async {
                           ],
                         ),
                       ),
-                      // Expanded(
-                      //   child: Column(
-                      //     children: [
-                      //       // ListTile(
-                      //       //   leading: Icon(Icons.person),
-                      //       //   title: Text('Apellidos'),
-                      //       //   subtitle: Text(_lastNameController.text),
-                      //       // ),
-                      //       ListTile(
-                      //         leading: Icon(Icons.access_time),
-                      //         title: Text('Hora'),
-                      //         subtitle:
-                      //             Text(DateFormat.Hm().format(DateTime.now())),
-                      //       ),
-                      //       ListTile(
-                      //         leading: Icon(Icons.timer),
-                      //         title: Text('Duración'),
-                      //         subtitle: Text('$selectedTime horas'),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                     ],
                   ),
                 ],
@@ -363,10 +375,46 @@ Future<void> getUbicaciones() async {
                   
                   icon: const Icon(Icons.share, color: Colors.white),
                   onPressed: () async {
-                    var imagePath = await _downloadQRCode(_qrKey);
+                    //var imagePath = await _downloadQRCode(_qrKey);
               
                     //_shareQRData(qrData, imagePath??"");
-                    _shareQRImage(qrData);
+                    //_shareQRImage(qrData);
+
+                    _shareQRImageScreen(
+                        context: context,
+                        qrWidget: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text("QR de invitación",style: TextStyle(color: Colors.black, fontSize: 30),),
+                              const SizedBox(height: 50),
+                              QrImageView(
+                                data: qrData,
+                                version: QrVersions.auto,
+                                size: 350.0,
+                                gapless: false,
+                                backgroundColor: Colors.white,
+                                dataModuleStyle:const  QrDataModuleStyle(
+                                  color: Colors.black,
+                                  dataModuleShape: QrDataModuleShape.square
+                                ),
+                                errorStateBuilder: (context, error) {
+                                  return const Center(
+                                    child: Text(
+                                      "Error al generad el qr",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  );
+                                },
+                              ),
+                              //Text(""),
+                            ],
+                          ),
+                        ));
+
+
+
                   },
                 ),
               ),
@@ -403,7 +451,26 @@ Future<void> getUbicaciones() async {
 
 
 
+Future<void> _shareQRImageScreen(
+      {required BuildContext context, required Widget qrWidget}) async {
+        final qrBox = context.findRenderObject() as RenderBox;
+        _screenshotController.captureFromWidget(qrWidget).then((Uint8List bytes) async {
+          final Directory dir = await getApplicationSupportDirectory();
+          final String ts = DateTime.now().millisecondsSinceEpoch.toString();
 
+          final String filePath = '${dir.path}/$ts.png'; 
+          XFile? xFile = XFile.fromData(bytes);
+          await xFile.saveTo(filePath);
+                  //await XFile.fromData(bytes).saveTo(filePath);
+
+          await Share.shareXFiles(
+            [XFile(filePath)],
+            text: "QR generado",
+            sharePositionOrigin: qrBox.localToGlobal(Offset.zero) & qrBox.size,
+          );
+                  
+        });
+      }
 
 
 
@@ -458,6 +525,8 @@ Future<void> getUbicaciones() async {
                         stateCedula = value;
                       } else if (fieldName == 'Nombre') {
                         stateNombre = value;
+                      } else if (fieldName == 'Apellido') {
+                        stateApellido = value;
                       }
                     });
                   },
@@ -506,8 +575,6 @@ Future<void> getUbicaciones() async {
           ubicacionController.text = value.toString();
           int selectedIndex = ubicaciones.indexWhere((item) => item["Descripcion"] == value);
           ubicacionSelected=ubicaciones[selectedIndex];
-          print(selectedIndex);
-          print(ubicacionSelected["Id"]);
         });
       },
       isDense: true,
@@ -528,8 +595,6 @@ Future<void> getUbicaciones() async {
           padding: const EdgeInsets.all(10.0),
           child: ListView(
             children: [
-
-
               Center(
                 child: Text(
                   'Invitar a un visitante',
@@ -539,6 +604,88 @@ Future<void> getUbicaciones() async {
               const SizedBox(height: 16.0),
 
               if (!cedulaIsFiled) ...[
+
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0), // Ajusta el valor para redondear más o menos
+                  color: Colors.white, // Color de fondo opcional
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: TextFormField(
+                    //keyboardType: TextInputType.text,
+                    controller: busquedaController,
+                    decoration: const InputDecoration(
+                      hintText: 'Buscar por cedula o nombre',
+                      border: InputBorder.none,
+                    ),validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, coloque su Cedula o Nombre';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue[900],
+                    onPrimary: Colors.white,
+                    
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  onPressed: () async {
+                    consultarExisteVisitante(busquedaController.text).then((value) => {
+
+                    });
+                    
+                  },
+
+                  child: const Text(
+                    'Buscar',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                ),
+              ),
+              Container(
+                height: 300,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0), // Ajusta el valor para redondear más o menos
+                  color: Colors.blue[100], // Color de fondo opcional
+                ),
+                child: ListView.builder(
+                  itemCount: resultadosBusqueda.length,
+                  itemBuilder: (context, index) {
+                    String nombre= (resultadosBusqueda[index]["Nombres"]??"")+" "+(resultadosBusqueda[index]["Apellidos"]??"");
+                    return Container(
+                      margin: const EdgeInsets.only(left: 20,right: 20),
+                      decoration: const BoxDecoration(
+                        border: Border(bottom: BorderSide(
+                        color: Colors.blue
+                        ))
+                      ),
+                      child: ListTile(
+                        onTap: () {
+                          setState(() {
+                            cedulaController.text=resultadosBusqueda[index]["Cedula"];
+                            stateNombre = resultadosBusqueda[index]["Nombres"]??"";
+                            stateApellido = resultadosBusqueda[index]["Apellidos"]??"";
+                            //idVisitanteEncontrado = resultadosBusqueda[index]["IdPersona"];
+                            visitanteEncontrado = resultadosBusqueda[index];
+                          });
+                        },
+                        title: Text(nombre , style: const TextStyle(color: Colors.black)),
+                        subtitle: Text( 'CI:${resultadosBusqueda[index]["Cedula"]??""}', style: const TextStyle(color: Colors.black)),
+                                
+                      ),
+                    );
+                },),
+              ),
+                            const SizedBox(height: 16.0),
 
               Container(
                 decoration: BoxDecoration(
@@ -564,11 +711,6 @@ Future<void> getUbicaciones() async {
               ),
 
               const SizedBox(height: 16.0),
-
-
-              
-              // _buildTextField('Nombre', nombreController),
-              // _buildTextField('Apellido', apellidoController),
               
               Container(
                 width: double.infinity,
@@ -576,14 +718,14 @@ Future<void> getUbicaciones() async {
                   style: ElevatedButton.styleFrom(
                     primary: Colors.blue[900],
                     onPrimary: Colors.white,
+                    
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     String cedulaescrita = cedulaController.text;
                     // widget.cedula = cedulaController.text;
-
                     // Validar la cédula
                     if (cedulaescrita.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(cedulaescrita)) {
                       // Si la cédula no tiene 10 dígitos o no son todos números, muestra un mensaje de error
@@ -650,7 +792,7 @@ Future<void> getUbicaciones() async {
                       child: Text("invitar a:")
                     ),
                     Center(
-                      child: Text(stateNombre)
+                      child: Text('$stateNombre $stateApellido')
                     ),
                     Center(
                       child: Text(stateCedula)

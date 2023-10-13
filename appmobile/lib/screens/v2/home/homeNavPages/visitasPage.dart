@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
@@ -101,6 +102,16 @@ class _VisitasPage extends State<VisitasPage>
         itemBuilder: (BuildContext context, int index) {
           final reversedIndex = visitas!.length - 1 - index;
           final visita = visitas[reversedIndex];
+          DateFormat inputFormat = DateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'");
+
+          String fechaVisitaFormateada = DateFormat('yyyy-MM-dd').format(inputFormat.parse(visita['FechaTimeVisitaEstimada']));
+          String fechaSalidaFormateada = DateFormat('yyyy-MM-dd').format(inputFormat.parse(visita['FechaTimeSalidaEstimada']));
+          DateTime fechaVisita = inputFormat.parse(visita['FechaTimeVisitaEstimada']);
+          DateTime fechaSalida = inputFormat.parse(visita['FechaTimeSalidaEstimada']);
+
+          Duration duracionVisita = fechaSalida.difference(fechaVisita);
+          //Duration duracionVisita = fechaSalidaFormateada.difference(fechaVisitaFormateada);
+          print("La duración de la visita es: ${duracionVisita.inDays} días, ${duracionVisita.inHours % 24} horas y ${duracionVisita.inMinutes % 60} minutos.");
 
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
@@ -120,15 +131,19 @@ class _VisitasPage extends State<VisitasPage>
                       // Text('Apellido: ${visita['ApellidosVisitante']?.toString() ?? 'N/A'}'),
                       Text(
                           'ID: ${visita['IdentificacionVisitante']?.toString() ?? 'N/A'}'),
-                      Text(
-                          'Duracion: ${visita['Duracion']?.toString() ?? 'N/A'}'),
+                      //Text('Duracion: ${visita['Duracion']?.toString() ?? 'N/A'}'),
+                      
                       // Text('Estado: ${visita['Estado']?.toString() ?? 'N/A'}'),
                       // Text('FechaCrea: ${visita['FechaCrea']?.toString() ?? 'N/A'}'),
-                      Text(
-                          'FechaVisita: ${visita['FechaTimeVisitaReal']?.toString() ?? 'N/A'}'),
-                      //Text('Hora: ${visita['Hora']?.toString() ?? 'N/A'}'),
+                      //Text(                          'FechaVisita: ${fechaVisitaFormateada.toString()??"N/A"}'),
                       Text('Placa: ${visita['Placa']?.toString() ?? 'N/A'}'),
-                      Text('Ubicacion:${visita["Ubicacion"]?.toString() ?? 'N/A'}')
+
+                      //Text(                          'FechaSalida: ${fechaSalidaFormateada.toString()??"N/A"}'),
+                     
+                      //Text('Hora: ${visita['Hora']?.toString() ?? 'N/A'}'),
+                      Text('Ubicacion:${visita["Ubicacion"]?.toString() ?? 'N/A'}'),
+                      //Text('Duracion: ${duracionVisita.inDays} días, ${duracionVisita.inHours % 24} horas y ${duracionVisita.inMinutes % 60} minutos.'),
+
                     ])
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

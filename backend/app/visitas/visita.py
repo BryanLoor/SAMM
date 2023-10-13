@@ -428,10 +428,40 @@ def registraVisita():
     # }
     # return the new user and their JWT to the client
     # return jsonify(visita=temp_user_dict), 201
+    
     return jsonify({"msg":"Visita creada"}), 201
 
-
-
+#obtener persona por nombre o cedula
+@bp.route('/getPersonaByCED_and_NAME/<string:cedula_or_name>', methods=['GET'])
+@cross_origin()
+def get_persona_by_CED_and_NAME(cedula_or_name):
+    try:
+        personas = Persona.query.filter(or_(
+                Persona.Nombres.like(f"%{cedula_or_name}%"),
+                Persona.Apellidos.like(f"%{cedula_or_name}%"),
+                Persona.Identificacion.like(f"%{cedula_or_name}%")
+            )).all()
+            
+        
+        #if len(personas) == 0:
+        #    return jsonify({'message': 'Persona no existe'}), 400
+        personas_dict = [
+        {
+            "Nombres": row.Nombres,
+            "Apellidos": row.Apellidos,
+            "Cedula": row.Identificacion, 
+            "IdPersona": row.Id,
+            "Cel_Personal":row.Cel_Personal,
+            "Correo_Personal":row.Correo_Personal
+        }
+        for row in personas
+    ]
+        
+        return jsonify({"data":personas_dict,"total":len(personas_dict)}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+    
+    
 
 
 #obtener info de la persona usuando su identificaion
