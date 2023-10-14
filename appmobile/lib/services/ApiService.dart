@@ -6,8 +6,8 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 class ApiService {
-  final String _baseUrl = 'http://10.0.2.2:5000'; //local
-  // final String _baseUrl = 'http://192.168.100.5'; //local
+  // final String _baseUrl = 'http://10.0.2.2:5000'; //local
+  final String _baseUrl = 'http://192.168.100.5:5000'; //local
   // final String _baseUrl = 'http://198.38.89.240:8035'; //produccionGrowthly
 
   //ip para tlf http://10.0.2.2:5000

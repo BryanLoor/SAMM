@@ -19,7 +19,7 @@ from app.models.SAMM_Estaddos import SAMM_Estados
 from app.models.SAMM_Ronda import SAMM_Ronda
 from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto
 from app.models.SAMM_Ronda_Detalle import SAMM_Ronda_Detalle
-from app.models.SAMM_Ronda_Usuario import SAMM_Ronda_Usuario
+from app.models.SAMM_Ronda_Usuario import SAMM_Ronda_Usuario, SAMM_Ronda_UsuarioSchema
 
 #pensado para admin y supervisor
 
@@ -245,34 +245,107 @@ def guardarPuntoRealizado():
         }), 201
 
 
-@bp.route('/guardarRondaRealizadaXUsuario', methods=['POST'])
+@bp.route('/guardarRondaAsignadaXUsuario', methods=['POST'])
 @cross_origin()
 @jwt_required()
-def guardarRondaRealizadaXUsuario():
-    
-    currentUserID =  get_jwt_identity() #CODIGO usuario
-    idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
-
-    IdRonda = request.json["IdRonda"]
+def guardarRondaAsignadaXUsuario():
+    currentUserID = get_jwt_identity()  # CODIGO usuario
 
     rondaUsuario = SAMM_Ronda_Usuario()
 
-    rondaUsuario.IdUsuario = idUsuario[0]
-    rondaUsuario.IdRonda = IdRonda
-    rondaUsuario.Estado = 0
+    # rondaUsuario.IdRonda = 1
+    rondaUsuario.IdRonda = request.json["idronda"]
+    # rondaUsuario.IdUsuario = 1
+    rondaUsuario.IdUsuario = request.json["idguardia"]
+    rondaUsuario.Estado = "A"
     rondaUsuario.FechaCrea = datetime.now()
-    rondaUsuario.UsuCrea = idUsuario[0]
+    # rondaUsuario.UsuCrea = 1
     rondaUsuario.FechaMod = datetime.now()
-    rondaUsuario.UsuMod = idUsuario[0]
+    # rondaUsuario.UsuMod = 1
 
-   
+    idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo == currentUserID).first()
+    # if idUsuario:
+    rondaUsuario.UsuCrea = idUsuario[0]
+    rondaUsuario.UsuMod = idUsuario[0]
+    # else:
+    #     rondaUsuario.UsuCrea = 1
+    #     rondaUsuario.UsuMod = 1
+
+
+    print(rondaUsuario.IdUsuario)
+    print(rondaUsuario.IdRonda)
+    print(rondaUsuario.Estado)
+    print(rondaUsuario.FechaCrea)
+    print(rondaUsuario.UsuCrea)
+    print(rondaUsuario.FechaMod)
+    print(rondaUsuario.UsuMod)
+
     db.session.add(rondaUsuario)
     db.session.commit()
 
     return jsonify({
-        "msg":"Ronda creada",
+        "msg": "Ronda asignada al usuario",
         "IdRonda": rondaUsuario.Id
-        }), 201
+    }), 201
+
+
+
+# @bp.route('/getUsuariosPorRonda/<int:IdRonda>', methods=['GET'])
+# @cross_origin()
+# @jwt_required()
+# def getUsuariosPorRonda(IdRonda):
+#     # Obtén la lista de usuarios asignados a la ronda con el IdRonda especificado
+#     usuarios_en_ronda = db.session.query(
+#         SAMM_Ronda_Usuario
+#     ).filter(
+#         SAMM_Ronda_Usuario.IdRonda == IdRonda
+#     ).all()
+
+#     # Ahora, obtén la información de los usuarios correspondientes a los IdUsuario obtenidos
+#     usuarios_info = []
+#     for ronda_usuario in usuarios_en_ronda:
+#         ronda_usuario_schema = SAMM_Ronda_UsuarioSchema()
+#         ronda_usuario_data = ronda_usuario_schema.dump(ronda_usuario)
+#         usuarios_info.append(ronda_usuario_data)
+
+#     return jsonify({
+#         "data": usuarios_info
+#     }), 200
+
+
+@bp.route('/getUsuariosPorRonda/<int:IdRonda>', methods=['GET'])
+@cross_origin()
+@jwt_required()
+def getUsuariosPorRonda(IdRonda):
+    # Obtén la lista de usuarios asignados a la ronda con el IdRonda especificado
+    usuarios_en_ronda = db.session.query(
+        SAMM_Ronda_Usuario.IdUsuario
+    ).filter(
+        SAMM_Ronda_Usuario.IdRonda == IdRonda
+    ).all()
+
+    # Ahora, obtén la información de los usuarios correspondientes a los IdUsuario obtenidos
+    usuarios_info = []
+    for usuario_id in usuarios_en_ronda:
+        usuario = db.session.query(
+            SAMM_Usuario
+        ).filter(
+            SAMM_Usuario.Id == usuario_id[0]
+        ).first()
+        if usuario:
+            usuario_schema = SAMM_UsuarioSchema()
+            usuario_data = usuario_schema.dump(usuario)
+            # Elimina el campo "Clave" del diccionario antes de agregarlo a la lista
+            if 'Clave' in usuario_data:
+                del usuario_data['Clave']
+            usuarios_info.append(usuario_data)
+
+    return jsonify({
+        "data": usuarios_info
+    }), 200
+
+
+
 
 
 

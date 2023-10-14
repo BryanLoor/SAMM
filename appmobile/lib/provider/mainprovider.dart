@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:sammseguridad_apk/screens/logins/LoginResponse.dart';
+import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainProvider extends ChangeNotifier {
@@ -109,6 +110,45 @@ class MainProvider extends ChangeNotifier {
     }
   }
 
+
+
+
+// {
+//     "apellidos": "Choez Velez",
+//     "codigo": "admin",
+//     "codigo_usuario_crea": "admin",
+//     "codigo_usuario_modifica": "admin",
+//     "estado": "A",
+//     "fechaCrea:": "28-06-2023",
+//     "fechaModifica:": "16-08-2023",
+//     "horaCrea": "21:07:59",
+//     "horaModifica": "11:56:53",
+//     "id": 1,
+//     "nombres": "Richard Michael"
+//   },
+  Future<List<Map<String, dynamic>>> getUsuarios(
+      ApiService apiService
+  ) async {
+    List<Map<String, dynamic>> usuarios = [];
+
+    try{
+      // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
+      var sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString("token") ?? "";
+      var response = await apiService.getData('/rutas/usuarios', token);
+      usuarios = response.cast<Map<String, dynamic>>();
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      print(e);
+    }finally{
+      return usuarios;
+    }
+
+  }
+
+
+
   Future<void> logout() async {
     _token = "";
     await prefs.setString("token", "");
@@ -120,6 +160,8 @@ class MainProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+
 
 // {
 //   "Apellidos": "Choez Velez",

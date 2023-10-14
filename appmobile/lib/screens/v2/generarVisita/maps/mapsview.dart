@@ -1,6 +1,8 @@
 // import 'dart:async';
 // import 'dart:convert';
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -44,7 +46,8 @@ class MapViewState extends State<MapView> {
 
   // @override
   // void dispose() {
-  //   // mapviewcontroller.dispose();
+  //   MapviewController mapviewcontroller = Provider.of<MapviewController>(context);
+  //   mapviewcontroller.completerController.
   //   super.dispose();
   // }
 
@@ -85,7 +88,7 @@ class MapViewState extends State<MapView> {
     // );
   }
 
-  PopupMenuButton acciones(rondasprovider,mapviewcontroller) {
+  PopupMenuButton acciones(RondasProvider rondasprovider,mapviewcontroller) {
     return PopupMenuButton(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -95,7 +98,7 @@ class MapViewState extends State<MapView> {
           margin: const EdgeInsets.only(top: 10),
           decoration: BoxDecoration(
             color: Colors.blue[900],
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
@@ -164,32 +167,131 @@ class MapViewState extends State<MapView> {
 
 }
 
-class MapaGoogle  extends StatelessWidget {
-  final id;
-  const MapaGoogle ({
+
+
+class MapaGoogle extends StatelessWidget {
+  final int id;
+
+  const MapaGoogle({
     required this.id,
-    super.key
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final MapviewController mapviewController = Provider.of<MapviewController>(context, listen: false);
 
-    // RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
-    // ApiService apiService = Provider.of<ApiService>(context);
-    MapviewController mapviewcontroller = Provider.of<MapviewController>(context);
     return GoogleMap(
       zoomControlsEnabled: false,
       mapType: MapType.normal,
-      initialCameraPosition: mapviewcontroller.cameraPosition,
-      markers: mapviewcontroller.markers,
+      initialCameraPosition: mapviewController.cameraPosition,
+      markers: mapviewController.markers,
       myLocationEnabled: true,
       onMapCreated: (GoogleMapController controller) {
-        controller.setMapStyle(MapStyle.style);
-        // mapviewcontroller.completerController = controller;
-        mapviewcontroller.completarcompleter(controller);
-        // mapviewcontroller.completerController.complete(controller);
-        mapviewcontroller.goToFirst(controller);
+        try {
+          controller.setMapStyle(MapStyle.style);
+          mapviewController.goToFirst(controller);
+        } catch (e) {
+          // Manejar la excepción aquí, puedes imprimir un mensaje de error o tomar las acciones necesarias.
+          print('Error al crear el mapa: $e');
+        }
       },
     );
   }
 }
+
+
+// class MapaGoogle extends StatelessWidget {
+//   final int id;
+
+//   const MapaGoogle({
+//     required this.id,
+//     Key? key,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final MapviewController mapviewController = Provider.of<MapviewController>(context, listen: false);
+    
+//     return GoogleMap(
+//       zoomControlsEnabled: false,
+//       mapType: MapType.normal,
+//       initialCameraPosition:CameraPosition(
+//         target: LatLng(-12.046374, -77.042793),
+//         zoom: 14,
+//       ),
+//     );
+//   }
+// }
+
+// class MapaGoogle extends StatelessWidget {
+//   final int id;
+
+//   const MapaGoogle({
+//     required this.id,
+//     Key? key,
+//   }) : super(key: key);
+
+
+
+//   @override
+//   Widget build(BuildContext context) {
+    
+
+//     return GoogleMap(
+//       zoomControlsEnabled: false,
+//       mapType: MapType.normal,
+//       initialCameraPosition: CameraPosition(
+//         target: LatLng(-12.046374, -77.042793),
+//         zoom: 14,
+//       ),
+//       myLocationEnabled: true,
+//       onMapCreated: (GoogleMapController controller) {
+//         controller.setMapStyle(MapStyle.style);
+//         mapviewController.completarcompleter(controller);
+//         mapviewController.goToFirst(controller);
+//       },
+//     );
+//   }
+// }
+
+
+// class MapaGoogle extends StatelessWidget {
+//   final int id;
+
+//   const MapaGoogle({
+//     required this.id,
+//     Key? key,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final MapviewController mapviewController = Provider.of<MapviewController>(context, listen: false);
+
+//     return FutureBuilder<GoogleMapController>(
+//       future: mapviewController.completerDelControlador.future,
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.done) {
+//           final GoogleMapController controller = snapshot.data!;
+//           controller.setMapStyle(MapStyle.style);
+//           mapviewController.goToFirst(controller);
+//           return GoogleMap(
+//             zoomControlsEnabled: false,
+//             mapType: MapType.normal,
+//             initialCameraPosition: mapviewController.cameraPosition,
+//             markers: mapviewController.markers,
+//             myLocationEnabled: true,
+//             onMapCreated: (GoogleMapController gcontroller) {
+//               mapviewController.hacerUsoDeComplete(gcontroller);
+//               // Este bloque no se ejecutará nuevamente porque ya se completó.
+//             },
+//           );
+//         } else {
+//           // Puedes mostrar un indicador de carga mientras se carga el controlador.
+//           return CircularProgressIndicator();
+//         }
+//       },
+//     );
+//   }
+// }
+

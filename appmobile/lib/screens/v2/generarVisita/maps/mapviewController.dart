@@ -17,15 +17,44 @@ class MapviewController with ChangeNotifier{
       snippet: '',
     ),
   );
+  // Completer<GoogleMapController> _completerDelControlador= Completer<GoogleMapController>();
+  // MapviewController() {
+  //   _completerDelControlador = Completer<GoogleMapController>();
+  // }
 
-  Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+  // Completer<GoogleMapController> get completerDelControlador => _completerDelControlador;
 
-  Completer<GoogleMapController> get completerController => _controller;
+  // set completerController(Completer<GoogleMapController> newCompleterController){
+  //   _completerDelControlador = newCompleterController;
+  //   notifyListeners();
+  // }
 
-  set completerController(Completer<GoogleMapController> newCompleterController){
-    _controller = newCompleterController;
-    notifyListeners();
+  
+  //MAPS INIT
+  Future<void> goToFirst(GoogleMapController controller) async {
+    if (positionList.isEmpty) {
+      return;
+    }
+    // menuselection = 4;
+    _CameraPosition = CameraPosition(
+      target: positionList[0],
+      zoom: 17.0,
+    );
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        // await _getCurrentLocation()
+        _CameraPosition,
+      )
+    );
   }
+
+  //MAPS INIT
+  // void hacerUsoDeComplete(GoogleMapController gcontroller){
+  //   if(!_completerDelControlador.isCompleted){
+  //     _completerDelControlador.complete(gcontroller);
+  //   }
+  // }
+
 
   List<LatLng> _positionList = [];
 
@@ -71,11 +100,7 @@ class MapviewController with ChangeNotifier{
     notifyListeners();
   }
 
-  void completarcompleter(GoogleMapController cont){
-    if(!_controller.isCompleted){
-      _controller.complete(cont);
-    }
-  }
+
 
   Future<void> goTo(GoogleMapController controller,LatLng coordenada) async {
     menuselection = 4;
@@ -90,22 +115,8 @@ class MapviewController with ChangeNotifier{
       )
     );
   }
-  Future<void> goToFirst(GoogleMapController controller) async {
-    if (positionList.isEmpty) {
-      return;
-    }
-    menuselection = 4;
-    _CameraPosition = CameraPosition(
-      target: positionList[0],
-      zoom: 17.0,
-    );
-    await controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        // await _getCurrentLocation()
-        _CameraPosition,
-      )
-    );
-  }
+
+
 
   Set<Marker> get markers => _markers.values.toSet();
   // set markers(Map<MarkerId,Marker> newMarkers){

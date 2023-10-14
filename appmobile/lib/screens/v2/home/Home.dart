@@ -122,6 +122,8 @@ class _HomeState extends State<Home> {
 
         :_selectedIndex == 2?
           FloatingActionButton.extended(
+              backgroundColor: Colors.blue[900],
+            foregroundColor: Colors.white,
             onPressed: () {
               showModalBottomSheet(
                 isScrollControlled: true,

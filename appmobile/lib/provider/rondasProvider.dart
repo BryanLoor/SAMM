@@ -47,7 +47,10 @@ class RondasProvider with ChangeNotifier {
       if (response["data"] is List) {
         // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
         // return response["data"].cast<Map<String, dynamic>>();
+        
         RondasMaps = response["data"].cast<Map<String, dynamic>>();
+        RondasMaps.removeWhere((map) => map["Estado"] == "activo");
+
       }
 
     }catch(e){
@@ -91,6 +94,52 @@ class RondasProvider with ChangeNotifier {
     // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
   }
 
+  Future<List<Map<String, dynamic>>> getRondaGuardias(
+      ApiService apiService,String rondaID
+  ) async {
+    
+    List<Map<String, dynamic>> guardias = [];
+    
+    try{
+      var sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString("token") ?? "";
+      var response = await apiService.getData('/rondas/getUsuariosPorRonda/$rondaID', token);
+      // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+      // Verifica si la respuesta es una lista
+      if (response["data"] is List) {
+        // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+        // return response["data"].cast<Map<String, dynamic>>();
+        guardias = response["data"].cast<Map<String, dynamic>>();
+      }
+
+      
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      print(e);
+    }finally{
+      return guardias;
+    }
+    // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
+  }
+
+
+  Future<void> enviarAsignarGuardiaARonda(
+    ApiService apiService,
+    int idRonda,
+    int idguardia,
+  ) async {
+    var sharedPreferences = await SharedPreferences.getInstance();
+    var token = sharedPreferences.getString("token") ?? "";
+    var data = {
+      "idronda": idRonda,
+      "idguardia": idguardia,
+    };
+    await apiService.postData('/rondas/guardarRondaAsignadaXUsuario', data,token);
+    // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+  }
 
   Future<void> enviarNuevoPunto(
     ApiService apiService,

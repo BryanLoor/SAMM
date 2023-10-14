@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapsview.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewController.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/AgregarGuardiaFormulario.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 
@@ -33,10 +34,119 @@ class _RondaDetalleState extends State<RondaDetalle> {
     MapviewController mapviewController = Provider.of<MapviewController>(context);
     return Scaffold(
       appBar: CustomAppBar(),
-      floatingActionButton: FlotingActionMenu(
-        idRonda: widget.idRonda,
-        tabMenuView: tabMenuView,
+
+
+      floatingActionButton:
+      PopupMenuButton(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Container(
+            height: 50,
+            width: 50,
+            margin: const EdgeInsets.only(top: 10),
+            decoration: BoxDecoration(
+              color: Colors.blue[900],
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 5,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.keyboard_arrow_up, color: Colors.white,)
+          ),
+        ),
+        itemBuilder: (context) => [
+          // PopupMenuItem(
+          //   child: Text("Rondas"),
+          //   value: 0,
+          // ),
+
+
+          tabMenuView == TabMenu.Puntos?
+          const PopupMenuItem(
+            child: Row(
+              children: [
+                Icon(Icons.add_location_alt_outlined),
+                Text("Editar Puntos"),
+              ],
+            ),
+            value: 0,
+          )
+
+
+          :PopupMenuItem(
+            child: Row(
+              children: [
+                Icon(Icons.add_circle_outline_outlined,),
+                Text("Agregar guardia"),
+              ],
+            ),
+            value: 1,
+          ),
+          
+          PopupMenuItem(
+            child: Row(
+              children: [
+                Icon(Icons.map_outlined),
+                Text("Ver en el mapa"),
+              ],
+            ),
+            value: 2,
+          ),
+
+        ],
+        onSelected: (value) async{
+            switch (value) {
+              case 0:
+                // tabMenuView = TabMenu.Puntos;
+                print("Agregar punto");
+                var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
+                final positionList = mapviewController.setMarkersByPositionList(listarondas);
+                mapviewController.menuselection = 2;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MapView(
+                      idRonda: widget.idRonda,
+                    ),
+                  ),
+                );
+                break;
+              case 1:
+                print("Agregar guardia");
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => AgregarGuardiaFormulario(idRonda: widget.idRonda),
+                );
+                // tabMenuView = TabMenu.Guardias;
+                break;
+              case 2:
+                var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
+                final positionList = mapviewController.setMarkersByPositionList(listarondas);
+                mapviewController.menuselection = 4;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MapView(
+                      idRonda: widget.idRonda,
+                    ),
+                  ),
+                );
+                break;
+              default:
+            }
+          setState(() {
+            
+          });
+        },
       ),
+
+
+
+
       body: Column(
         children: [
           Container(
@@ -106,7 +216,7 @@ class _RondaDetalleState extends State<RondaDetalle> {
           ),
     
           if (tabMenuView == TabMenu.Guardias) 
-            GuardiasView()
+            GuardiasView(idRonda: widget.idRonda)
           else if (tabMenuView == TabMenu.Puntos) 
             PuntosView(idRonda: widget.idRonda)
         ],
@@ -115,105 +225,5 @@ class _RondaDetalleState extends State<RondaDetalle> {
   }
 }
 
-class FlotingActionMenu extends StatelessWidget {
-  int idRonda;
-  TabMenu tabMenuView;
-  FlotingActionMenu({
-    required this.idRonda,
-    required this.tabMenuView,
-    super.key,
-  });
-
-
-  @override
-  Widget build(BuildContext context) {
-    RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
-    ApiService apiService = Provider.of<ApiService>(context);
-    MapviewController mapviewController = Provider.of<MapviewController>(context);
-    
-    if (tabMenuView == TabMenu.Puntos){
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-
-
-          tabMenuView == TabMenu.Puntos?
-            FloatingActionButton.extended(
-              onPressed: (){
-
-              }, 
-              label: Text('Agregar punto'),
-              icon: Icon(Icons.add_location_alt_outlined),
-            )
-
-          :tabMenuView == TabMenu.Guardias?
-            
-            FloatingActionButton.extended(
-              onPressed: (){
-
-              }, 
-              label: Text('Agregar guardia'),
-              icon: Icon(Icons.add_circle_outline_outlined),
-            )
-          :Container(),
-          
-
-          
-          SizedBox(height: 16), // Espacio entre los botones flotantes
-          
-          
-          FloatingActionButton.extended(
-            onPressed: () async{
-
-              var listarondas = await rondasProvider.getRondaPoints(apiService, idRonda.toString());
-              final positionList = mapviewController.setMarkersByPositionList(listarondas);
-
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MapView(
-                    idRonda: idRonda,
-                  ),
-                ),
-              );
-            },
-            label: Text('Ver en el mapa'),
-            // icono de tres puntos
-            icon: Icon(Icons.map_outlined),
-          ),
-        ],
-      );
-
-    }else if (tabMenuView == TabMenu.Guardias){
-      return Column();
-
-    }
-    
-    
-    
-    return FloatingActionButton.extended(
-      onPressed: () async{
-
-        var listarondas = await rondasProvider.getRondaPoints(apiService, idRonda.toString());
-        final positionList = mapviewController.setMarkersByPositionList(listarondas);
-
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MapView(
-              idRonda: idRonda,
-            ),
-          ),
-        );
-      },
-      label: Text('Ver en el mapa'),
-      // icono de tres puntos
-      icon: Icon(Icons.map_outlined),
-    );
-  }
-}
 
 enum TabMenu { Puntos, Guardias}
