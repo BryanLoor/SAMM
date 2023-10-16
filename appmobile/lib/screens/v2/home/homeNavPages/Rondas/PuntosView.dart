@@ -46,26 +46,35 @@ class _PuntosViewState extends State<PuntosView> {
 
   @override
   Widget build(BuildContext context) {
+    Widget result;
     if (isLoading) {
-      return CircularProgressIndicator();
+      result = CircularProgressIndicator();
     } else if (hasError) {
-      return Text('Error al cargar puntos');
+      result= Text('Error al cargar puntos');
     } else if (puntos.isEmpty) {
-      return Text('No hay puntos');
+      result= Text('No hay puntos');
     } else {
-      return SingleChildScrollView(
-        child: Column(
-          children: puntos.map((punto) {
-            return ListTile(
-              title: Text(punto['Descripcion'].toString()),
-              subtitle: Text(punto['Coordenada']),
-              leading: Icon(Icons.location_on),
-              // Otros elementos de ListTile según tus datos
-            );
-          }).toList(),
-        ),
+      result= Column(
+        children: puntos.map((punto) {
+          return ListTile(
+            title: Text(punto['Descripcion'].toString()),
+            subtitle: Text(punto['Coordenada']),
+            leading: Icon(Icons.location_on),
+            // Otros elementos de ListTile según tus datos
+          );
+        }).toList(),
       );
     }
+    return RefreshIndicator(
+      onRefresh: _fetchPuntos,
+      child: SingleChildScrollView(
+        child: result,
+      ),
+    );
+    // return RefreshIndicator(
+    //   onRefresh: _fetchPuntos,
+    //   child: result,
+    // );
   }
 }
 

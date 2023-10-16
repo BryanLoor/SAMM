@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapsview.dart';
@@ -147,83 +148,180 @@ class _RondaDetalleState extends State<RondaDetalle> {
 
 
 
-      body: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-             width: double.infinity,
-            child: Center(
-              child: Text(
-                '${widget.descripcionRonda} ',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
               ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-             width: double.infinity,
-            child: Center(
-              child: Text(
-                '${widget.nombreRonda} ',
-                style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            width: double.infinity,
-            child: Center(
-              child: SegmentedButton<TabMenu>(
-                segments: const <ButtonSegment<TabMenu>>[
-                  ButtonSegment<TabMenu>(
-                    value: TabMenu.Puntos,
-                    label: Text('Puntos'),
-                    icon: Icon(Icons.location_on_outlined)
+               width: double.infinity,
+              child: Center(
+                child: Text(
+                  '${widget.descripcionRonda} ',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
                   ),
-                  ButtonSegment<TabMenu>(
-                    value: TabMenu.Guardias,
-                    label: Text('Guardias'),
-                    icon: Icon(Icons.shield_outlined)
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+               width: double.infinity,
+              child: Center(
+                child: Text(
+                  '${widget.nombreRonda} ',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              width: double.infinity,
+              child: Center(
+                child: SegmentedButton<TabMenu>(
+                  segments: const <ButtonSegment<TabMenu>>[
+                    ButtonSegment<TabMenu>(
+                      value: TabMenu.Puntos,
+                      label: Text('Puntos'),
+                      icon: Icon(Icons.location_on_outlined)
+                    ),
+                    ButtonSegment<TabMenu>(
+                      value: TabMenu.Guardias,
+                      label: Text('Guardias'),
+                      icon: Icon(Icons.shield_outlined)
+                    ),
+                  ],
+                  selected: <TabMenu>{tabMenuView},
+                  selectedIcon: tabMenuView == TabMenu.Puntos 
+                    ? Icon(Icons.location_on) 
+                    : Icon(Icons.shield),
+                  onSelectionChanged: (Set<TabMenu> newSelection) {
+                    setState(() {
+                      // By default there is only a single segment that can be
+                      // selected at one time, so its value is always the first
+                      // item in the selected set.
+                      tabMenuView = newSelection.first;
+                    });
+                    
+                  },
+                ),
+              )
+            ),
+          
+            if (tabMenuView == TabMenu.Guardias) 
+              GuardiasView(idRonda: widget.idRonda)
+            else if (tabMenuView == TabMenu.Puntos) 
+              PuntosView(idRonda: widget.idRonda),
+      
+      
+            if (tabMenuView == TabMenu.Puntos)
+            BotonAgregarPunto(
+              apiService: apiService, 
+              widget: widget
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BotonAgregarPunto extends StatelessWidget {
+  const BotonAgregarPunto({
+    super.key,
+    required this.apiService,
+    required this.widget,
+  });
+
+  final ApiService apiService;
+  final RondaDetalle widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () { 
+        showDialog(
+          context: context,
+          builder: (context) {
+            TextEditingController puntoController = TextEditingController();
+
+            return AlertDialog(
+              title: const Text('Agregar punto'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Se agregará un punto en su ubicación actual'),
+                  TextField(
+                    controller: puntoController,
+                    decoration: InputDecoration(labelText: 'Nombre del punto'),
                   ),
                 ],
-                selected: <TabMenu>{tabMenuView},
-                selectedIcon: tabMenuView == TabMenu.Puntos 
-                  ? Icon(Icons.location_on) 
-                  : Icon(Icons.shield),
-                onSelectionChanged: (Set<TabMenu> newSelection) {
-                  setState(() {
-                    // By default there is only a single segment that can be
-                    // selected at one time, so its value is always the first
-                    // item in the selected set.
-                    tabMenuView = newSelection.first;
-                  });
-                  
-                },
               ),
-            )
-          ),
-    
-          if (tabMenuView == TabMenu.Guardias) 
-            GuardiasView(idRonda: widget.idRonda)
-          else if (tabMenuView == TabMenu.Puntos) 
-            PuntosView(idRonda: widget.idRonda)
-        ],
-      ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.pop(context, 'Aceptar');
+                    MapviewController mapviewcontroller = Provider.of<MapviewController>(context, listen: false);
+                    RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
+
+                    try {
+                      var pos = await mapviewcontroller.determinePosition();
+                      String puntoNombre = puntoController.text; // Obtener el nombre del punto desde el TextField
+
+                      await rondasProvider.enviarNuevoPunto(
+                        apiService,
+                        widget.idRonda,
+                        0,
+                        "${pos.latitude.toString()},${pos.longitude.toString()}",
+                        puntoNombre,
+                      );
+                    } catch (error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('ha ocurrido un error'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      // Manejar errores aquí
+                      print("Error: $error");
+                    }
+                    // show snakbar color verde
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   const SnackBar(
+                    //     content: Text('Punto agregado'),
+                    //     backgroundColor: Colors.green,
+                    //   ),
+                    // );
+
+                    // Navigator.pop(context, 'Aceptar');
+                  },
+                  child: const Text('Aceptar'),
+                ),
+              ],
+            );
+          },
+        );
+
+      },
+      child: const Text('agregar punto'),
     );
   }
 }
 
 
 enum TabMenu { Puntos, Guardias}
+
+

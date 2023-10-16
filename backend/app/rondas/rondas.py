@@ -229,7 +229,7 @@ def guardarPuntoRealizado():
 
     rondaDetalle.IdUsuario = idUsuario[0]
     rondaDetalle.IdRonda = IdRonda
-    rondaDetalle.Estado = 0
+    rondaDetalle.Estado = 1
     rondaDetalle.IdPuntoRonda = request.json['IdPuntoRonda']
     rondaDetalle.Codigo = request.json['Codigo']
     rondaDetalle.Descripcion = request.json['Descripcion']

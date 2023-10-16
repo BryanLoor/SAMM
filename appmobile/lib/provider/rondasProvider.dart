@@ -49,7 +49,7 @@ class RondasProvider with ChangeNotifier {
         // return response["data"].cast<Map<String, dynamic>>();
         
         RondasMaps = response["data"].cast<Map<String, dynamic>>();
-        RondasMaps.removeWhere((map) => map["Estado"] == "activo");
+        // RondasMaps.removeWhere((map) => map["Estado"] == "activo");
 
       }
 
@@ -93,6 +93,37 @@ class RondasProvider with ChangeNotifier {
     }
     // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
   }
+
+  // TODO:  esto lo va a llamar cuando vaya a asignar un guardia
+  // Future<List<Map<String, dynamic>>> getUsuariosPorRol(
+  //   ApiService apiService,
+  //   String rol
+  // ) async {
+
+  //   List<Map<String, dynamic>> usuarios = [];
+
+  //   var sharedPreferences = await SharedPreferences.getInstance();
+  //   var token = sharedPreferences.getString("token") ?? "";
+  //   var data = {
+  //     "rol": rol
+  //   };
+  //   var response = await apiService.postData('/rutas/usuariosxrol', data,token);
+  //   // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+  //   usuarios = response.cast<Map<String, dynamic>>();
+  //   return response
+    
+  // }
+    //   usuarios = [
+    //     {
+    //         'rolusuarioestado': item.rolusuarioestado,
+    //         'Codigo': item.Codigo,
+    //         'Nombres': item.nombrescompletos,
+    //         'estadousuario':item.Estado
+    //     }
+    //     for item in query_result
+    // ]
+  // usuariosxrol
+
 
   Future<List<Map<String, dynamic>>> getRondaGuardias(
       ApiService apiService,String rondaID
