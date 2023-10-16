@@ -358,7 +358,6 @@ def registraVisita():
    
     # Alertas = db.Column(db.String(255))
 
-    print(request.json['nameVisitante'])
     visita.NombresVisitante= request.json['nameVisitante']
     visita.ApellidosVisitante = request.json['lastNameVisitante']
     visita.IdentificacionVisitante = str(request.json['cedula'])
@@ -428,8 +427,9 @@ def registraVisita():
     # }
     # return the new user and their JWT to the client
     # return jsonify(visita=temp_user_dict), 201
-    
-    return jsonify({"msg":"Visita creada"}), 201
+    id_visita_recien_creada = visita.Id
+
+    return jsonify({"msg":"Visita creada","idVisita":id_visita_recien_creada}), 201
 
 #obtener persona por nombre o cedula
 @bp.route('/getPersonaByCED_and_NAME/<string:cedula_or_name>', methods=['GET'])
