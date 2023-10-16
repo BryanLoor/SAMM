@@ -124,17 +124,17 @@ class MapViewState extends State<MapView> {
         ),
 
 
-        if(rondasprovider.hasSelectedItem)
-        PopupMenuItem(
-          child: Text("Editar Ronda"),
-          value: 2,
-        ),
+        // if(rondasprovider.hasSelectedItem)
+        // PopupMenuItem(
+        //   child: Text("Editar Ronda"),
+        //   value: 2,
+        // ),
 
 
-        PopupMenuItem(
-          child: Text("Crear Ronda"),
-          value: 3,
-        ),
+        // PopupMenuItem(
+        //   child: Text("Crear Ronda"),
+        //   value: 3,
+        // ),
       ],
       onSelected: (value) {
         setState(() {

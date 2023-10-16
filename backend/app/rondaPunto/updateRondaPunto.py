@@ -45,3 +45,11 @@ def updateRondaPunto():
 
 
     return jsonify({"msg":"PuntoRonda editada"}), 201
+
+# {
+#     "IdRonda": 1,
+#     "IdPuntoRonda": 1,
+#     "Orden": 1,
+#     "Coordenada": "string",
+#     "Descripcion": "string"
+# }

@@ -66,27 +66,27 @@ class _RondaDetalleState extends State<RondaDetalle> {
           // ),
 
 
-          tabMenuView == TabMenu.Puntos?
-          const PopupMenuItem(
-            child: Row(
-              children: [
-                Icon(Icons.add_location_alt_outlined),
-                Text("Editar Puntos"),
-              ],
-            ),
-            value: 0,
-          )
+          // tabMenuView == TabMenu.Puntos?
+          // const PopupMenuItem(
+          //   child: Row(
+          //     children: [
+          //       Icon(Icons.add_location_alt_outlined),
+          //       Text("Editar Puntos"),
+          //     ],
+          //   ),
+          //   value: 0,
+          // )
 
 
-          :PopupMenuItem(
-            child: Row(
-              children: [
-                Icon(Icons.add_circle_outline_outlined,),
-                Text("Agregar guardia"),
-              ],
-            ),
-            value: 1,
-          ),
+          // :PopupMenuItem(
+          //   child: Row(
+          //     children: [
+          //       Icon(Icons.add_circle_outline_outlined,),
+          //       Text("Agregar guardia"),
+          //     ],
+          //   ),
+          //   value: 1,
+          // ),
           
           PopupMenuItem(
             child: Row(
@@ -227,7 +227,13 @@ class _RondaDetalleState extends State<RondaDetalle> {
             BotonAgregarPunto(
               apiService: apiService, 
               widget: widget
-            )
+            ),
+
+            if (tabMenuView == TabMenu.Guardias)
+            BotonAgregarGuardia(
+              apiService: apiService, 
+              widget: widget
+            ),
           ],
         ),
       ),
@@ -320,6 +326,34 @@ class BotonAgregarPunto extends StatelessWidget {
     );
   }
 }
+
+
+class BotonAgregarGuardia extends StatelessWidget {
+  const BotonAgregarGuardia({
+    super.key,
+    required this.apiService,
+    required this.widget,
+  });
+
+  final ApiService apiService;
+  final RondaDetalle widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () { 
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => AgregarGuardiaFormulario(idRonda: widget.idRonda),
+        );
+
+      },
+      child: const Text('Asignar un Guardia'),
+    );
+  }
+}
+
+
 
 
 enum TabMenu { Puntos, Guardias}

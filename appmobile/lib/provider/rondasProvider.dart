@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
@@ -82,6 +84,50 @@ class RondasProvider with ChangeNotifier {
         puntos = response["data"].cast<Map<String, dynamic>>();
         ItemPuntos = puntos;
       }
+
+      
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      print(e);
+    }finally{
+      return puntos;
+    }
+    // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
+  }
+
+
+
+//   # {
+// #     "IdRonda": 1,
+// #     "IdPuntoRonda": 1,
+// #     "Orden": 1,
+// #     "Coordenada": "string",
+// #     "Descripcion": "string"
+// # }
+// TODO: aqui deberia eliminar el punto de la ronda
+  Future<List<Map<String, dynamic>>> removePoint(
+      ApiService apiService,
+      Int puntoID,
+      Int rondaID,
+
+  ) async {
+    
+    List<Map<String, dynamic>> puntos = [];
+    
+    try{
+      // var sharedPreferences = await SharedPreferences.getInstance();
+      // var token = sharedPreferences.getString("token") ?? "";
+      // var response = await apiService.getData('/rondaPunto/updateRondaPunto/$rondaID', token);
+      // // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+      // // Verifica si la respuesta es una lista
+      // if (response["data"] is List) {
+      //   // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+      //   // return response["data"].cast<Map<String, dynamic>>();
+      //   puntos = response["data"].cast<Map<String, dynamic>>();
+      //   ItemPuntos = puntos;
+      // }
 
       
 
