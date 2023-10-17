@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 class NuevaRondaFormulario extends StatelessWidget {
   const NuevaRondaFormulario({super.key});
@@ -111,47 +110,9 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
                       ))
                 ],
               ),
-              
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(onPressed: () {
-            setState(() {
-              _currentIntValue>0?_currentIntValue--:0;
-            });
-          }, icon: const Icon(Icons.remove)),
-          Column(
-
-                children: [
-                  const Text(
-                    "Cantidad de Rondas",
-                    style:  TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    child: NumberPicker(
-                      axis: Axis.horizontal,
-                      value: _currentIntValue,
-                      minValue: 0,
-                      maxValue: 100,
-                      step: 1,
-                      haptics: true,
-                      itemWidth: 50,
-                      onChanged: (value) =>
-                          setState(() => _currentIntValue = value),
-                    ),
-                  ),
-                ],
-              ),
-              IconButton(onPressed: () {
-            setState(() {
-              _currentIntValue++;
-            });
-          }, icon: const Icon(Icons.add)),
-            ],
-          ),
+          
           TextField(
             controller: descriptionController,
             decoration: const InputDecoration(labelText: 'Descripción'),
