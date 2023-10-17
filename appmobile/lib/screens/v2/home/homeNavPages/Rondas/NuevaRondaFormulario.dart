@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class NuevaRondaFormulario extends StatelessWidget {
   const NuevaRondaFormulario({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -20,24 +22,18 @@ class NuevaRondaFormulario extends StatelessWidget {
               child: Text(
                 'Crear nueva ronda',
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[900]
-                ),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[900]),
               ),
-            
             ),
             Formulario_crea_Ronda(),
           ],
         ),
       ),
     );
-
   }
 }
-
-
-
 
 class Formulario_crea_Ronda extends StatefulWidget {
   @override
@@ -45,6 +41,11 @@ class Formulario_crea_Ronda extends StatefulWidget {
 }
 
 class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
+  final TextEditingController _fechaInicioController = TextEditingController();
+  final TextEditingController _fechaFinalController = TextEditingController();
+  final TextEditingController _cantidadRondasController =
+      TextEditingController();
+  int _currentIntValue = 0;
   int selectedLocation = 1;
   TextEditingController descriptionController = TextEditingController();
   List<Map<String, dynamic>> locations = [];
@@ -65,36 +66,113 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-     RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
+    RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
     ApiService apiService = Provider.of<ApiService>(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Fecha icicial\n${_fechaInicioController.text}",
+                    style: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        _selectDatePicker(_fechaInicioController);
+                      },
+                      icon: const Icon(
+                        Icons.calendar_month_outlined,
+                        color: Colors.black,
+                      ))
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    "Fecha final\n${_fechaFinalController.text}",
+                    style: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        _selectDatePicker(_fechaFinalController);
+                      },
+                      icon: const Icon(
+                        Icons.calendar_month_outlined,
+                        color: Colors.black,
+                      ))
+                ],
+              ),
+              
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(onPressed: () {
+            setState(() {
+              _currentIntValue>0?_currentIntValue--:0;
+            });
+          }, icon: const Icon(Icons.remove)),
+          Column(
+
+                children: [
+                  const Text(
+                    "Cantidad de Rondas",
+                    style:  TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    child: NumberPicker(
+                      axis: Axis.horizontal,
+                      value: _currentIntValue,
+                      minValue: 0,
+                      maxValue: 100,
+                      step: 1,
+                      haptics: true,
+                      itemWidth: 50,
+                      onChanged: (value) =>
+                          setState(() => _currentIntValue = value),
+                    ),
+                  ),
+                ],
+              ),
+              IconButton(onPressed: () {
+            setState(() {
+              _currentIntValue++;
+            });
+          }, icon: const Icon(Icons.add)),
+            ],
+          ),
           TextField(
             controller: descriptionController,
-            decoration: InputDecoration(labelText: 'Descripción'),
+            decoration: const InputDecoration(labelText: 'Descripción'),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           DropdownButtonFormField(
             value: selectedLocation,
             items: locations.map((location) {
               return DropdownMenuItem(
-                value: location['id'], 
-                child: Text(location['descripcion']), 
+                value: location['id'],
+                child: Text(location['descripcion']),
               );
             }).toList(),
-            hint: Text('Selecciona una ubicación'),
+            hint: const Text('Selecciona una ubicación'),
             onChanged: (value) {
               setState(() {
                 selectedLocation = value as int;
               });
             },
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
               String description = descriptionController.text;
@@ -105,22 +183,22 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
                 showDialog(
                   context: context,
                   barrierDismissible: false,
-                  builder: (context) => CircularProgressIndicator(),
+                  builder: (context) => const CircularProgressIndicator(),
                 );
 
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 // int userId = prefs.getInt('userId');
                 await rondasProvider.enviarNuevaRonda(
-                  apiService, 
-                  prefs.getInt('Id')??0,
-                  selectedLocation, 
-                  description, 
+                  apiService,
+                  prefs.getInt('Id') ?? 0,
+                  selectedLocation,
+                  description,
                 );
                 Navigator.pop(context);
                 Navigator.pop(context);
                 // show snackbar
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Ronda creada correctamente'),
                     backgroundColor: Colors.green,
                   ),
@@ -128,17 +206,34 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
               } else {
                 // print('Por favor, completa todos los campos.');
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Por favor, completa todos los campos.'),
                     backgroundColor: Colors.red,
                   ),
                 );
               }
             },
-            child: Text('Enviar'),
+            child: const Text('Enviar'),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _selectDatePicker(TextEditingController controller) async {
+    DateTime selectedDate = DateTime.now();
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        //String formattedDate = DateFormat('yyyy-MM-dd hh:mm:ss').format(picked);
+        String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
+        controller.text = formattedDate;
+      });
+    }
   }
 }
