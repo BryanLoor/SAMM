@@ -54,7 +54,7 @@ class _ScreenHistorialRondasState extends State<ScreenHistorialRondas> {
       }
 
     }catch(e){
-      print(e);
+      // print(e);
     }finally{
       return res;
     }

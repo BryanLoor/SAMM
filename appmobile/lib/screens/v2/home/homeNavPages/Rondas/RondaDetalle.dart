@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapsview.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewController.dart';
@@ -27,6 +28,15 @@ class RondaDetalle extends StatefulWidget {
 }
 
 class _RondaDetalleState extends State<RondaDetalle> {
+  bool canedit = false;
+
+  @override
+  void initState() {
+    MainProvider mainProvider = Provider.of<MainProvider>(context, listen: false);
+    mainProvider.canedit().then((value) => canedit = value);
+    super.initState();
+  }
+
   TabMenu tabMenuView = TabMenu.Puntos;
   @override
   Widget build(BuildContext context) {
@@ -223,13 +233,13 @@ class _RondaDetalleState extends State<RondaDetalle> {
               PuntosView(idRonda: widget.idRonda),
       
       
-            if (tabMenuView == TabMenu.Puntos)
+            if (tabMenuView == TabMenu.Puntos && canedit)
             BotonAgregarPunto(
               apiService: apiService, 
               widget: widget
             ),
 
-            if (tabMenuView == TabMenu.Guardias)
+            if (tabMenuView == TabMenu.Guardias  && canedit)
             BotonAgregarGuardia(
               apiService: apiService, 
               widget: widget

@@ -11,6 +11,8 @@ import 'package:sammseguridad_apk/screens/logins/ScreenLogin.dart';
 import 'package:sammseguridad_apk/screens/crear/ScreenCreascuenta.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewController.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
+import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
+import 'package:sammseguridad_apk/screens/v2/home/HomeVisitas.dart';
 
 import 'screens/logins/ScreenLoginPin.dart';
 import 'screens/ScreenSplash.dart';
@@ -73,6 +75,8 @@ class MyApp extends StatelessWidget {
       routes: {
         LoginPage.routeName: (context) => const LoginPage(),
         Home.routeName: (context) => const Home(),
+        HomeRondas.routeName: (context) => const HomeRondas(),
+        HomeVisitas.routeName: (context) => const HomeVisitas(),
 
         
         ScreenPerfil.routeName: (context) => const ScreenPerfil(),

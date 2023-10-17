@@ -57,7 +57,7 @@ class RondasProvider with ChangeNotifier {
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return RondasMaps;
     }
@@ -89,7 +89,7 @@ class RondasProvider with ChangeNotifier {
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return puntos;
     }
@@ -133,7 +133,7 @@ class RondasProvider with ChangeNotifier {
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return puntos;
     }
@@ -194,7 +194,7 @@ class RondasProvider with ChangeNotifier {
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return guardias;
     }
@@ -267,7 +267,7 @@ class RondasProvider with ChangeNotifier {
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return ubicaciones;
     }

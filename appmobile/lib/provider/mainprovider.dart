@@ -57,6 +57,16 @@ class MainProvider extends ChangeNotifier {
 
   }
 
+  Future<bool> canedit()async{
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final descripcion = prefs.getString("Descripcion");
+
+    return (descripcion == "Administrador" || descripcion == "Supervisor");
+
+
+  }
+
   Future<LoginResponse> getUserInfo() async {
     prefs = await SharedPreferences.getInstance();
     final apellidos = prefs.getString("Apellidos");
@@ -140,12 +150,33 @@ class MainProvider extends ChangeNotifier {
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return usuarios;
     }
 
   }
+
+  Future<List<Map<String, dynamic>>> getMenu(
+      ApiService apiService
+  ) async {
+    List<Map<String, dynamic>> opciones = [];
+
+    try{
+      var sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString("token") ?? "";
+      var response = await apiService.getData('/menu/getMenu/MOBILE', token);
+      opciones = response.cast<Map<String, dynamic>>();
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      // print(e);
+    }finally{
+      return opciones;
+    }
+
+  }
+
   // usuariosxrol
 
 

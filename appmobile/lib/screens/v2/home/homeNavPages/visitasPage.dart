@@ -25,7 +25,7 @@ class _VisitasPage extends State<VisitasPage>
   bool get wantKeepAlive => true; // Anula wantKeepAlive y devuelve true
 
   _VisitasPage() {
-    print("VisitasPage constructor called");
+    // print("VisitasPage constructor called");
   }
   TabMenu tabMenuView = TabMenu.Personas;
 
@@ -71,7 +71,7 @@ class _VisitasPage extends State<VisitasPage>
 
           Duration duracionVisita = fechaSalida.difference(fechaVisita);
           //Duration duracionVisita = fechaSalidaFormateada.difference(fechaVisitaFormateada);
-          print("La duración de la visita es: ${duracionVisita.inDays} días, ${duracionVisita.inHours % 24} horas y ${duracionVisita.inMinutes % 60} minutos.");
+          // print("La duración de la visita es: ${duracionVisita.inDays} días, ${duracionVisita.inHours % 24} horas y ${duracionVisita.inMinutes % 60} minutos.");
 
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),

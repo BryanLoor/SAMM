@@ -13,35 +13,34 @@ import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 import 'package:sammseguridad_apk/widgets/navbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
-class Home extends StatefulWidget {
-  static const routeName = 'Home';
-  const Home({super.key});
+class HomeRondas extends StatefulWidget {
+  static const routeName = 'HomeRondas';
+  const HomeRondas({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeRondas> createState() => _HomeRondasState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeRondasState extends State<HomeRondas> {
   late int _selectedIndex;
   late final PageController _pageController;
   late final List<Widget> _pages;
   late List<Map<String, dynamic>> menu;
-
+  late bool canedit = false;
 
   @override
   void initState() {
     super.initState();
     final apiservices = Provider.of<ApiService>(context, listen: false);
     final mainProvider = Provider.of<MainProvider>(context, listen: false);
+    mainProvider.canedit().then((value) => canedit = value);
     _selectedIndex = 0;
     _pageController = PageController(initialPage: 0);
     // fetchMenu(apiservices, mainProvider);
     _pages = [
-      HomePage(),
-      VisitasPage(),
+      // HomePage(),
       RondasPage(),
       // MapView(),
    
@@ -60,64 +59,55 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final mainProvider = Provider.of<MainProvider>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBar(),
-      bottomNavigationBar: NavigationBar(
-        // backgroundColor: Colors.blue[900],
-        //indicatorColor: Colors.white,
+      // bottomNavigationBar: NavigationBar(
+      //   // backgroundColor: Colors.blue[900],
+      //   //indicatorColor: Colors.white,
         
-        onDestinationSelected: (int index) {
-          setIndex(index);
-        },
-        selectedIndex: _selectedIndex,
+      //   onDestinationSelected: (int index) {
+      //     setIndex(index);
+      //   },
+      //   selectedIndex: _selectedIndex,
         
-        destinations:[
+      //   destinations:[
 
-          NavigationDestination(
+      //     // NavigationDestination(
           
-            icon: Icon(Icons.home_outlined,),
-            selectedIcon: Icon(Icons.home_outlined),
-            label: 'Home',
+      //     //   icon: Icon(Icons.home_outlined,),
+      //     //   selectedIcon: Icon(Icons.home_outlined),
+      //     //   label: 'Home',
             
             
             
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.car_crash_outlined),
-            selectedIcon: Icon(Icons.car_crash_outlined),
-            label: 'Visitas',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.change_circle_outlined),
-            selectedIcon: Icon(Icons.change_circle_outlined),
-            label: 'Rondas',
-          ),
-        ],
-      ),
+      //     // ),
+      //     NavigationDestination(
+      //       icon: Icon(Icons.change_circle_outlined),
+      //       selectedIcon: Icon(Icons.change_circle_outlined),
+      //       label: 'Rondas',
+      //     ),
+      //   ],
+      // ),
       floatingActionButton: 
 
-        _selectedIndex == 0?
-          null
+        // _selectedIndex == 0?
+        //   null
 
 
-        :_selectedIndex == 1?
-          FloatingVisitas()
-
-
-
-        :_selectedIndex == 2?
+        _selectedIndex == 0 && canedit?
           FloatingRondas()
         : null,
         
-        
-        body: PageView(
-        onPageChanged: (value) {
-          setIndex(value);
-        },
-        controller: _pageController,
-        children: _pages,
+        body: RondasPage(),
+      //   body: PageView(
+      //   onPageChanged: (value) {
+      //     setIndex(value);
+      //   },
+      //   controller: _pageController,
+      //   children: _pages,
 
-      ),
+      // ),
     );
   }
 }

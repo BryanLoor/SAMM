@@ -16,9 +16,9 @@ import 'package:sammseguridad_apk/widgets/TwoColumnsWidget.dart';
 import 'package:sammseguridad_apk/widgets/navbar.dart';
 
 class HomePage extends StatelessWidget {
-  final Function(int) setIndex;
+  // final Function(int) setIndex;
   HomePage({
-    required this.setIndex,
+    // required this.setIndex,
     super.key
   });
 
@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final visitasProvider = Provider.of<VisitasProvider>(context);
     if (!visitasProvider.hasFetchedData) {
-      print("pidiendo ");
+      // print("pidiendo ");
       visitasProvider.refreshvisitas(context,visitasProvider);
       visitasProvider.hasFetchedData = true;
     }
@@ -138,7 +138,7 @@ class HomePage extends StatelessWidget {
                     PopupMenuButton(
                       onSelected: (value) {
                         // ScreenGenerarVisita()
-                        print(value);
+                        // print(value);
               
                         showModalBottomSheet(
                           isScrollControlled: true,
@@ -178,7 +178,7 @@ class HomePage extends StatelessWidget {
                 margin: EdgeInsets.all(10.0),
                 child: InkWell(
                   onTap: () {
-                    setIndex(1);
+                    // setIndex(1);
                     // Navigator.of(context).push(
                     //   MaterialPageRoute(
                     //     builder: (context) => ScreenHistorialVisitas(),
@@ -197,7 +197,7 @@ class HomePage extends StatelessWidget {
                       } else {
                         final visitasList = snapshot.data!; // Obtén la lista de visitas.
                         final primerasTresVisitas = visitasList.take(7); // Toma las primeras tres visitas.
-                        print(primerasTresVisitas);
+                        // print(primerasTresVisitas);
                         return ListView(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(), // Evita el desplazamiento

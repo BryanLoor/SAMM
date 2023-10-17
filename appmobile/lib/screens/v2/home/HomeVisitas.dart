@@ -13,23 +13,21 @@ import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 import 'package:sammseguridad_apk/widgets/navbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
-class Home extends StatefulWidget {
-  static const routeName = 'Home';
-  const Home({super.key});
+class HomeVisitas extends StatefulWidget {
+  static const routeName = 'HomeVisitas';
+  const HomeVisitas({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeVisitas> createState() => _HomeVisitasState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeVisitasState extends State<HomeVisitas> {
   late int _selectedIndex;
   late final PageController _pageController;
   late final List<Widget> _pages;
   late List<Map<String, dynamic>> menu;
-
 
   @override
   void initState() {
@@ -42,7 +40,6 @@ class _HomeState extends State<Home> {
     _pages = [
       HomePage(),
       VisitasPage(),
-      RondasPage(),
       // MapView(),
    
    
@@ -87,11 +84,6 @@ class _HomeState extends State<Home> {
             selectedIcon: Icon(Icons.car_crash_outlined),
             label: 'Visitas',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.change_circle_outlined),
-            selectedIcon: Icon(Icons.change_circle_outlined),
-            label: 'Rondas',
-          ),
         ],
       ),
       floatingActionButton: 
@@ -103,10 +95,6 @@ class _HomeState extends State<Home> {
         :_selectedIndex == 1?
           FloatingVisitas()
 
-
-
-        :_selectedIndex == 2?
-          FloatingRondas()
         : null,
         
         

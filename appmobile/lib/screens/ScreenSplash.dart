@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
+import 'package:sammseguridad_apk/screens/v2/home/HomeVisitas.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'ScreenWelcom.dart';
@@ -33,8 +35,18 @@ class _ScreenSplashState extends State<ScreenSplash> {
   void verifySession() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+    final descripcion = prefs.getString("Descripcion");
     if (token != null) {
-      Navigator.pushReplacementNamed(context, Home.routeName);
+      if (descripcion == "Agente"){
+        Navigator.pushReplacementNamed(context, HomeRondas.routeName);
+      }else
+      if (descripcion == "Anfitrión"){
+        Navigator.pushReplacementNamed(context, HomeVisitas.routeName);
+      }else{
+        Navigator.pushReplacementNamed(context, Home.routeName);
+        print("===================================================================================");
+
+      }
     } else {
       Navigator.pushReplacementNamed(context, LoginPage.routeName);
     }

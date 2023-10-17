@@ -6,7 +6,10 @@ import 'package:sammseguridad_apk/provider/mainprovider.dart';
 // import 'package:sammseguridad_apk/screens/ScreenHome.dart';
 import 'package:sammseguridad_apk/screens/logins/LoginResponse.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
+import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
+import 'package:sammseguridad_apk/screens/v2/home/HomeVisitas.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = 'login';
@@ -113,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
       if (response['access_token'] != null) {
         _mainProvider.updateToken(response['access_token']);
         _mainProvider.response=response;
-        _mainProvider.updateUserInfo(loginResponse);
+        await _mainProvider.updateUserInfo(loginResponse);
       }
     } catch (e) {
       throw Exception('Fallo metodo posteo de Api Service: $e');
@@ -166,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
       if (isologin) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar(); // Ocultar cualquier SnackBar existente
         showCustomSnackBar(context, 'Inicio de sesión exitoso!', Colors.green);
-        Navigator.popAndPushNamed(context, Home.routeName);
+        verifySession();
       }else{
         throw Exception('Error al iniciar sesión');
       }
@@ -181,6 +184,30 @@ class _LoginPageState extends State<LoginPage> {
 
       // Si no se pudo iniciar sesión, muestra el SnackBar rojo
     }
+  }
+
+  void verifySession() async {
+    SharedPreferences.getInstance().then((prefs) {
+      final token = prefs.getString('token');
+      final descripcion = prefs.getString("Descripcion");
+      print(descripcion);
+      if (token != null) {
+        if (descripcion == "Agente"){
+          Navigator.pushReplacementNamed(context, HomeRondas.routeName);
+        }else
+        if (descripcion == "Anfitrión"){
+          Navigator.pushReplacementNamed(context, HomeVisitas.routeName);
+        }else{
+          Navigator.pushReplacementNamed(context, Home.routeName);
+          print("===================================================================================");
+          
+
+        }
+      } else {
+        Navigator.pushReplacementNamed(context, LoginPage.routeName);
+      }
+
+    });
   }
 
 
@@ -345,7 +372,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         //   label,
         //   style: const TextStyle(color: Color(0xFF0040AE), fontSize: _fontSize),
         //   textAlign: TextAlign.left,
-        // ),
+        // ),Home
         const SizedBox(height: _sizedBoxHeight),
         TextFormField(
           controller: widget.controller,
