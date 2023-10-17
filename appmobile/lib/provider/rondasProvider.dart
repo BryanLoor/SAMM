@@ -309,6 +309,24 @@ class RondasProvider with ChangeNotifier {
   }
 
 
+  Future<List<Map<String, dynamic>>> getGuardiasValidos(
+    ApiService apiService,
+    String ubicacion
+  ) async {
+    List<Map<String, dynamic>> usuarios = [];
+    var sharedPreferences = await SharedPreferences.getInstance();
+    var token = sharedPreferences.getString("token") ?? "";
+    var data = {
+      "idUbicacion": ubicacion,
+    };
+    var response = await apiService.postData('/rondas/getGuardiasValidos', data,token);
+    // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+    usuarios = response["data"].cast<Map<String, dynamic>>();
+    return usuarios;
+    
+  }
+
+
   Future<void> GenerarYenviarNuevaRonda(
     ApiService apiService,
     // int IdRonda,

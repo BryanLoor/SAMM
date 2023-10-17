@@ -61,39 +61,60 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: CustomAppBar(),
       bottomNavigationBar: NavigationBar(
-        // backgroundColor: Colors.blue[900],
-        //indicatorColor: Colors.white,
-        
+        height: 60,
+        backgroundColor: Colors.blue[900],
+        indicatorColor: Colors.blue[800],
         onDestinationSelected: (int index) {
           setIndex(index);
         },
         selectedIndex: _selectedIndex,
-        
-        destinations:[
-
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+        indicatorShape:ShapeBorder.lerp(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          1,
+        ),
+        destinations: [
           NavigationDestination(
-          
-            icon: Icon(Icons.home_outlined,),
-            selectedIcon: Icon(Icons.home_outlined),
+            icon: Icon(
+              Icons.home_outlined,
+              color: Colors.white, // Color blanco para el ícono
+            ),
+            selectedIcon: Icon(
+              Icons.home_outlined,
+              color: Colors.white, // Color blanco para el ícono seleccionado
+            ),
             label: 'Home',
-            
-            
-            
+
           ),
           NavigationDestination(
-            icon: Icon(Icons.car_crash_outlined),
-            selectedIcon: Icon(Icons.car_crash_outlined),
+            icon: Icon(
+              Icons.car_crash_outlined,
+              color: Colors.white, // Color blanco para el ícono
+            ),
+            selectedIcon: Icon(
+              Icons.car_crash_outlined,
+              color: Colors.white, // Color blanco para el ícono seleccionado
+            ),
             label: 'Visitas',
           ),
           NavigationDestination(
-            icon: Icon(Icons.change_circle_outlined),
-            selectedIcon: Icon(Icons.change_circle_outlined),
+            icon: Icon(
+              Icons.change_circle_outlined,
+              color: Colors.white, // Color blanco para el ícono
+            ),
+            selectedIcon: Icon(
+              Icons.change_circle_outlined,
+              color: Colors.white, // Color blanco para el ícono seleccionado
+            ),
             label: 'Rondas',
           ),
         ],
       ),
+
       floatingActionButton: 
 
         _selectedIndex == 0?

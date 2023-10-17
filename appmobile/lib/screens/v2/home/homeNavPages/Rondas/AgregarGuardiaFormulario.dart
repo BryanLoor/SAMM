@@ -67,9 +67,12 @@ class _Formulario_AsignarGuardiaState extends State<Formulario_AsignarGuardia> {
 
   Future<void> _fetchPuntos() async {
     final ApiService apiService = Provider.of<ApiService>(context, listen: false);
-    final MainProvider mainProvider = Provider.of<MainProvider>(context, listen: false);
+    // final MainProvider mainProvider = Provider.of<MainProvider>(context, listen: false);
+    final RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
+    int idubicacion = rondasProvider.selectedItem["IdUbicacion"];
+    // sacar el id de la ubicacion
     try {
-      final newGuardias = await mainProvider.getUsuarios(apiService);
+      final newGuardias = await rondasProvider.getGuardiasValidos(apiService, idubicacion.toString());
       setState(() {
         guardias = newGuardias;
         isLoading = false;
@@ -100,8 +103,8 @@ class _Formulario_AsignarGuardiaState extends State<Formulario_AsignarGuardia> {
           children: guardias.map((guardia) {
             return ListTile(
               // title: Text("data"),
-              title: Text(guardia['nombres']??'N/A'),
-              subtitle: Text(guardia['apellidos']??'N/A'),
+              title: Text(guardia['Nombres']??'N/A'),
+              // subtitle: Text(guardia['apellidos']??'N/A'),
               leading: Icon(Icons.shield),
               onTap: () async{
                 // print(guardia['id']);
