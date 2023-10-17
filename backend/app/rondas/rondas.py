@@ -2,7 +2,7 @@ from flask import jsonify, request
 from flask_cors import cross_origin
 from app.rondas import bp
 from app.extensions import db
-from sqlalchemy import text
+from sqlalchemy import and_, text
 import base64
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import date, datetime, timedelta
@@ -16,10 +16,11 @@ from app.models.SAMM_Persona import Persona
 from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita
 from app.models.SAMM_Estaddos import SAMM_Estados
 
-from app.models.SAMM_Ronda import SAMM_Ronda
+from app.models.SAMM_Ronda import SAMM_Ronda,SAMM_RondaSchema
 from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto
 from app.models.SAMM_Ronda_Detalle import SAMM_Ronda_Detalle
 from app.models.SAMM_Ronda_Usuario import SAMM_Ronda_Usuario
+from app.models.SAMM_RolUsu import SAMM_RolUsu
 
 #pensado para admin y supervisor
 
@@ -74,9 +75,10 @@ def getAllRondas():
 ]
 
 
-    return jsonify({"data":schema}), 200
+    return jsonify({"total":len(schema),"data":schema}), 200
 
 
+    
 #Trae todas las ubicaciones(es la misma que esta en visitas)
 @bp.route('/getUbicaciones', methods=['GET'])
 @cross_origin()
