@@ -193,58 +193,62 @@ def crearRonda():
 @cross_origin()
 @jwt_required()
 def editarRonda():
+    try:
+        currentUserID =  get_jwt_identity() #CODIGO usuario
+        idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
+
+        IdRonda = request.json["IdRonda"]
+
+        ronda = db.session.query(SAMM_Ronda).filter(SAMM_Ronda.Id == IdRonda).first()
+
+        ronda.Desripcion = request.json['Desripcion']
+        ronda.Estado = 0
+        ronda.IdUbicacion = request.json['IdUbicacion']
+        ronda.FechaModifica = datetime.now()
+        ronda.UsuModifica = idUsuario[0]
+        ronda.IdUsuarioSupervisor = request.json['IdUsuarioSupervisor']
+
     
-    currentUserID =  get_jwt_identity() #CODIGO usuario
-    idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
+    
+    
+        db.session.add(ronda)
+        db.session.commit()
 
-    IdRonda = request.json["IdRonda"]
-
-    ronda = db.session.query(SAMM_Ronda).filter(SAMM_Ronda.Id == IdRonda).first()
-
-    ronda.Desripcion = request.json['Desripcion']
-    ronda.Estado = 0
-    ronda.IdUbicacion = request.json['IdUbicacion']
-    ronda.FechaModifica = datetime.now()
-    ronda.UsuModifica = idUsuario[0]
-    ronda.IdUsuarioSupervisor = request.json['IdUsuarioSupervisor']
-
-   
-   
-   
-    db.session.add(ronda)
-    db.session.commit()
-
-    return jsonify({"msg":"Ronda actualizada"}), 201
-
+        return jsonify({"msg":"Ronda actualizada"}), 201
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 @bp.route('/guardarPuntoRealizado', methods=['POST'])
 @cross_origin()
 @jwt_required()
 def guardarPuntoRealizado():
-    
-    currentUserID =  get_jwt_identity() #CODIGO usuario
-    idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
+    try:
+        currentUserID =  get_jwt_identity() #CODIGO usuario
+        idUsuario = db.session.query(SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo== currentUserID).first()
 
-    IdRonda = request.json["IdRonda"]
+        IdRonda = request.json["IdRonda"]
 
-    rondaDetalle = SAMM_Ronda_Detalle()
+        rondaDetalle = SAMM_Ronda_Detalle()
 
-    rondaDetalle.IdUsuario = idUsuario[0]
-    rondaDetalle.IdRonda = IdRonda
-    rondaDetalle.Estado = 1
-    rondaDetalle.IdPuntoRonda = request.json['IdPuntoRonda']
-    rondaDetalle.Codigo = request.json['Codigo']
-    rondaDetalle.Descripcion = request.json['Descripcion']
-    rondaDetalle.FotoURL = request.json['FotoURL']
+        rondaDetalle.IdUsuario = idUsuario[0]
+        rondaDetalle.IdRonda = IdRonda
+        rondaDetalle.Estado = 1
+        rondaDetalle.IdPuntoRonda = request.json['IdPuntoRonda']
+        rondaDetalle.Codigo = request.json['Codigo']
+        rondaDetalle.Descripcion = request.json['Descripcion']
+        rondaDetalle.FotoURL = request.json['FotoURL']
 
-   
-    db.session.add(rondaDetalle)
-    db.session.commit()
+        
+        db.session.add(rondaDetalle)
+        db.session.commit()
 
-    return jsonify({
-        "msg":"punto registrado",
-        "IdRonda": rondaDetalle.Id
-        }), 201
+        return jsonify({
+            "msg":"punto registrado",
+            "IdRonda": rondaDetalle.Id
+            }), 201
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
 
 
 @bp.route('/guardarRondaAsignadaXUsuario', methods=['POST'])
