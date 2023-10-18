@@ -8,7 +8,7 @@ class SAMM_Ronda_Usuario(db.Model):
     Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     IdRonda = db.Column(db.Integer)
     IdUsuario = db.Column(db.Integer)
-    Estado = db.Column(db.Integer)
+    Estado = db.Column(db.String(1))
     FechaCrea = db.Column(db.DateTime)
     UsuCrea = db.Column(db.Integer)
     FechaMod = db.Column(db.DateTime)
