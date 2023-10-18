@@ -6,4 +6,4 @@ bp = Blueprint('rondas', __name__)
 cors = CORS(bp,resources={r"/*": {"origins": "*", "headers":["Content-Type"]}})
 
 from app.rondas import rondas
-from app.rondas import agentes
+from app.rondas import guardias
