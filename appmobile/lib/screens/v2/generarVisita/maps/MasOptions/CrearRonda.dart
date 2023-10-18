@@ -126,6 +126,8 @@ class _CrearRondaState extends State<CrearRonda> {
                                 // setState(() {
                                   
                                 // });
+                                // Navigator.pop(context, 'OK');
+                                // Navigator.pop(context, 'OK');
                                 Navigator.pop(context, 'OK');
                               }
                             );

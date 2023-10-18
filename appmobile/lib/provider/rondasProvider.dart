@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
@@ -47,12 +49,15 @@ class RondasProvider with ChangeNotifier {
       if (response["data"] is List) {
         // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
         // return response["data"].cast<Map<String, dynamic>>();
+        
         RondasMaps = response["data"].cast<Map<String, dynamic>>();
+        // RondasMaps.removeWhere((map) => map["Estado"] == "activo");
+
       }
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return RondasMaps;
     }
@@ -84,13 +89,134 @@ class RondasProvider with ChangeNotifier {
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return puntos;
     }
     // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
   }
 
+
+
+//   # {
+// #     "IdRonda": 1,
+// #     "IdPuntoRonda": 1,
+// #     "Orden": 1,
+// #     "Coordenada": "string",
+// #     "Descripcion": "string"
+// # }
+// TODO: aqui deberia eliminar el punto de la ronda
+  Future<List<Map<String, dynamic>>> removePoint(
+      ApiService apiService,
+      Int puntoID,
+      Int rondaID,
+
+  ) async {
+    
+    List<Map<String, dynamic>> puntos = [];
+    
+    try{
+      // var sharedPreferences = await SharedPreferences.getInstance();
+      // var token = sharedPreferences.getString("token") ?? "";
+      // var response = await apiService.getData('/rondaPunto/updateRondaPunto/$rondaID', token);
+      // // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+      // // Verifica si la respuesta es una lista
+      // if (response["data"] is List) {
+      //   // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+      //   // return response["data"].cast<Map<String, dynamic>>();
+      //   puntos = response["data"].cast<Map<String, dynamic>>();
+      //   ItemPuntos = puntos;
+      // }
+
+      
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      // print(e);
+    }finally{
+      return puntos;
+    }
+    // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
+  }
+
+  // TODO:  esto lo va a llamar cuando vaya a asignar un guardia
+  // Future<List<Map<String, dynamic>>> getUsuariosPorRol(
+  //   ApiService apiService,
+  //   String rol
+  // ) async {
+
+  //   List<Map<String, dynamic>> usuarios = [];
+
+  //   var sharedPreferences = await SharedPreferences.getInstance();
+  //   var token = sharedPreferences.getString("token") ?? "";
+  //   var data = {
+  //     "rol": rol
+  //   };
+  //   var response = await apiService.postData('/rutas/usuariosxrol', data,token);
+  //   // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+  //   usuarios = response.cast<Map<String, dynamic>>();
+  //   return response
+    
+  // }
+    //   usuarios = [
+    //     {
+    //         'rolusuarioestado': item.rolusuarioestado,
+    //         'Codigo': item.Codigo,
+    //         'Nombres': item.nombrescompletos,
+    //         'estadousuario':item.Estado
+    //     }
+    //     for item in query_result
+    // ]
+  // usuariosxrol
+
+
+  Future<List<Map<String, dynamic>>> getRondaGuardias(
+      ApiService apiService,String rondaID
+  ) async {
+    
+    List<Map<String, dynamic>> guardias = [];
+    
+    try{
+      var sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString("token") ?? "";
+      var response = await apiService.getData('/rondas/getUsuariosPorRonda/$rondaID', token);
+      // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+      // Verifica si la respuesta es una lista
+      if (response["data"] is List) {
+        // Asegúrate de que cada elemento de la lista es un Map<String, dynamic>
+        // return response["data"].cast<Map<String, dynamic>>();
+        guardias = response["data"].cast<Map<String, dynamic>>();
+      }
+
+      
+
+    }catch(e){
+      // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
+      // print(e);
+    }finally{
+      return guardias;
+    }
+    // Future<SharedPreferences> prefs =SharedPreferences.getInstance();
+  }
+
+
+  Future<void> enviarAsignarGuardiaARonda(
+    ApiService apiService,
+    int idRonda,
+    int idguardia,
+  ) async {
+    var sharedPreferences = await SharedPreferences.getInstance();
+    var token = sharedPreferences.getString("token") ?? "";
+    var data = {
+      "idronda": idRonda,
+      "idguardia": idguardia,
+    };
+    await apiService.postData('/rondas/guardarRondaAsignadaXUsuario', data,token);
+    // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+
+  }
 
   Future<void> enviarNuevoPunto(
     ApiService apiService,
@@ -141,7 +267,7 @@ class RondasProvider with ChangeNotifier {
 
     }catch(e){
       // Si no es una lista, lanza una excepción o maneja este caso de manera apropiada
-      print(e);
+      // print(e);
     }finally{
       return ubicaciones;
     }
@@ -179,6 +305,24 @@ class RondasProvider with ChangeNotifier {
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
     int rondasId = response["IdRonda"]??0;
     return rondasId;
+    
+  }
+
+
+  Future<List<Map<String, dynamic>>> getGuardiasValidos(
+    ApiService apiService,
+    String ubicacion
+  ) async {
+    List<Map<String, dynamic>> usuarios = [];
+    var sharedPreferences = await SharedPreferences.getInstance();
+    var token = sharedPreferences.getString("token") ?? "";
+    var data = {
+      "idUbicacion": ubicacion,
+    };
+    var response = await apiService.postData('/rondas/getGuardiasValidos', data,token);
+    // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
+    usuarios = response["data"].cast<Map<String, dynamic>>();
+    return usuarios;
     
   }
 

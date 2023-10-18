@@ -1,21 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class GuardiasView extends StatefulWidget {
+class AgregarGuardiaFormulario extends StatelessWidget {
+  final int idRonda;
+  const AgregarGuardiaFormulario({
+    required this.idRonda,
+    super.key
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            Center(
+              child: Text(
+                'Agregar Guardia',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[900]
+                ),
+              ),
+            
+            ),
+            Formulario_AsignarGuardia(idRonda: idRonda),
+          ],
+        ),
+      ),
+    );
+
+  }
+}
+
+
+class Formulario_AsignarGuardia extends StatefulWidget {
   final int idRonda;
 
-  GuardiasView({
+  Formulario_AsignarGuardia({
     required this.idRonda,
   });
 
 
   @override
-  State<GuardiasView> createState() => _GuardiasViewState();
+  State<Formulario_AsignarGuardia> createState() => _Formulario_AsignarGuardiaState();
 }
 
-class _GuardiasViewState extends State<GuardiasView> {
+class _Formulario_AsignarGuardiaState extends State<Formulario_AsignarGuardia> {
   List<Map<String, dynamic>> guardias = [];
   bool isLoading = true;
   bool hasError = false;
@@ -27,17 +66,19 @@ class _GuardiasViewState extends State<GuardiasView> {
   }
 
   Future<void> _fetchPuntos() async {
-    final RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
     final ApiService apiService = Provider.of<ApiService>(context, listen: false);
-
+    // final MainProvider mainProvider = Provider.of<MainProvider>(context, listen: false);
+    final RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
+    int idubicacion = rondasProvider.selectedItem["IdUbicacion"];
+    // sacar el id de la ubicacion
     try {
-      final newGuardias = await rondasProvider.getRondaGuardias(apiService, widget.idRonda.toString());
+      final newGuardias = await rondasProvider.getGuardiasValidos(apiService, idubicacion.toString());
       setState(() {
         guardias = newGuardias;
         isLoading = false;
       });
     } catch (e) {
-      print('Error al cargar puntos: $e');
+      print('Error al cargar guardias: $e');
       setState(() {
         hasError = true;
         isLoading = false;
@@ -47,22 +88,33 @@ class _GuardiasViewState extends State<GuardiasView> {
 
   @override
   Widget build(BuildContext context) {
+    final RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
+    final ApiService apiService = Provider.of<ApiService>(context, listen: false);
     if (isLoading) {
       return CircularProgressIndicator();
     } else if (hasError) {
-      return Text('Error al cargar puntos');
+      return Text('Error al cargar guardias');
     } else if (guardias.isEmpty) {
       return Text('No hay guardias asignados');
     } else {
+      // print(guardias);
       return SingleChildScrollView(
         child: Column(
           children: guardias.map((guardia) {
             return ListTile(
-              title: Text(guardia['Codigo'].toString() + " " + guardia['IdPerfil'].toString()),
-              // title: Text(guardia['Descripcion'].toString()),
-              // subtitle: Text(guardia['Coordenada']),
+              // title: Text("data"),
+              title: Text(guardia['Nombres']??'N/A'),
+              // subtitle: Text(guardia['apellidos']??'N/A'),
               leading: Icon(Icons.shield),
-              // Otros elementos de ListTile según tus datos
+              onTap: () async{
+                // print(guardia['id']);
+                await rondasProvider.enviarAsignarGuardiaARonda(
+                  apiService,
+                  widget.idRonda,
+                  guardia['id'],
+                );
+                Navigator.pop(context);
+              },
             );
           }).toList(),
         ),
@@ -71,6 +123,17 @@ class _GuardiasViewState extends State<GuardiasView> {
   }
 }
 
+
+// class Formulario_AsignarGuardia extends StatefulWidget {
+//   final int idRonda;
+//   const Formulario_AsignarGuardia({
+//     required this.idRonda,
+//     super.key
+//   });
+
+//   @override
+//   _Formulario_AsignarGuardiaState createState() => _Formulario_AsignarGuardiaState();
+// }
 
 // class _Formulario_AsignarGuardiaState extends State<Formulario_AsignarGuardia> {
 //   int selectedLocation = 1;

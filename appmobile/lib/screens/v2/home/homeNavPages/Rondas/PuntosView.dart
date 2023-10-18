@@ -44,28 +44,69 @@ class _PuntosViewState extends State<PuntosView> {
     }
   }
 
+
+  Future<void> _removePunto(int puntoID) async {
+    final RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
+    final ApiService apiService = Provider.of<ApiService>(context, listen: false);
+
+    try {
+      // TODO: aqui se tiene que remover el punto
+      // final newPuntos = await rondasProvider.removePoint(apiService, puntoID);
+      setState(() {
+        // puntos = newPuntos;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error al cargar puntos: $e');
+      setState(() {
+        hasError = true;
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget result;
     if (isLoading) {
-      return CircularProgressIndicator();
+      result = CircularProgressIndicator();
     } else if (hasError) {
-      return Text('Error al cargar puntos');
+      result= Text('Error al cargar puntos');
     } else if (puntos.isEmpty) {
-      return Text('No hay puntos');
+      result= Text('No hay puntos');
     } else {
-      return SingleChildScrollView(
-        child: Column(
-          children: puntos.map((punto) {
-            return ListTile(
+      result= Column(
+        children: puntos.map((punto) {
+          return Dismissible(
+            key: Key(punto['Id'].toString()),
+            onDismissed: (direction) {
+              setState(() {
+                puntos.remove(punto);
+              });
+              _fetchPuntos();
+            },
+            background: Container(color: Colors.red),
+
+            child: ListTile(
               title: Text(punto['Descripcion'].toString()),
               subtitle: Text(punto['Coordenada']),
               leading: Icon(Icons.location_on),
               // Otros elementos de ListTile según tus datos
-            );
-          }).toList(),
-        ),
+            ),
+          );
+        }).toList(),
       );
     }
+    return RefreshIndicator(
+      onRefresh: _fetchPuntos,
+      child: SingleChildScrollView(
+        child: result,
+      ),
+    );
+    // return RefreshIndicator(
+    //   onRefresh: _fetchPuntos,
+    //   child: result,
+    // );
   }
 }
 
