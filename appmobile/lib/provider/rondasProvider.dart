@@ -205,15 +205,15 @@ class RondasProvider with ChangeNotifier {
   Future<void> enviarAsignarGuardiaARonda(
     ApiService apiService,
     int idRonda,
-    int idguardia,
+    int idAgente,
   ) async {
     var sharedPreferences = await SharedPreferences.getInstance();
     var token = sharedPreferences.getString("token") ?? "";
     var data = {
-      "idronda": idRonda,
-      "idguardia": idguardia,
+      "idRonda": idRonda,
+      "idAgente": idAgente,
     };
-    await apiService.postData('/rondas/guardarRondaAsignadaXUsuario', data,token);
+    await apiService.postData('/rondas/guardarGuardiasPorRonda', data,token);
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
 
   }

@@ -58,7 +58,7 @@ class _GuardiasViewState extends State<GuardiasView> {
         child: Column(
           children: guardias.map((guardia) {
             return ListTile(
-              title: Text(guardia['Codigo'].toString() + " " + guardia['IdPerfil'].toString()),
+              title: Text(guardia['Apellidos'].toString() + " " + guardia['Nombres'].toString()),
               // title: Text(guardia['Descripcion'].toString()),
               // subtitle: Text(guardia['Coordenada']),
               leading: Icon(Icons.shield),

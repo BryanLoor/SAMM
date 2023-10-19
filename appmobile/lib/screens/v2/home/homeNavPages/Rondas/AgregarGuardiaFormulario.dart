@@ -111,7 +111,7 @@ class _Formulario_AsignarGuardiaState extends State<Formulario_AsignarGuardia> {
                 await rondasProvider.enviarAsignarGuardiaARonda(
                   apiService,
                   widget.idRonda,
-                  guardia['id'],
+                  guardia['IdUsuario'],
                 );
                 Navigator.pop(context);
               },

@@ -319,38 +319,57 @@ def guardarRondaAsignadaXUsuario():
 #     }), 200
 
 
-@bp.route('/getUsuariosPorRonda/<int:IdRonda>', methods=['GET'])
+@bp.route('/getUsuariosPorRonda/<int:id_ronda>', methods=['GET'])
 @cross_origin()
 @jwt_required()
-def getUsuariosPorRonda(IdRonda):
-    # Obtén la lista de usuarios asignados a la ronda con el IdRonda especificado
-    usuarios_en_ronda = db.session.query(
-        SAMM_Ronda_Usuario.IdUsuario
-    ).filter(
-        SAMM_Ronda_Usuario.IdRonda == IdRonda
-    ).all()
+def getUsuariosPorRonda(id_ronda):
+    # # Obtén la lista de usuarios asignados a la ronda con el IdRonda especificado
+    # usuarios_en_ronda = db.session.query(
+    #     SAMM_Ronda_Usuario.IdUsuario
 
-    # Ahora, obtén la información de los usuarios correspondientes a los IdUsuario obtenidos
-    usuarios_info = []
-    for usuario_id in usuarios_en_ronda:
-        usuario = db.session.query(
-            SAMM_Usuario
-        ).filter(
-            SAMM_Usuario.Id == usuario_id[0]
-        ).first()
-        if usuario:
-            usuario_schema = SAMM_UsuarioSchema()
-            usuario_data = usuario_schema.dump(usuario)
-            # Elimina el campo "Clave" del diccionario antes de agregarlo a la lista
-            if 'Clave' in usuario_data:
-                del usuario_data['Clave']
-            usuarios_info.append(usuario_data)
+    # ).filter(
+    #     SAMM_Ronda_Usuario.IdRonda == IdRonda
+    # ).all()
 
-    return jsonify({
-        "data": usuarios_info
-    }), 200
+    # # Ahora, obtén la información de los usuarios correspondientes a los IdUsuario obtenidos
+    # usuarios_info = []
+    # for usuario_id in usuarios_en_ronda:
+    #     usuario = db.session.query(
+    #         SAMM_Usuario,
+    #     ).filter(
+    #         SAMM_Usuario.Id == usuario_id[0]
+    #     ).first()
+    #     if usuario:
+    #         usuario_schema = SAMM_UsuarioSchema()
+    #         usuario_data = usuario_schema.dump(usuario)
+    #         # Elimina el campo "Clave" del diccionario antes de agregarlo a la lista
+    #         if 'Clave' in usuario_data:
+    #             del usuario_data['Clave']
+    #         usuarios_info.append(usuario_data)
 
+    # return jsonify({
+    #     "data": usuarios_info
+    # }), 200
+    try:
+        # Buscar los IDs de usuarios en la ronda especificada
+        ronda_usuarios = SAMM_Ronda_Usuario.query.filter_by(IdRonda=id_ronda).all()
+        
+        # Crear una lista de diccionarios con los nombres e IDs de las personas
+        data = []
+        for ronda_usuario in ronda_usuarios:
+            usuario = SAMM_Usuario.query.get(ronda_usuario.IdUsuario)
+            if usuario:
+                persona = Persona.query.get(usuario.IdPersona)
+                if persona:
+                    data.append({
+                        'Nombres': persona.Nombres,
+                        'Apellidos': persona.Apellidos,
+                        'Id': usuario.Id,
+                    })
 
+        return jsonify({'data': data})
+    except Exception as e:
+        return jsonify({'error': 'Ocurrió un error al obtener los nombres e IDs de las personas en la ronda.'}), 500
 
 
 
