@@ -129,9 +129,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLoading = true; // Muestra el loader
       });
-
       await postData('/login/login', {'Codigo': Codigo, 'Clave': Clave}, '');
-
       // Si la solicitud se completa con éxito, navega a la siguiente pantalla
       // Navigator.popAndPushNamed(context, Home.routeName);
       isologin = true;
@@ -160,7 +158,6 @@ class _LoginPageState extends State<LoginPage> {
       // await Future.delayed(Duration(seconds: 2)); // Ejemplo de 2 segundos
 
       bool isologin =await login(username, password);
-
       setState(() {
         isLoading = false; // Ocultar el loader
       });

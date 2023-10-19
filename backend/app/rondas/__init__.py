@@ -7,3 +7,4 @@ cors = CORS(bp,resources={r"/*": {"origins": "*", "headers":["Content-Type"]}})
 
 from app.rondas import rondas
 from app.rondas import guardias
+from app.rondas import bitacora
