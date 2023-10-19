@@ -38,10 +38,10 @@ class _GuardiasViewState extends State<GuardiasView> {
       });
     } catch (e) {
       print('Error al cargar puntos: $e');
-      setState(() {
-        hasError = true;
-        isLoading = false;
-      });
+      // setState(() {
+      //   hasError = true;
+      //   isLoading = false;
+      // });
     }
   }
 
