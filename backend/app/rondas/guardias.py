@@ -122,7 +122,7 @@ def eliminarRondaUsuario():
 @cross_origin()
 @jwt_required()
 def actualizarRondaUsuario():
-        
+    
     try:
         dataRondaUsuario = request.get_json()
         print(dataRondaUsuario)

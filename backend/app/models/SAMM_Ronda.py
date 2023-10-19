@@ -13,6 +13,8 @@ class SAMM_Ronda(db.Model):
     UsuCreacion = db.Column(db.Integer)
     FechaModifica = db.Column(db.DateTime)
     UsuModifica = db.Column(db.Integer)
+    FechaInicio = db.Column(db.DateTime)
+    FechaFin = db.Column(db.DateTime)
     IdUsuarioSupervisor = db.Column(db.Integer)
 
 class SAMM_RondaSchema(ma.SQLAlchemyAutoSchema):

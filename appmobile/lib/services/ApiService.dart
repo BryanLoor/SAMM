@@ -98,7 +98,6 @@ class ApiService {
       headers: headers,
       body: jsonEncode(data),
     );
-
     // print(response.body.toString());
 
     if (response.statusCode == 200 || response.statusCode == 201) {
