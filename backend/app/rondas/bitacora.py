@@ -33,7 +33,4 @@ def getBitacoraRecorrido():
     }
     for q in query
 ]
-    
-    
-    
     return jsonify({"total":len(schema),"data":schema}), 200

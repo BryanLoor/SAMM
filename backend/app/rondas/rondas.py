@@ -17,7 +17,7 @@ from app.models.SAMM_BitacoraVisita import SAMM_BitacoraVisita
 from app.models.SAMM_Estaddos import SAMM_Estados
 
 from app.models.SAMM_Ronda import SAMM_Ronda,SAMM_RondaSchema
-from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto
+from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto,SAMM_Ronda_PuntoSchema
 from app.models.SAMM_Ronda_Detalle import SAMM_Ronda_Detalle
 from app.models.SAMM_Ronda_Usuario import SAMM_Ronda_Usuario
 from app.models.SAMM_RolUsu import SAMM_RolUsu
@@ -76,6 +76,8 @@ def getAllRondas():
 
 
     return jsonify({"total":len(schema),"data":schema}), 200
+
+
 
 
     
@@ -217,6 +219,27 @@ def editarRonda():
         return jsonify({"msg":"Ronda actualizada"}), 201
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+
+
+
+@bp.route('/getPuntosPorRonda', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def getPuntoPorRonda():
+    try:
+        idRonda = request.json["IdRonda"]
+        
+        ronda_existe = SAMM_Ronda.query.filter(SAMM_Ronda.Id == idRonda).first()
+        
+        if (ronda_existe is None):
+            return jsonify({"message":"Ronda no existe"}),400
+        puntos = SAMM_Ronda_Punto.query.filter(SAMM_Ronda_Punto.IdRonda==idRonda).all()
+        puntos_schema=SAMM_Ronda_PuntoSchema(many=True)
+        
+        return jsonify({"data":puntos_schema.dump(puntos),"total":len(puntos)})
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
 
 @bp.route('/guardarPuntoRealizado', methods=['POST'])
 @cross_origin()
