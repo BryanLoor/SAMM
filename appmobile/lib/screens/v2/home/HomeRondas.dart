@@ -28,19 +28,19 @@ class _HomeRondasState extends State<HomeRondas> {
   late final PageController _pageController;
   late final List<Widget> _pages;
   late List<Map<String, dynamic>> menu;
-  late bool canedit = false;
+
 
   @override
   void initState() {
     super.initState();
     final apiservices = Provider.of<ApiService>(context, listen: false);
     final mainProvider = Provider.of<MainProvider>(context, listen: false);
-    mainProvider.canedit().then((value) => canedit = value);
     _selectedIndex = 0;
     _pageController = PageController(initialPage: 0);
     // fetchMenu(apiservices, mainProvider);
     _pages = [
-      // HomePage(),
+      HomePage(),
+      // VisitasPage(),
       RondasPage(),
       // MapView(),
    
@@ -59,57 +59,72 @@ class _HomeRondasState extends State<HomeRondas> {
 
   @override
   Widget build(BuildContext context) {
-    final mainProvider = Provider.of<MainProvider>(context, listen: false);
     return Scaffold(
+      
       appBar: CustomAppBar(),
-      // bottomNavigationBar: NavigationBar(
-      //   // backgroundColor: Colors.blue[900],
-      //   //indicatorColor: Colors.white,
-        
-      //   onDestinationSelected: (int index) {
-      //     setIndex(index);
-      //   },
-      //   selectedIndex: _selectedIndex,
-        
-      //   destinations:[
+      bottomNavigationBar: NavigationBar(
+        height: 60,
+        backgroundColor: Colors.blue[900],
+        indicatorColor: Colors.blue[800],
+        onDestinationSelected: (int index) {
+          setIndex(index);
+        },
+        selectedIndex: _selectedIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+        indicatorShape:ShapeBorder.lerp(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          1,
+        ),
+        destinations: [
+          NavigationDestination(
+            icon: Icon(
+              Icons.home_outlined,
+              color: Colors.white, // Color blanco para el ícono
+            ),
+            selectedIcon: Icon(
+              Icons.home_outlined,
+              color: Colors.white, // Color blanco para el ícono seleccionado
+            ),
+            label: 'Home',
 
-      //     // NavigationDestination(
-          
-      //     //   icon: Icon(Icons.home_outlined,),
-      //     //   selectedIcon: Icon(Icons.home_outlined),
-      //     //   label: 'Home',
-            
-            
-            
-      //     // ),
-      //     NavigationDestination(
-      //       icon: Icon(Icons.change_circle_outlined),
-      //       selectedIcon: Icon(Icons.change_circle_outlined),
-      //       label: 'Rondas',
-      //     ),
-      //   ],
-      // ),
+          ),
+          NavigationDestination(
+            icon: Icon(
+              Icons.change_circle_outlined,
+              color: Colors.white, // Color blanco para el ícono
+            ),
+            selectedIcon: Icon(
+              Icons.change_circle_outlined,
+              color: Colors.white, // Color blanco para el ícono seleccionado
+            ),
+            label: 'Rondas',
+          ),
+        ],
+      ),
+
       floatingActionButton: 
 
-        // _selectedIndex == 0?
-        //   null
+        _selectedIndex == 0?
+          null
 
 
-        _selectedIndex == 0 && canedit?
+        :_selectedIndex == 1?
           FloatingRondas()
         : null,
         
-        body: RondasPage(),
-      //   body: PageView(
-      //   onPageChanged: (value) {
-      //     setIndex(value);
-      //   },
-      //   controller: _pageController,
-      //   children: _pages,
+        
+        body: PageView(
+        onPageChanged: (value) {
+          setIndex(value);
+        },
+        controller: _pageController,
+        children: _pages,
 
-      // ),
+      ),
     );
   }
 }
+
 
 

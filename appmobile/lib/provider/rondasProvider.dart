@@ -308,6 +308,8 @@ class RondasProvider with ChangeNotifier {
     
   }
 
+  
+
 
   Future<List<Map<String, dynamic>>> getGuardiasValidos(
     ApiService apiService,
