@@ -10,9 +10,9 @@
 
     <application
     
-        android:label="sammseguridad_apk"
+        android:label="SAM"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <meta-data
        android:name="com.google.android.geo.API_KEY"
        android:value="AIzaSyApO2Kb-Ep7aNpkUhi3jQ8fqanJ1vG58Eo"/>

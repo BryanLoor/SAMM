@@ -37,10 +37,10 @@ class _PuntosViewState extends State<PuntosView> {
       });
     } catch (e) {
       print('Error al cargar puntos: $e');
-      setState(() {
-        hasError = true;
-        isLoading = false;
-      });
+      // setState(() {
+      //   hasError = true;
+      //   isLoading = false;
+      // });
     }
   }
 
