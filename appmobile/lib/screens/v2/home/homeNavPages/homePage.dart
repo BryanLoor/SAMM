@@ -10,7 +10,7 @@ import 'package:sammseguridad_apk/screens/ScreenHistorialRondas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
 // import 'package:sammseguridad_apk/screens/ScreenRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
-import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/MisRecorridos.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/MisRecorridos.dart';
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
