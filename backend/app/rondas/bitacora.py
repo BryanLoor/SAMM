@@ -55,6 +55,7 @@ def getPuntosRecorridoxRonda():
                 'FechaInicio':q.SAMM_Ronda.FechaInicio,
                 'FechaFin':q.SAMM_Ronda.FechaFin,
                 'Puntos': {
+                    "IdPunto":q.SAMM_Ronda_Punto.Id,
                     "Codigo":q.SAMM_Ronda_Punto.CodigoPunto,
                     "Coordenadas":q.SAMM_Ronda_Punto.Coordenada,
                     "Descripcion":q.SAMM_Ronda_Punto.Descripcion,
