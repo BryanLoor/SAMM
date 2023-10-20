@@ -36,8 +36,9 @@ def getPuntosRecorridoxRonda():
             .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
             
             .filter(
-                SAMM_BitacoraRecorrido.IdRonda==idRonda,
-                SAMM_BitacoraRecorrido.IdAgente==idAgente,
+                SAMM_BitacoraRecorrido.IdRonda == idRonda,
+                SAMM_BitacoraRecorrido.IdAgente == idAgente,
+                SAMM_Ronda_Punto.IdRonda == idRonda
             )
             .all()
         )
