@@ -292,14 +292,22 @@ class RondasProvider with ChangeNotifier {
     // int IdRonda,
     int idUsuarioSupervisor,
     int idUbicacion,
-    String descripcion
+    String descripcion,
+    String fechaInicio,
+    String fechaFinal,
+    String frecuencia,
+    String diaSemana
   ) async {
     var sharedPreferences = await SharedPreferences.getInstance();
     var token = sharedPreferences.getString("token") ?? "";
     var data = {
       "IdUsuarioSupervisor": idUsuarioSupervisor,
       "IdUbicacion": idUbicacion,
-      "Desripcion": descripcion
+      "Desripcion": descripcion,
+      "FechaInicio" : fechaInicio,
+      "FechaFin" : fechaFinal,
+      "Frecuencia" : frecuencia,
+      "DiaSemana":diaSemana
     };
     var response = await apiService.postData('/rondas/crearRonda', data,token);
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
@@ -334,13 +342,22 @@ class RondasProvider with ChangeNotifier {
     int idUbicacion,
     int orden,
     String descripcion,
-    List<LatLng> coordenadas
+    List<LatLng> coordenadas,
+    String fechaInicio,
+    String fechaFinal,
+    String frecuencia,
+    String diaSemana
   ) async {
      enviarNuevaRonda(
       apiService, 
       idUsuarioSupervisor, // es el usuario logeado por que el supervisor crea rondas
       idUbicacion, // se selecciona las ubicaciones 
-      descripcion // se escribe
+      descripcion, // se escribe
+      fechaInicio,
+      fechaFinal,
+      frecuencia,
+      diaSemana
+
     ).then((idRonda){
       coordenadas.forEach((coordenada) {
         String coordString = coordenada.latitude.toString() + "," + coordenada.longitude.toString();
