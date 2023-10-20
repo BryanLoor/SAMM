@@ -92,7 +92,6 @@ def getBitacoraRecorrido():
                 )
             .all()
             )
-        print(query)
 
         schema = [
         {

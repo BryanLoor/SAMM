@@ -113,6 +113,12 @@ class _CrearRondaState extends State<CrearRonda> {
                               1,
                               rondanombre.text,
                               mapviewController.getMarkersPositionList(),
+                              DateTime.now().toString(),
+                              DateTime.now().toString(),
+                              "DIARIO",
+                              ""
+                              
+
                             ).then(
                               (value) {
                                 ScaffoldMessenger.of(context).showSnackBar(

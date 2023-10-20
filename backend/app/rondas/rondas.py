@@ -179,6 +179,12 @@ def crearRonda():
     ronda.FechaModifica = datetime.now()
     ronda.UsuModifica = idUsuario[0]
     ronda.IdUsuarioSupervisor = request.json['IdUsuarioSupervisor']
+    ronda.FechaInicio = request.json['FechaInicio']
+    ronda.FechaFin = request.json['FechaFin']
+    ronda.Frecuencia = request.json['Frecuencia'] 
+    ronda.diaSemana = request.json['DiaSemana'] or None
+    
+    
 
    
    
