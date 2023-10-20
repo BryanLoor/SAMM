@@ -45,6 +45,7 @@ def getPuntosRecorridoxRonda():
         schema= [
             {   'idRecorrido':q.SAMM_BitacoraRecorrido.Id,
                 'IdRonda': q.SAMM_BitacoraRecorrido.IdRonda,
+                "RondaNombre": q.SAMM_Ronda.Desripcion,
                 "IdAgente": q.SAMM_BitacoraRecorrido.IdAgente,
                 'IdUsuarioSupervisor':q.SAMM_Ronda.IdUsuarioSupervisor,
                 'Identificacion': q.Persona.Identificacion,
@@ -55,7 +56,8 @@ def getPuntosRecorridoxRonda():
                 'Puntos': {
                     "Codigo":q.SAMM_Ronda_Punto.CodigoPunto,
                     "Coordenadas":q.SAMM_Ronda_Punto.Coordenada,
-                    "Descripcion":q.SAMM_Ronda_Punto.Descripcion
+                    "Descripcion":q.SAMM_Ronda_Punto.Descripcion,
+                    "Estado":q.SAMM_BitacoraRecorrido.Estado
                 }
             }
             for q in query
@@ -69,7 +71,7 @@ def getPuntosRecorridoxRonda():
     
     
     
-@bp.route('/getBitacoraRecorrido', methods=['GET'])
+@bp.route('/getBitacoraRecorrido', methods=['POST'])
 @cross_origin()
 @jwt_required()
 def getBitacoraRecorrido():

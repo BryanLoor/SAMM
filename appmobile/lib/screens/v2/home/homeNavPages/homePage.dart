@@ -207,7 +207,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               // SizedBox.square(dimension: 10.0),
-              MisRecorridos(),
+              // MisRecorridos(),
               // Container(
               //   child: MisRecorridos(),
               //   height: 200,

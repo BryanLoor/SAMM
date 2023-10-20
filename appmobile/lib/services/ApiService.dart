@@ -100,7 +100,7 @@ class ApiService {
     );
     // print(response.body.toString());
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 400) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Fallo al enviar datos');
