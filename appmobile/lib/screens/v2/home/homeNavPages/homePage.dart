@@ -37,7 +37,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final apiservices = Provider.of<ApiService>(context, listen: false);
     final mainProvider = Provider.of<MainProvider>(context, listen: false);
-    mainProvider.canedit().then((value) => canedit = value);
+    mainProvider.canedit().then((value) {
+      setState(() {
+        canedit = value;
+      });
+    });
    
   }
 
@@ -132,6 +136,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
+              // ),
               ):Container(),
               
               // SizedBox.square(dimension: 10.0),
@@ -179,8 +184,9 @@ class _HomePageState extends State<HomePage> {
 
 
                 ),
+              // ),
               ):Container(),
-
+              
 
               Divider(),
               // =====================================================

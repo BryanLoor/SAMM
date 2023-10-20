@@ -26,14 +26,32 @@ class MisRecorridos extends StatelessWidget {
             physics: NeverScrollableScrollPhysics(),
             children: [
               for (var ronda in data!)
-                ListTile(
-                  title: Text('Nombre Ronda: ${ronda.nombreRonda}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Puntos Totales: ${ronda.nPuntosTotales}'),
-                      Text('Puntos Recorridos: ${ronda.nPuntosRecorridos}'),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Card(
+                    margin: EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${ronda.nombreRonda}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                
+                              )
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10.0,height:100,),
+                        Text('${ronda.nPuntosRecorridos} - ${ronda.nPuntosTotales}'),
+                        SizedBox(width: 10.0,),
+                        // SizedBox(width: 10.0,),
+                      ],
+                    ),
                   ),
                 ),
             ],
