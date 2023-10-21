@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeVisitas.dart';
+import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'ScreenWelcom.dart';
@@ -28,15 +31,37 @@ class _ScreenSplashState extends State<ScreenSplash> {
     //   //   context,
     //   //   MaterialPageRoute(builder: (context) => const LoginPage()),
     //   // );
+      
       verifySession();
     });
+  }
+
+
+
+  Future<bool> refreshToken(
+    String jwtToken,
+  ) async {
+    ApiService _apiService = Provider.of<ApiService>(context, listen: false);
+    MainProvider _mainProvider = Provider.of<MainProvider>(context, listen: false);
+    try {
+      var response = await _apiService.postData("/login/actualizar_token", {}, jwtToken);
+      if (response['access_token'] != null) {
+        _mainProvider.updateToken(response['access_token']);
+        _mainProvider.response=response;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
   void verifySession() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final descripcion = prefs.getString("Descripcion");
-    if (token != null) {
+    bool canrefresh = await refreshToken(token??"");
+    if (token != null && canrefresh) {
       if (descripcion == "Agente"){
         Navigator.pushReplacementNamed(context, HomeRondas.routeName);
       }else

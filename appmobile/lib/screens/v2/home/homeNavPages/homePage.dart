@@ -11,6 +11,7 @@ import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
 // import 'package:sammseguridad_apk/screens/ScreenRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/MisRecorridos.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/PuntosDelRecorrido.dart';
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
@@ -73,6 +74,10 @@ class _HomePageState extends State<HomePage> {
     // int _selectedIndex = 0;
 
     return Center(
+      // child:         PuntosDelRecorrido(
+      //     rondaNombre: "rondaNombre",
+      //     rondaConcretaId: 1,
+      //   ),
         // child:[
           child: ListView(
             children: [
@@ -207,16 +212,31 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               // SizedBox.square(dimension: 10.0),
-              // MisRecorridos(),
+              MisRecorridos(),
               // Container(
               //   child: MisRecorridos(),
               //   height: 200,
               // ),
               Divider(),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     Navigator.of(context).push(
+              //       MaterialPageRoute(
+              //         builder: (context) => PuntosConcretosScreen(
+              //                                 rondaNombre: "rondaNombre",
+              //                                 rondaConcretaId: 1,
+              //                               ),
+              //       ),
+              //     );
+              //   },
+              //   child: Text("rondanombre y ronda 1"),
+              
+              // )
               // =====================================================
 
             ],
           )
+        // ]
     );
   }
 }

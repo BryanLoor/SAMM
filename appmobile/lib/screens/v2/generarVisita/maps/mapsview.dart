@@ -59,7 +59,7 @@ class MapViewState extends State<MapView> {
     mapviewcontroller.getCurrentLocation();
     return Scaffold(
       appBar: CustomAppBar(),
-      floatingActionButton: acciones(rondasprovider,mapviewcontroller),
+      // floatingActionButton: acciones(rondasprovider,mapviewcontroller),
       body: Stack(
     
         children:[
@@ -87,6 +87,7 @@ class MapViewState extends State<MapView> {
     //   bottomNavigationBar: _buildNavBar(),
     // );
   }
+
 
   PopupMenuButton acciones(RondasProvider rondasprovider,mapviewcontroller) {
     return PopupMenuButton(

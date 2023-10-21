@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapsview.dart';
+import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapviewController.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,11 +28,40 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
   List<Map<String, dynamic>> puntos = [];
   bool isLoading = true;
   bool hasError = false;
+  late MapviewController mapviewController;
+
+
+  late Timer _timer;
+  bool _estaCerca = false;
+
+
+  void _iniciarActualizacionProximidad() {
+    // Iniciar el temporizador de actualización de proximidad.
+    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      _actualizarProximidad();
+    });
+  }
+
+  void _actualizarProximidad() async {
+    LatLng ubicacion =
+        await mapviewController.getCurrentLocation().then((value) => value.target);
+    Set<Marker> markers = mapviewController.markers;
+
+    bool estaCerca = mapviewController.estaCercaDeUnMarcador(ubicacion, markers, 10);
+
+    if (estaCerca != _estaCerca) {
+      setState(() {
+        _estaCerca = estaCerca;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    mapviewController = Provider.of<MapviewController>(context, listen: false);
     _fetchPuntos();
+    // _iniciarActualizacionProximidad();
   }
 
   Future<void> _fetchPuntos() async {
@@ -65,18 +99,23 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
         "idRonda": widget.rondaConcretaId,
         "idAgente": idAgente
       };
+      print('ronda concreta id es esta : ${widget.rondaConcretaId}');
       Map<String,dynamic> responsePuntos = await apiService.postData("/rondas/getPuntosRecorridoxRonda", dataPuntos, jwtToken);
       if (!responsePuntos.containsKey("message") && responsePuntos['data'].length > 0){
         
         responsePuntos['data'].forEach((punto) {
 
           Map<String, dynamic> convertedPunto = {
+            "Id" : punto['Puntos']['IdPunto'],
             "Descripcion" : punto['Puntos']['Descripcion'],
             "Coordenada" : punto['Puntos']['Coordenadas'],
+            "Estado" : punto['Puntos']['Estado'],
           };
           puntos.add(convertedPunto);
         });
       }
+
+      final positionList = mapviewController.setMarkersByPositionList(puntos);
 
       
 
@@ -103,22 +142,14 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
     } else {
       result= Column(
         children: puntos.map((punto) {
-          return Dismissible(
-            key: Key(punto['Id'].toString()),
-            onDismissed: (direction) {
-              setState(() {
-                puntos.remove(punto);
-              });
-              _fetchPuntos();
-            },
-            background: Container(color: Colors.red),
-
-            child: ListTile(
-              title: Text(punto['Descripcion'].toString()),
-              subtitle: Text(punto['Coordenada']),
-              leading: Icon(Icons.location_on),
-              // Otros elementos de ListTile según tus datos
-            ),
+          print(punto["Id"]);
+          return ListTile(
+            title: Text(punto['Descripcion'].toString()),
+            subtitle: Text(punto['Coordenada']),
+            leading: 
+              punto["Estado"] == "R"
+              ? Icon(Icons.location_on,color: Colors.green,)
+              : Icon(Icons.location_on,color: Colors.red,),
           );
         }).toList(),
       );
@@ -126,7 +157,7 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
     return RefreshIndicator(
       onRefresh: _fetchPuntos,
       child: SingleChildScrollView(
-        child: result,
+        child: result
       ),
     );
     // return RefreshIndicator(
@@ -136,3 +167,51 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
   }
 }
 
+class PuntosConcretosScreen extends StatelessWidget {
+  final String rondaNombre;
+  final int rondaConcretaId;
+  const PuntosConcretosScreen({
+    required this.rondaNombre,
+    required this.rondaConcretaId,
+    super.key
+    
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
+    ApiService apiService = Provider.of<ApiService>(context, listen: false);
+    MapviewController mapviewController = Provider.of<MapviewController>(context, listen: false);
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: ()async {
+          // TODO: rondaconcretaid creo que no es el id de la ronda hay que ver de donde se lo obtiene
+          // var listarondas = await rondasProvider.getRondaPoints(apiService, rondaConcretaId.toString());
+          // final positionList = mapviewController.setMarkersByPositionList(listarondas);
+          mapviewController.menuselection = 1;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MapView(
+                idRonda: rondaConcretaId,
+              ),
+            ),
+          );
+        },
+        label:  Row(
+          children: [
+            Text('ver en el mapa', style: TextStyle(color: Colors.white),),
+            SizedBox(width: 10,),
+            Icon(Icons.map, color: Colors.white,)
+          ],
+        ),
+        backgroundColor: Colors.blue[900],
+      ),
+      appBar: CustomAppBar(),
+      body: PuntosDelRecorrido(
+        rondaNombre: rondaNombre,
+        rondaConcretaId: rondaConcretaId,
+      ),
+    );
+  }
+}

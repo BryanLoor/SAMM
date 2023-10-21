@@ -31,6 +31,7 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
     _iniciarActualizacionProximidad();
   }
 
+
   void _iniciarActualizacionProximidad() {
     // Iniciar el temporizador de actualización de proximidad.
     _timer = Timer.periodic(Duration(seconds: 3), (timer) {

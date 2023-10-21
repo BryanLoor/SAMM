@@ -5,7 +5,7 @@ import ssl
 import string
 from app.models.SAMM_Persona import Persona
 from flask import request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, verify_jwt_in_request
 from app.extensions import db
 from app.login import bp as app
 from marshmallow import ValidationError
@@ -77,6 +77,24 @@ def login():
         return jsonify(response_data), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+
+
+@app.route('/actualizar_token', methods=['POST'])
+@jwt_required()
+def actualizar_token():
+    current_user = get_jwt_identity()  # Obtiene el Codigo del usuario actual desde el token JWT
+
+    # Genera un nuevo token de acceso con una nueva duración
+    expires = timedelta(hours=42)  # Nueva duración, 1 hora en este caso
+    new_access_token = create_access_token(identity=current_user, expires_delta=expires)
+
+    # Devuelve el nuevo token como respuesta
+    response_data = {
+        "access_token": new_access_token,
+        "message": "Token actualizado exitosamente"
+    }
+
+    return jsonify(response_data), 200
 
 
 @app.route('/get_user_data', methods=['POST'])

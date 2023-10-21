@@ -47,113 +47,135 @@ class _RondaDetalleState extends State<RondaDetalle> {
       appBar: CustomAppBar(),
 
 
-      floatingActionButton:
-      PopupMenuButton(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            height: 50,
-            width: 50,
-            margin: const EdgeInsets.only(top: 10),
-            decoration: BoxDecoration(
-              color: Colors.blue[900],
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 5,
-                  offset: Offset(0, 5),
-                ),
-              ],
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: ()async {
+          var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
+          final positionList = mapviewController.setMarkersByPositionList(listarondas);
+          mapviewController.menuselection = 4;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MapView(
+                idRonda: widget.idRonda,
+              ),
             ),
-            child: const Icon(Icons.keyboard_arrow_up, color: Colors.white,)
-          ),
-        ),
-        itemBuilder: (context) => [
-          // PopupMenuItem(
-          //   child: Text("Rondas"),
-          //   value: 0,
-          // ),
-
-
-          // tabMenuView == TabMenu.Puntos?
-          // const PopupMenuItem(
-          //   child: Row(
-          //     children: [
-          //       Icon(Icons.add_location_alt_outlined),
-          //       Text("Editar Puntos"),
-          //     ],
-          //   ),
-          //   value: 0,
-          // )
-
-
-          // :PopupMenuItem(
-          //   child: Row(
-          //     children: [
-          //       Icon(Icons.add_circle_outline_outlined,),
-          //       Text("Agregar guardia"),
-          //     ],
-          //   ),
-          //   value: 1,
-          // ),
-          
-          PopupMenuItem(
-            child: Row(
-              children: [
-                Icon(Icons.map_outlined),
-                Text("Ver en el mapa"),
-              ],
-            ),
-            value: 2,
-          ),
-
-        ],
-        onSelected: (value) async{
-            switch (value) {
-              case 0:
-                // tabMenuView = TabMenu.Puntos;
-                print("Agregar punto");
-                var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
-                final positionList = mapviewController.setMarkersByPositionList(listarondas);
-                mapviewController.menuselection = 2;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MapView(
-                      idRonda: widget.idRonda,
-                    ),
-                  ),
-                );
-                break;
-              case 1:
-                print("Agregar guardia");
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => AgregarGuardiaFormulario(idRonda: widget.idRonda),
-                );
-                // tabMenuView = TabMenu.Guardias;
-                break;
-              case 2:
-                var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
-                final positionList = mapviewController.setMarkersByPositionList(listarondas);
-                mapviewController.menuselection = 4;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MapView(
-                      idRonda: widget.idRonda,
-                    ),
-                  ),
-                );
-                break;
-              default:
-            }
-          setState(() {
-            
-          });
+          );
         },
+        label:  Row(
+          children: [
+            Text('ver en el mapa', style: TextStyle(color: Colors.white),),
+            SizedBox(width: 10,),
+            Icon(Icons.map, color: Colors.white,)
+          ],
+        ),
+        backgroundColor: Colors.blue[900],
       ),
+      // PopupMenuButton(
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(10.0),
+      //     child: Container(
+      //       height: 50,
+      //       width: 50,
+      //       margin: const EdgeInsets.only(top: 10),
+      //       decoration: BoxDecoration(
+      //         color: Colors.blue[900],
+      //         borderRadius: BorderRadius.circular(20),
+      //         boxShadow: const [
+      //           BoxShadow(
+      //             color: Colors.black12,
+      //             blurRadius: 5,
+      //             offset: Offset(0, 5),
+      //           ),
+      //         ],
+      //       ),
+      //       child: const Icon(Icons.keyboard_arrow_up, color: Colors.white,)
+      //     ),
+      //   ),
+      //   itemBuilder: (context) => [
+      //     // PopupMenuItem(
+      //     //   child: Text("Rondas"),
+      //     //   value: 0,
+      //     // ),
+
+
+      //     // tabMenuView == TabMenu.Puntos?
+      //     // const PopupMenuItem(
+      //     //   child: Row(
+      //     //     children: [
+      //     //       Icon(Icons.add_location_alt_outlined),
+      //     //       Text("Editar Puntos"),
+      //     //     ],
+      //     //   ),
+      //     //   value: 0,
+      //     // )
+
+
+      //     // :PopupMenuItem(
+      //     //   child: Row(
+      //     //     children: [
+      //     //       Icon(Icons.add_circle_outline_outlined,),
+      //     //       Text("Agregar guardia"),
+      //     //     ],
+      //     //   ),
+      //     //   value: 1,
+      //     // ),
+          
+      //     PopupMenuItem(
+      //       child: Row(
+      //         children: [
+      //           Icon(Icons.map_outlined),
+      //           Text("Ver en el mapa"),
+      //         ],
+      //       ),
+      //       value: 2,
+      //     ),
+
+      //   ],
+      //   onSelected: (value) async{
+      //       switch (value) {
+      //         case 0:
+      //           // tabMenuView = TabMenu.Puntos;
+      //           print("Agregar punto");
+      //           var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
+      //           final positionList = mapviewController.setMarkersByPositionList(listarondas);
+      //           mapviewController.menuselection = 2;
+      //           Navigator.push(
+      //             context,
+      //             MaterialPageRoute(
+      //               builder: (context) => MapView(
+      //                 idRonda: widget.idRonda,
+      //               ),
+      //             ),
+      //           );
+      //           break;
+      //         case 1:
+      //           print("Agregar guardia");
+      //           showModalBottomSheet(
+      //             context: context,
+      //             builder: (context) => AgregarGuardiaFormulario(idRonda: widget.idRonda),
+      //           );
+      //           // tabMenuView = TabMenu.Guardias;
+      //           break;
+      //         case 2:
+                // var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
+                // final positionList = mapviewController.setMarkersByPositionList(listarondas);
+                // mapviewController.menuselection = 4;
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => MapView(
+                //       idRonda: widget.idRonda,
+                //     ),
+                //   ),
+                // );
+      //           break;
+      //         default:
+      //       }
+      //     setState(() {
+            
+      //     });
+      //   },
+      // ),
 
 
 
