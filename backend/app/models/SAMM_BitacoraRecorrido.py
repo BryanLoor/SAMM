@@ -13,6 +13,7 @@ class SAMM_BitacoraRecorrido(db.Model):
     FechaCrea = db.Column(db.DateTime)
     FechaMod = db.Column(db.DateTime)
     Estado = db.Column(db.String(1))
+    FechaRecorrido = db.Column(db.DateTime)
     
 
 class SAMM_BitacoraRecorridoSchema(ma.SQLAlchemyAutoSchema):

@@ -41,7 +41,7 @@ class MisRecorridos extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => PuntosConcretosScreen(
                                                   rondaNombre: ronda.nombreRonda,
-                                                  rondaConcretaId: ronda.id,
+                                                  rondaConcretaId: ronda.idRondaBitacora,
                                                 ),
                         ),
                       );
@@ -55,7 +55,7 @@ class MisRecorridos extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                '${ronda.nombreRonda}',
+                                '${ronda.idRondaBitacora} ${ronda.nombreRonda}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -65,6 +65,7 @@ class MisRecorridos extends StatelessWidget {
                             ),
                           ),
                           SizedBox(width: 10.0,height:100,),
+                          Text('${ronda.fechaRecorrido}'),
                           Text('${ronda.nPuntosRecorridos} - ${ronda.nPuntosTotales}'),
                           SizedBox(width: 10.0,),
                           // SizedBox(width: 10.0,),
@@ -137,7 +138,9 @@ class MisRecorridos extends StatelessWidget {
           "IdRonda" : ronda['idRonda'],
           "Nombreronda" : nombreronda == "" ? "Sin nombre" : nombreronda,
           "n_puntosTotales" : responsePuntos['total'],
-          "n_puntosRecorridos" : n_puntosRecorridos
+          "n_puntosRecorridos" : n_puntosRecorridos,
+          "idRondaBitacora" : ronda['idRondaBitacora'],
+          "fechaRecorrido" : ronda['fechaRecorrido'].toString()
         };
         rondas.add(RondaData.fromJson(convertedRonda));
         
@@ -181,21 +184,30 @@ class RondaData {
   final String nombreRonda;
   final int nPuntosTotales;
   final int nPuntosRecorridos;
+  final int idRondaBitacora;
+  final String fechaRecorrido;
 
   RondaData({
     required this.id,
     required this.nombreRonda,
     required this.nPuntosTotales,
     required this.nPuntosRecorridos,
+    required this.idRondaBitacora,
+    required this.fechaRecorrido,
   });
 
   factory RondaData.fromJson(Map<String, dynamic> json) {
     return RondaData(
       id: json['IdRonda'],
+      idRondaBitacora: json['idRondaBitacora'],
       // puntos: json['Puntos'],
       nombreRonda: json['Nombreronda'],
       nPuntosTotales: json['n_puntosTotales'],
       nPuntosRecorridos: json['n_puntosRecorridos'],
+      fechaRecorrido: json['fechaRecorrido'],
     );
   }
 }
+
+
+// idRondaBitacora

@@ -17,7 +17,7 @@ class SAMM_Bitacora_RecorridoDetalle(db.Model):
     UsuCreacion = db.Column(db.Integer)
     FechaModifica = db.Column(db.DateTime)
     UsuModifica = db.Column(db.DateTime)
-    IdBitacoraRonda = db.Column(db.Integer)
+    IdBitacoraRecorrido = db.Column(db.Integer)
     
 
 class SAMM_Bitacora_RecorridoDetalleSchema(ma.SQLAlchemyAutoSchema):

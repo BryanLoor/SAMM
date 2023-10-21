@@ -101,6 +101,8 @@ def getBitacoraRecorrido():
         {
             "IdUsuario": q.SAMM_Usuario.Id,
             "idRonda": q.SAMM_BitacoraRecorrido.IdRonda,
+            "idRondaBitacora": q.SAMM_BitacoraRecorrido.Id,
+            "fechaRecorrido": q.SAMM_BitacoraRecorrido.FechaRecorrido,
             "Nombres": f"{q.Persona.Nombres} {q.Persona.Apellidos}" if q.Persona else None,
             
         }
