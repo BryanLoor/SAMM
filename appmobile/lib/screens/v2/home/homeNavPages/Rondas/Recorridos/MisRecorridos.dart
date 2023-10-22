@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
@@ -54,18 +55,25 @@ class MisRecorridos extends StatelessWidget {
                           Flexible(
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                '${ronda.idRondaBitacora} ${ronda.nombreRonda}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  
-                                )
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${ronda.idRondaBitacora} ${ronda.nombreRonda}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      
+                                    ),
+                                  ),
+                                  Text('${
+                                    ronda.fechaRecorrido.substring(0, ronda.fechaRecorrido.length - 12)
+                                    }'),
+                                ],
                               ),
                             ),
                           ),
                           SizedBox(width: 10.0,height:100,),
-                          Text('${ronda.fechaRecorrido}'),
                           Text('${ronda.nPuntosRecorridos} - ${ronda.nPuntosTotales}'),
                           SizedBox(width: 10.0,),
                           // SizedBox(width: 10.0,),
@@ -109,7 +117,6 @@ class MisRecorridos extends StatelessWidget {
     Map<String, dynamic> data = {
       "idAgente": idAgente
     };
-    print(data);
 
     Map<String,dynamic> responseRondas = await apiService.postData("/rondas/getBitacoraRecorrido", data, jwtToken);
     if (responseRondas.containsKey("message")){
@@ -130,10 +137,9 @@ class MisRecorridos extends StatelessWidget {
       Map<String,dynamic> responsePuntos = await apiService.postData("/rondas/getPuntosRecorridoxRonda", dataPuntos, jwtToken);    
       
       if (!responseRondas.containsKey("message") && responsePuntos['data'].length > 0){
-        print("entro aqui");
         int n_puntosRecorridos = 0;
         responsePuntos['data'].forEach((punto) {
-          if(punto['Puntos']["Estado"] == "P"){
+          if(punto['Puntos']["EstadoPuntoConcreto"] == "RECORRIDO"){
             n_puntosRecorridos++;
           }
           // int n_puntosRecorridos = responsePuntos['data'].((punto) => punto['Puntos']["Estado"] == "R").length;

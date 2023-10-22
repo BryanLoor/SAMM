@@ -61,90 +61,136 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
     // widget.mapviewController.cleanMarkers();
     
     // MapviewController mapviewController = Provider.of<MapviewController>(context);
-    return DraggableScrollableSheet(
-      initialChildSize: 0.3,
-      minChildSize: 0.1,
-      maxChildSize: 0.3,
-      builder: (context, scrollController) => Container(
-
-        decoration: BoxDecoration(
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, -5),
-            ),
-          ],
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25.0),
-            topRight: Radius.circular(25.0),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            controller: scrollController,
-            children: [
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FloatingActionButton.extended(
+          
+          onPressed: _estaCerca?() async {
+            LatLng ubication = 
+            await widget.mapviewController
+            .getCurrentLocation()
+            .then(
+              (value) => value.target
+            );
+            Set<Marker> markers = widget.mapviewController.markers;
+            
+            bool estaCerca = widget.mapviewController.estaCercaDeUnMarcador(
+              ubication,
+              markers,
+              10
+            );
+            if (estaCerca) {
+              registrarpresenciadialog(context,widget.mapviewController);
               
-              ElevatedButton.icon(
-                icon: const Icon(Icons.location_on),
-                label: const Text("Registrar Presencia"),
-                onPressed: _estaCerca?() async {
-                  LatLng ubication = 
-                  await widget.mapviewController
-                  .getCurrentLocation()
-                  .then(
-                    (value) => value.target
-                  );
-                  Set<Marker> markers = widget.mapviewController.markers;
-                  
-                  bool estaCerca = widget.mapviewController.estaCercaDeUnMarcador(
-                    ubication,
-                    markers,
-                    10
-                  );
-                  if (estaCerca) {
-                    registrarpresenciadialog(context,widget.mapviewController);
-                    
-                    // La ubicación está cerca de un marcador
-                    if (widget.mapviewController.markers.isEmpty){
-                      //  mostrar snackbar que diga ronda finalizada
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          backgroundColor: Colors.green,
-                          content: Text("Recorrido finalizado"),
-                        )
-                      );
-                    }
-                  } else {
-                    // La ubicación no está cerca de ningún marcador
-                  }
-
-                }:null
-              ),
-
-              ElevatedButton.icon(
-                icon: const Icon(Icons.save),
-                label: const Text("Terminar recorrido"),
-                onPressed: () {
-                  widget.mapviewController.menuselection = 0;
-                  widget.mapviewController.cleanMarkers();
-                  //  mostrar snackbar que diga ronda finalizada
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: Colors.green,
-                      content: Text("Finalizado"),
-                    )
-                  );
-
-                }
-              ),
-            ],
-          )
+              // La ubicación está cerca de un marcador
+              if (widget.mapviewController.markers.isEmpty){
+                //  mostrar snackbar que diga ronda finalizada
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text("Recorrido finalizado"),
+                  )
+                );
+              }
+            } else {
+              // La ubicación no está cerca de ningún marcador
+            }
+      
+          }:null,
+          label: Text('Registrar presencia', style: TextStyle(color: Colors.white),),
+          // backgroundColor: Colors.blue[900],
+          backgroundColor: !_estaCerca ? Colors.grey : Colors.blue[900],
+          foregroundColor: !_estaCerca ? Colors.black : Colors.white,
+          icon: const Icon(Icons.location_on, color: Colors.white,)
         ),
       ),
     );
+    // return DraggableScrollableSheet(
+    //   initialChildSize: 0.2,
+    //   minChildSize: 0.1,
+    //   maxChildSize: 0.3,
+    //   builder: (context, scrollController) => Container(
+
+    //     decoration: BoxDecoration(
+    //       boxShadow: const [
+    //         BoxShadow(
+    //           color: Colors.black12,
+    //           blurRadius: 10,
+    //           offset: Offset(0, -5),
+    //         ),
+    //       ],
+    //       color: Colors.white,
+    //       borderRadius: BorderRadius.only(
+    //         topLeft: Radius.circular(25.0),
+    //         topRight: Radius.circular(25.0),
+    //       ),
+    //     ),
+    //     child: Padding(
+    //       padding: const EdgeInsets.all(8.0),
+    //       child: ListView(
+    //         controller: scrollController,
+    //         children: [
+              
+    //           ElevatedButton.icon(
+    //             icon: const Icon(Icons.location_on),
+    //             label: const Text("Registrar Presencia"),
+    //             onPressed: _estaCerca?() async {
+    //               LatLng ubication = 
+    //               await widget.mapviewController
+    //               .getCurrentLocation()
+    //               .then(
+    //                 (value) => value.target
+    //               );
+    //               Set<Marker> markers = widget.mapviewController.markers;
+                  
+    //               bool estaCerca = widget.mapviewController.estaCercaDeUnMarcador(
+    //                 ubication,
+    //                 markers,
+    //                 10
+    //               );
+    //               if (estaCerca) {
+    //                 registrarpresenciadialog(context,widget.mapviewController);
+                    
+    //                 // La ubicación está cerca de un marcador
+    //                 if (widget.mapviewController.markers.isEmpty){
+    //                   //  mostrar snackbar que diga ronda finalizada
+    //                   ScaffoldMessenger.of(context).showSnackBar(
+    //                     const SnackBar(
+    //                       backgroundColor: Colors.green,
+    //                       content: Text("Recorrido finalizado"),
+    //                     )
+    //                   );
+    //                 }
+    //               } else {
+    //                 // La ubicación no está cerca de ningún marcador
+    //               }
+
+    //             }:null
+    //           ),
+
+    //           // ElevatedButton.icon(
+    //           //   icon: const Icon(Icons.save),
+    //           //   label: const Text("Terminar recorrido"),
+    //           //   onPressed: () {
+    //           //     widget.mapviewController.menuselection = 0;
+    //           //     widget.mapviewController.cleanMarkers();
+    //           //     //  mostrar snackbar que diga ronda finalizada
+    //           //     ScaffoldMessenger.of(context).showSnackBar(
+    //           //       const SnackBar(
+    //           //         backgroundColor: Colors.green,
+    //           //         content: Text("Finalizado"),
+    //           //       )
+    //           //     );
+
+    //           //   }
+    //           // ),
+    //         ],
+    //       )
+    //     ),
+    //   ),
+    // );
   }
 
   Future<dynamic> registrarpresenciadialog(BuildContext context,MapviewController mapviewController) {
@@ -178,9 +224,7 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
               ApiService apiService = Provider.of<ApiService>(context,listen: false);
               rondasProvider.registrarPresencia(
                 apiService,
-                rondasProvider.selectedItem["Id"],
                 int.parse(mapviewController.markerSelected.markerId.value),
-                "A",
                 observacionescontroller.text,
                 "foto"
 

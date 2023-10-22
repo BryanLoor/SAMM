@@ -19,16 +19,16 @@ from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto,SAMM_Ronda_PuntoSchema
 @jwt_required()
 def getPuntosRecorridoxRonda():
     try:
-        '''idRonda = request.json["idRonda"]
-        idAgente = request.json["idAgente"]
-        agente_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.IdAgente == idAgente).first()
-        ronda_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.IdRonda == idRonda).first()
+        # '''idRonda = request.json["idRonda"]
+        # idAgente = request.json["idAgente"]
+        # agente_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.IdAgente == idAgente).first()
+        # ronda_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.IdRonda == idRonda).first()
 
-        if (agente_existe is None):
-            return jsonify({"message":"Usuario Agente no existe en bitacora"}),400
-        if (ronda_existe is None):
-            return jsonify({"message":"Ronda no existe en bitacora"}),400
-        '''
+        # if (agente_existe is None):
+        #     return jsonify({"message":"Usuario Agente no existe en bitacora"}),400
+        # if (ronda_existe is None):
+        #     return jsonify({"message":"Ronda no existe en bitacora"}),400
+        # '''
         idRecorrido=request.json["idRecorrido"]
         recorrido_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.Id == idRecorrido).first()
         if (recorrido_existe is None):
@@ -60,13 +60,14 @@ def getPuntosRecorridoxRonda():
                 'ApellidosAgente' : q.Persona.Apellidos,
                 'FechaInicio':q.SAMM_Ronda.FechaInicio,
                 'FechaFin':q.SAMM_Ronda.FechaFin,
-                "Estado":q.SAMM_Bitacora_RecorridoDetalle.Estado,
+                "Estado":q.SAMM_Ronda_Punto.Estado,
                 'Puntos': {
                     "IdPunto":q.SAMM_Ronda_Punto.Id,
+                    "IdPuntoConcreto": q.SAMM_Bitacora_RecorridoDetalle.Id,
                     "Codigo":q.SAMM_Ronda_Punto.CodigoPunto,
                     "Coordenadas":q.SAMM_Ronda_Punto.Coordenada,
                     "Descripcion":q.SAMM_Ronda_Punto.Descripcion,
-                    "EstadoPunto":q.SAMM_Ronda_Punto.Estado
+                    "EstadoPuntoConcreto":q.SAMM_Bitacora_RecorridoDetalle.Estado
                 }
             }
             for q in query

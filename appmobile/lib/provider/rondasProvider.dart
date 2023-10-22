@@ -379,9 +379,7 @@ class RondasProvider with ChangeNotifier {
 
   Future<void> registrarPresencia(
     ApiService apiService,
-    int idRonda,
-    int idPuntoRonda,
-    String codigo,
+    int idPuntoConcreto,
     String descripcion,
     String fotoURL
 
@@ -389,13 +387,14 @@ class RondasProvider with ChangeNotifier {
     var sharedPreferences = await SharedPreferences.getInstance();
     var token = sharedPreferences.getString("token") ?? "";
     var data = {
-      "IdRonda": idRonda,
-      "IdPuntoRonda": idPuntoRonda,
-      "Codigo": codigo,
+      "Id": idPuntoConcreto,
+      "Estado": "RECORRIDO",
       "Descripcion": descripcion,
       "FotoURL": fotoURL
     };
-    await apiService.postData('/rondas/guardarPuntoRealizado', data,token);
+    print(data.toString());
+    var response = await apiService.postData('/rondas/updatePuntoBitacoraRecorridoDetalle', data,token);
+    // print(response);
   }
     //   ronda.Desripcion = request.json['Desripcion']
     // ronda.Estado = 0

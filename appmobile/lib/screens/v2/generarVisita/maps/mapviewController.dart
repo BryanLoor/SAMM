@@ -150,7 +150,7 @@ class MapviewController with ChangeNotifier{
     ).toList();
   }
 
-  Future<void> addPositionMarkerWithId(LatLng position,String id) async {
+  Future<void> addPositionMarkerWithId(LatLng position,String id, double color) async {
     final markerId = MarkerId(id);
     final marker = Marker(
       markerId: markerId,
@@ -159,7 +159,7 @@ class MapviewController with ChangeNotifier{
       //   ImageConfiguration(),
       //   'assets/images/marker.png',
       // ),
-      icon:BitmapDescriptor.defaultMarkerWithHue(200),
+      icon:BitmapDescriptor.defaultMarkerWithHue(color),
       infoWindow: InfoWindow(
         title: markerId.value,
         snippet: '*',
@@ -207,7 +207,36 @@ class MapviewController with ChangeNotifier{
         final markid = e["Id"];
         if (lat != null && lng != null) {
           latLngList.add(LatLng(lat, lng));
-          addPositionMarkerWithId(LatLng(lat, lng), markid.toString());
+          addPositionMarkerWithId(LatLng(lat, lng), markid.toString(),200);
+        }
+      }
+    });
+    positionList = latLngList;
+    return latLngList;
+    // latLngList.forEach((position) {
+    //   addPositionMarker(position);
+    // });
+  }
+  List<LatLng> setMarkersByPositionList2(List<Map<String, dynamic>> listarondas) {
+    cleanMarkers();
+    List<LatLng> latLngList = [];
+    final data = listarondas;
+    // print("data tamanio es este : ${data.length}");
+
+    data.forEach((e) {
+      final coordenadaSplit = e["Coordenada"].split(',');
+      final estado = e["Estado"];
+      if (coordenadaSplit.length == 2) {
+        final lat = double.tryParse(coordenadaSplit[0]);
+        final lng = double.tryParse(coordenadaSplit[1]);
+        final markid = e["Id"];
+        if (lat != null && lng != null) {
+          latLngList.add(LatLng(lat, lng));
+          if(estado == "RECORRIDO"){
+            addPositionMarkerWithId(LatLng(lat, lng), markid.toString(),100);
+          }else{
+            addPositionMarkerWithId(LatLng(lat, lng), markid.toString(),200);
+          }
         }
       }
     });

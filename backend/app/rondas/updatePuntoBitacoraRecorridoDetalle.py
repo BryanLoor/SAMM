@@ -18,11 +18,12 @@ def updatePuntoBitacoraRecorridoDetalle():
         if not registro:
             return jsonify({'message': 'Registro no encontrado'}), 404
 
-        nuevo_estado = request.json.get('Estado')
-        registro.Estado = nuevo_estado
+        registro.Estado = request.json.get('Estado')
+        registro.Descripcion = request.json.get('Descripcion')
+        registro.FotoURL = request.json.get('FotoURL')
 
         db.session.commit()
 
-        return SAMM_Bitacora_RecorridoDetalleSchema().jsonify(registro)
+        return jsonify({'message': 'Registro actualizado'}), 200
     except Exception as e:
         return jsonify({'message': 'Error al actualizar el registro', 'error': str(e)}), 500

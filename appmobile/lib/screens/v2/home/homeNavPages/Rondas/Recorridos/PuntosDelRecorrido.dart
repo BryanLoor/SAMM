@@ -31,30 +31,6 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
   late MapviewController mapviewController;
 
 
-  late Timer _timer;
-  bool _estaCerca = false;
-
-
-  void _iniciarActualizacionProximidad() {
-    // Iniciar el temporizador de actualización de proximidad.
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
-      _actualizarProximidad();
-    });
-  }
-
-  void _actualizarProximidad() async {
-    LatLng ubicacion =
-        await mapviewController.getCurrentLocation().then((value) => value.target);
-    Set<Marker> markers = mapviewController.markers;
-
-    bool estaCerca = mapviewController.estaCercaDeUnMarcador(ubicacion, markers, 10);
-
-    if (estaCerca != _estaCerca) {
-      setState(() {
-        _estaCerca = estaCerca;
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -106,16 +82,16 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
         responsePuntos['data'].forEach((punto) {
 
           Map<String, dynamic> convertedPunto = {
-            "Id" : punto['Puntos']['IdPunto'],
+            "Id" : punto['Puntos']['IdPuntoConcreto'],
             "Descripcion" : punto['Puntos']['Descripcion'],
             "Coordenada" : punto['Puntos']['Coordenadas'],
-            "Estado" : punto['Puntos']['Estado'],
+            "Estado" : punto['Puntos']['EstadoPuntoConcreto'],
           };
           puntos.add(convertedPunto);
         });
       }
 
-      final positionList = mapviewController.setMarkersByPositionList(puntos);
+      final positionList = mapviewController.setMarkersByPositionList2(puntos);
 
       
 
@@ -147,7 +123,7 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
             title: Text(punto['Descripcion'].toString()),
             subtitle: Text(punto['Coordenada']),
             leading: 
-              punto["Estado"] == "R"
+              punto["Estado"] == "RECORRIDO"
               ? Icon(Icons.location_on,color: Colors.green,)
               : Icon(Icons.location_on,color: Colors.red,),
           );
