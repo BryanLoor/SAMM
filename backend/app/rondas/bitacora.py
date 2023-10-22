@@ -7,6 +7,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 
 from app.models.SAMM_BitacoraRecorrido import SAMM_BitacoraRecorrido
+from app.models.SAMM_Bitacora_RecorridoDetalle import SAMM_Bitacora_RecorridoDetalle
 from app.models.SAMM_Usuario import SAMM_Usuario
 from app.models.SAMM_Ronda import SAMM_Ronda
 from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto,SAMM_Ronda_PuntoSchema
@@ -18,7 +19,7 @@ from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto,SAMM_Ronda_PuntoSchema
 @jwt_required()
 def getPuntosRecorridoxRonda():
     try:
-        idRonda = request.json["idRonda"]
+        '''idRonda = request.json["idRonda"]
         idAgente = request.json["idAgente"]
         agente_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.IdAgente == idAgente).first()
         ronda_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.IdRonda == idRonda).first()
@@ -27,39 +28,45 @@ def getPuntosRecorridoxRonda():
             return jsonify({"message":"Usuario Agente no existe en bitacora"}),400
         if (ronda_existe is None):
             return jsonify({"message":"Ronda no existe en bitacora"}),400
+        '''
+        idRecorrido=request.json["idRecorrido"]
+        recorrido_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.Id == idRecorrido).first()
+        if (recorrido_existe is None):
+            return jsonify({"message":"Recorrido no existe en bitacora"}),400
+        
         
         
         query = (
-            db.session.query(SAMM_BitacoraRecorrido,Persona,SAMM_Ronda,SAMM_Ronda_Punto)
-            .join(SAMM_Ronda, SAMM_Ronda.Id ==SAMM_BitacoraRecorrido.IdRonda)
-            .join(SAMM_Usuario, SAMM_BitacoraRecorrido.IdAgente == SAMM_Usuario.Id)
+            db.session.query(SAMM_Bitacora_RecorridoDetalle,SAMM_Ronda,SAMM_Ronda_Punto,SAMM_Usuario,Persona)
+            .join(SAMM_Ronda, SAMM_Ronda.Id ==SAMM_Bitacora_RecorridoDetalle.IdRonda)
+            .join(SAMM_Ronda_Punto, SAMM_Ronda_Punto.Id ==SAMM_Bitacora_RecorridoDetalle.IdPuntoRonda)                        
+            .join(SAMM_Usuario,SAMM_Usuario.Id == SAMM_Bitacora_RecorridoDetalle.IdUsuario)
             .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
-            
             .filter(
-                SAMM_BitacoraRecorrido.IdRonda == idRonda,
-                SAMM_BitacoraRecorrido.IdAgente == idAgente,
-                SAMM_Ronda_Punto.IdRonda == idRonda
+                SAMM_Bitacora_RecorridoDetalle.IdBitacoraRecorrido == idRecorrido,
+                
             )
             .all()
         )
 
         schema= [
-            {   'idRecorrido':q.SAMM_BitacoraRecorrido.Id,
-                'IdRonda': q.SAMM_BitacoraRecorrido.IdRonda,
-                "RondaNombre": q.SAMM_Ronda.Desripcion,
-                "IdAgente": q.SAMM_BitacoraRecorrido.IdAgente,
+            {   'idRecorrido':q.SAMM_Bitacora_RecorridoDetalle.IdBitacoraRecorrido,
+                'IdRonda': q.SAMM_Bitacora_RecorridoDetalle.IdRonda,
+                "IdAgente": q.SAMM_Bitacora_RecorridoDetalle.IdUsuario,
                 'IdUsuarioSupervisor':q.SAMM_Ronda.IdUsuarioSupervisor,
+                "RondaNombre": q.SAMM_Ronda.Desripcion,
                 'Identificacion': q.Persona.Identificacion,
                 'NombresAgente' : q.Persona.Nombres,
                 'ApellidosAgente' : q.Persona.Apellidos,
                 'FechaInicio':q.SAMM_Ronda.FechaInicio,
                 'FechaFin':q.SAMM_Ronda.FechaFin,
+                "Estado":q.SAMM_Bitacora_RecorridoDetalle.Estado,
                 'Puntos': {
                     "IdPunto":q.SAMM_Ronda_Punto.Id,
                     "Codigo":q.SAMM_Ronda_Punto.CodigoPunto,
                     "Coordenadas":q.SAMM_Ronda_Punto.Coordenada,
                     "Descripcion":q.SAMM_Ronda_Punto.Descripcion,
-                    "Estado":q.SAMM_BitacoraRecorrido.Estado
+                    "EstadoPunto":q.SAMM_Ronda_Punto.Estado
                 }
             }
             for q in query

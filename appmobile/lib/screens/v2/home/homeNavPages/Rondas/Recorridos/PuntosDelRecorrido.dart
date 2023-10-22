@@ -96,8 +96,8 @@ class _PuntosDelRecorridoState extends State<PuntosDelRecorrido> {
 
 
       Map<String,dynamic> dataPuntos = {
-        "idRonda": widget.rondaConcretaId,
-        "idAgente": idAgente
+        "idRecorrido": widget.rondaConcretaId,
+        //"idAgente": idAgente
       };
       print('ronda concreta id es esta : ${widget.rondaConcretaId}');
       Map<String,dynamic> responsePuntos = await apiService.postData("/rondas/getPuntosRecorridoxRonda", dataPuntos, jwtToken);
