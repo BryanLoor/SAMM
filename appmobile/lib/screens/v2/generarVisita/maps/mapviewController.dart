@@ -150,7 +150,7 @@ class MapviewController with ChangeNotifier{
     ).toList();
   }
 
-  Future<void> addPositionMarkerWithId(LatLng position,String id) async {
+  Future<void> addPositionMarkerWithId(LatLng position,String id, double color) async {
     final markerId = MarkerId(id);
     final marker = Marker(
       markerId: markerId,
@@ -159,7 +159,7 @@ class MapviewController with ChangeNotifier{
       //   ImageConfiguration(),
       //   'assets/images/marker.png',
       // ),
-      icon:BitmapDescriptor.defaultMarkerWithHue(200),
+      icon:BitmapDescriptor.defaultMarkerWithHue(color),
       infoWindow: InfoWindow(
         title: markerId.value,
         snippet: '*',
@@ -197,6 +197,7 @@ class MapviewController with ChangeNotifier{
     cleanMarkers();
     List<LatLng> latLngList = [];
     final data = listarondas;
+    // print("data tamanio es este : ${data.length}");
 
     data.forEach((e) {
       final coordenadaSplit = e["Coordenada"].split(',');
@@ -206,7 +207,36 @@ class MapviewController with ChangeNotifier{
         final markid = e["Id"];
         if (lat != null && lng != null) {
           latLngList.add(LatLng(lat, lng));
-          addPositionMarkerWithId(LatLng(lat, lng), markid.toString());
+          addPositionMarkerWithId(LatLng(lat, lng), markid.toString(),200);
+        }
+      }
+    });
+    positionList = latLngList;
+    return latLngList;
+    // latLngList.forEach((position) {
+    //   addPositionMarker(position);
+    // });
+  }
+  List<LatLng> setMarkersByPositionList2(List<Map<String, dynamic>> listarondas) {
+    cleanMarkers();
+    List<LatLng> latLngList = [];
+    final data = listarondas;
+    // print("data tamanio es este : ${data.length}");
+
+    data.forEach((e) {
+      final coordenadaSplit = e["Coordenada"].split(',');
+      final estado = e["Estado"];
+      if (coordenadaSplit.length == 2) {
+        final lat = double.tryParse(coordenadaSplit[0]);
+        final lng = double.tryParse(coordenadaSplit[1]);
+        final markid = e["Id"];
+        if (lat != null && lng != null) {
+          latLngList.add(LatLng(lat, lng));
+          if(estado == "RECORRIDO"){
+            addPositionMarkerWithId(LatLng(lat, lng), markid.toString(),100);
+          }else{
+            addPositionMarkerWithId(LatLng(lat, lng), markid.toString(),200);
+          }
         }
       }
     });
@@ -387,6 +417,77 @@ class MapviewController with ChangeNotifier{
     notifyListeners();
     return _cercaDeunPunto;
   }
+
+  
+  // bool estaCercaDeUnMarcadorYnoEnElMapa(LatLng ubicacion,Set<Marker> markers, double distanciaMinima) {
+  //   _cercaDeunPunto = false;
+  //   final BitmapDescriptor azul = BitmapDescriptor.defaultMarkerWithHue(200);
+  //   final BitmapDescriptor rojo = BitmapDescriptor.defaultMarkerWithHue(0);
+  //   final BitmapDescriptor amarillo = BitmapDescriptor.defaultMarkerWithHue(50);
+  //   final BitmapDescriptor verde = BitmapDescriptor.defaultMarkerWithHue(100);
+
+  //   for (Marker marker in markers) {
+  //     double distancia = calcularDistanciaHaversine(
+  //       ubicacion,
+  //       marker.position,
+  //     );
+  //     // print("aun sin comprovacion");
+  //     // print(marker.icon.toJson().toString());
+  //     // print(verde.toJson().toString());
+  //     // print(marker.icon.toString() == azul.toString());
+      
+      
+  //     if (marker.icon.toJson().toString() == verde.toJson().toString()) {
+  //       // print("Caso cuando el icono es verde (Hue = 100)");
+  //       // Caso cuando el icono es verde (Hue = 100)
+  //     } else if (marker.icon.toString() == amarillo.toString()) {
+  //       if (distancia < distanciaMinima) {
+  //         _cercaDeunPunto = true;
+  //         _markerSelected = marker;
+  //         // Caso cuando el icono es amarillo (Hue = 50) y la distancia es menor que la distancia mínima
+  //       } else {
+  //         // Caso cuando el icono es amarillo (Hue = 50) pero la distancia es mayor o igual a la distancia mínima
+  //         replaceMarker(
+  //           marker.markerId,
+  //           marker.copyWith(
+  //             iconParam: BitmapDescriptor.defaultMarkerWithHue(0), // Cambiar a Rojo (Hue = 0)
+  //           ),
+  //         );
+  //       }
+  //     } 
+  //     if (marker.icon.toJson().toString() == rojo.toJson().toString()) {
+  //       // print("solo rojo");
+  //       if (distancia < distanciaMinima) {
+  //         // print("Caso cuando el icono es rojo (Hue = 0) y la distancia es menor que la distancia mínima");
+  //         // Caso cuando el icono es rojo (Hue = 0) y la distancia es menor que la distancia mínima
+  //         _cercaDeunPunto = true;
+  //         _markerSelected = marker;
+  //         replaceMarker(
+  //           marker.markerId,
+  //           marker.copyWith(
+  //             iconParam: BitmapDescriptor.defaultMarkerWithHue(50), // Cambiar a Amarillo (Hue = 50)
+  //           ),
+  //         );
+  //       }
+        
+  //     }
+  //     if(marker.icon.toJson().toString() == azul.toJson().toString()){
+  //       // print("Caso cuando el icono es azul (Hue = 200)");
+  //         // Caso cuando el icono es azul (Hue = 200)
+  //       replaceMarker(
+  //         marker.markerId,
+  //         marker.copyWith(
+  //           iconParam: BitmapDescriptor.defaultMarkerWithHue(0), // Cambiar a Amarillo (Hue = 50)
+  //         ),
+  //       );
+  //     }
+
+
+  //   }
+    
+  //   notifyListeners();
+  //   return _cercaDeunPunto;
+  // }
 
 
 

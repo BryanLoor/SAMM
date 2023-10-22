@@ -277,55 +277,59 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                 onPressed: () async {
                   _shareQRImageScreen(
                       context: context,
-                      qrWidget: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: Image.asset(
-                                width: 100,
-                                  height: 100,
-                                  'assets/images/SAMM.png'),
-                            ),
-                             Container(
-                               padding: const EdgeInsets.only(left: 10,right: 10),
-                               child: Text( 
-                                "Te da la bienvenida $stateNombre $stateApellido!",
-                                textAlign: TextAlign.center,
+                      qrWidget: Container(
+                        color: Colors.white,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: Image.asset(
+                                  width: 100,
+                                    height: 100,
+                                    'assets/images/SAMM.png'),
+                              ),
+                               Container(
+                                  color: Colors.white,
+                                 padding: const EdgeInsets.only(left: 10,right: 10),
+                                 child: Text( 
+                                  "Te da la bienvenida $stateNombre $stateApellido!",
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      const TextStyle(color: Colors.black, fontSize: 30),
+                                                           ),
+                               ),
+                              const SizedBox(height: 100),
+                              QrImageView(
+                                data: qrData,
+                                version: QrVersions.auto,
+                                size: 280.0,
+                                gapless: false,
+                                backgroundColor: Colors.white,
+                                dataModuleStyle: const QrDataModuleStyle(
+                                    color: Colors.black,
+                                    dataModuleShape: QrDataModuleShape.square),
+                                errorStateBuilder: (context, error) {
+                                  return const Center(
+                                    child: Text(
+                                      "Error al generad el qr",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 40),
+                              const Text(
+                                "Verificado por",
                                 style:
-                                    const TextStyle(color: Colors.black, fontSize: 30),
-                                                         ),
-                             ),
-                            const SizedBox(height: 100),
-                            QrImageView(
-                              data: qrData,
-                              version: QrVersions.auto,
-                              size: 280.0,
-                              gapless: false,
-                              backgroundColor: Colors.white,
-                              dataModuleStyle: const QrDataModuleStyle(
-                                  color: Colors.black,
-                                  dataModuleShape: QrDataModuleShape.square),
-                              errorStateBuilder: (context, error) {
-                                return const Center(
-                                  child: Text(
-                                    "Error al generad el qr",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 40),
-                            const Text(
-                              "Verificado por",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 20,fontStyle: FontStyle.italic),
-                            ),
-
-                            //Text(""),
-                          ],
+                                    TextStyle(color: Colors.black, fontSize: 20,fontStyle: FontStyle.italic),
+                              ),
+                      
+                              //Text(""),
+                            ],
+                          ),
                         ),
                       ));
                 },

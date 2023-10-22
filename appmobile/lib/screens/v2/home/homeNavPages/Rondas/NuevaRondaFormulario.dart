@@ -86,182 +86,178 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
   Widget build(BuildContext context) {
     RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
     ApiService apiService = Provider.of<ApiService>(context);
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    "Fecha icicial\n${_fechaInicioController.text}",
-                    style: const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        _selectDatePicker(_fechaInicioController);
-                      },
-                      icon: const Icon(
-                        Icons.calendar_month_outlined,
-                        color: Colors.black,
-                      ))
-                ],
-              ),
-              Row(
-                children: [
-                  Text(
-                    "Fecha final\n${_fechaFinalController.text}",
-                    style: const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        _selectDatePicker(_fechaFinalController);
-                      },
-                      icon: const Icon(
-                        Icons.calendar_month_outlined,
-                        color: Colors.black,
-                      ))
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: needDia
-                    ? MediaQuery.of(context).size.width * 0.5
-                    : MediaQuery.of(context).size.width * 0.8,
-                child: DropdownButtonFormField(
-                  decoration: InputDecoration(
-                      label: Text(
-                    "Frecuencia",
-                  )),
-                  value:
-                      selectedFrecuencia == "" ? "Diario" : selectedFrecuencia,
-                  items: frecuencias.map((_frecuencia) {
-                    return DropdownMenuItem(
-                      value: _frecuencia,
-                      child: Text(_frecuencia),
-                    );
-                  }).toList(),
-                  hint: const Text('Selecciona una frecuencia'),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedFrecuencia = value as String;
-                      if (selectedFrecuencia == "Diario" ||
-                          selectedFrecuencia == "Dias Laborales") {
-                        _diasController.text = "";
-                        needDia = false;
-                      } else
-                        needDia = true;
-                    });
-                    print(selectedFrecuencia);
-                  },
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Fecha icicial\n${_fechaInicioController.text}",
+                      style: const TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          _selectDatePicker(_fechaInicioController);
+                        },
+                        icon: const Icon(
+                          Icons.calendar_month_outlined,
+                          color: Colors.black,
+                        ))
+                  ],
                 ),
+                Row(
+                  children: [
+                    Text(
+                      "Fecha final\n${_fechaFinalController.text}",
+                      style: const TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          _selectDatePicker(_fechaFinalController);
+                        },
+                        icon: const Icon(
+                          Icons.calendar_month_outlined,
+                          color: Colors.black,
+                        ))
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField(
+                    decoration: InputDecoration(
+                    
+                        label: Text(
+                      "Frecuencia",
+                    )),
+                    value:
+                        selectedFrecuencia == "" ? "Diario" : selectedFrecuencia,
+                    items: frecuencias.map((_frecuencia) {
+                      return DropdownMenuItem(
+                        value: _frecuencia,
+                        child: Text(_frecuencia),
+                      );
+                    }).toList(),
+                    hint: const Text('Selecciona una frecuencia'),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedFrecuencia = value as String;
+                        if (selectedFrecuencia == "Diario" ||
+                            selectedFrecuencia == "Dias Laborales") {
+                          _diasController.text = "";
+                          needDia = false;
+                        } else
+                          needDia = true;
+                      });
+                      print(selectedFrecuencia);
+                    },
+                  ),
+                ),
+                needDia
+                    ? IconButton(
+                        onPressed: () => _selectDay(_diasController),
+                        icon: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("Dia de la semana"),
+                            Icon(Icons.calendar_month_outlined),
+                            Text(_diasController.text)
+                          ],
+                        ))
+                    : SizedBox(
+                        width: 0,
+                      )
+              ],
+            ),
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: descriptionController,
+                decoration: const InputDecoration(labelText: 'Descripción'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Campo requerido';
+                  }
+                  return null;
+                },
               ),
-              needDia
-                  ? SizedBox(
-                      width:
-                          needDia ? MediaQuery.of(context).size.width * 0.3 : 0,
-                      child: IconButton(
-                          onPressed: () => _selectDay(_diasController),
-                          icon: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text("Dia de la semana"),
-                              Icon(Icons.calendar_month_outlined),
-                              Text(_diasController.text)
-                            ],
-                          )),
-                    )
-                  : SizedBox(
-                      width: 0,
-                    )
-            ],
-          ),
-          Form(
-            key: _formKey,
-            child: TextFormField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Descripción'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Campo requerido';
-                }
-                return null;
+            ),
+            
+            const SizedBox(height: 20),
+            DropdownButtonFormField(
+              value: selectedLocation,
+              items: locations.map((location) {
+                return DropdownMenuItem(
+                  value: location['id'],
+                  child: Text(location['descripcion']),
+                );
+              }).toList(),
+              hint: const Text('Selecciona una ubicación'),
+              onChanged: (value) {
+                setState(() {
+                  selectedLocation = value as int;
+                });
               },
             ),
-          ),
-          const SizedBox(height: 20),
-          DropdownButtonFormField(
-            value: selectedLocation,
-            items: locations.map((location) {
-              return DropdownMenuItem(
-                value: location['id'],
-                child: Text(location['descripcion']),
-              );
-            }).toList(),
-            hint: const Text('Selecciona una ubicación'),
-            onChanged: (value) {
-              setState(() {
-                selectedLocation = value as int;
-              });
-            },
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 20),
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[900],
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+            Container(
+              margin: EdgeInsets.only(top: 20),
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[900],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
+                onPressed: rangoFechaValido &&
+                        _formKey.currentState?.validate() == true && ((needDia==false && _diasController.text=="")|| (needDia==true && _diasController.text!=""))
+                    ? () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => const CircularProgressIndicator(),
+                        );
+    
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        // int userId = prefs.getInt('userId');
+                        await rondasProvider.enviarNuevaRonda(
+                            apiService,
+                            prefs.getInt('Id') ?? 0,
+                            selectedLocation,
+                            descriptionController.text,
+                            _fechaInicioController.text,
+                            _fechaFinalController.text,
+                            selectedFrecuencia.toUpperCase(),
+                            _diasController.text.toUpperCase());
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        // show snackbar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Ronda creada correctamente'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+                    : null,
+                child: const Text('Enviar'),
               ),
-              onPressed: rangoFechaValido &&
-                      _formKey.currentState?.validate() == true && ((needDia==false && _diasController.text=="")|| (needDia==true && _diasController.text!=""))
-                  ? () async {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) => const CircularProgressIndicator(),
-                      );
-
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      // int userId = prefs.getInt('userId');
-                      await rondasProvider.enviarNuevaRonda(
-                          apiService,
-                          prefs.getInt('Id') ?? 0,
-                          selectedLocation,
-                          descriptionController.text,
-                          _fechaInicioController.text,
-                          _fechaFinalController.text,
-                          selectedFrecuencia.toUpperCase(),
-                          _diasController.text.toUpperCase());
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      // show snackbar
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Ronda creada correctamente'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    }
-                  : null,
-              child: const Text('Enviar'),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

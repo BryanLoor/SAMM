@@ -3,24 +3,50 @@ import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/page/PageInfoSeguRonda.dart';
 // import 'package:sammseguridad_apk/page/PageInfoUrbaSeguridad.dart';
 import 'package:sammseguridad_apk/page/QRView%20.dart';
+import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialRondas.dart';
 import 'package:sammseguridad_apk/screens/ScreenHistorialVisitas.dart';
 // import 'package:sammseguridad_apk/screens/ScreenRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/MisRecorridos.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/PuntosDelRecorrido.dart';
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
+import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:sammseguridad_apk/widgets/Appbar.dart';
 // import 'package:sammseguridad_apk/widgets/Drawer.dart';
 import 'package:sammseguridad_apk/widgets/TwoColumnsWidget.dart';
 import 'package:sammseguridad_apk/widgets/navbar.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   // final Function(int) setIndex;
   HomePage({
     // required this.setIndex,
     super.key
   });
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late bool canedit = false;
+
+    @override
+  void initState() {
+    super.initState();
+    final apiservices = Provider.of<ApiService>(context, listen: false);
+    final mainProvider = Provider.of<MainProvider>(context, listen: false);
+    mainProvider.canedit().then((value) {
+      setState(() {
+        canedit = value;
+      });
+    });
+   
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +69,15 @@ class HomePage extends StatelessWidget {
       Visit(nombre: 'Villas samanes', apellido: 'Pablo Cedeno', fecha: DateTime(2023, 9, 5)),
     ];
 
+
+
     // int _selectedIndex = 0;
 
     return Center(
+      // child:         PuntosDelRecorrido(
+      //     rondaNombre: "rondaNombre",
+      //     rondaConcretaId: 1,
+      //   ),
         // child:[
           child: ListView(
             children: [
@@ -55,72 +87,9 @@ class HomePage extends StatelessWidget {
                 child: Center(child: Text("Ubicacion - cuenta")),
               ),
               SizedBox.square(dimension: 10.0),
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: TwoColumnsWidget(
-              //     listaDeWidgets: [
-              //       ElevatedButton(
-              //         onPressed: () {
-              //           // Navigator.of(context).push(
-              //           //   MaterialPageRoute(
-              //           //     builder: (context) => ScreenGenerarVisita(),
-              //           //   ),
-              //           // );
-              //           showModalBottomSheet(
-              //             isScrollControlled: true,
-              //             context: context,
-              //             builder: (BuildContext context) {
-              //               return FractionallySizedBox(
-              //                 heightFactor: 0.75, // Ajusta este valor según tus necesidades.
-              //                 child: ModalBottomCreateVisita(
-              //                   cedula: '',
-              //                   nombre: '',
-              //                 ),
-              //               );
-              //             },
-              //             // builder: (context) => ModalBottomCreateVisita(
-              //             //   cedula: '',
-              //             //   nombre: '',
-              //             // ),
-              //           );
-              //         },
-              //         child: Text('crear visita'),
-              //       ),
-                    
-                    
-              //       ElevatedButton(
-              //         onPressed: () {
-              //           Navigator.of(context).push(
-              //             MaterialPageRoute(
-              //               builder: (context) => ScreenHistorialRondas(),
-              //             ),
-              //           );
-              //         },
-              //         child: Text('historial rondas'),
-              //       ),
-              //       ElevatedButton(
-              //         onPressed: () {
-              //           Navigator.of(context).push(
-              //             MaterialPageRoute(
-              //               builder: (context) => PageInfoSeguRonda(),
-              //             ),
-              //           );
-              //         },
-              //         child: Text('seguridad rondas'),
-              //       ),
-              //       ElevatedButton(
-              //         onPressed: () {
-              //           Navigator.of(context).push(
-              //             MaterialPageRoute(
-              //               builder: (context) => QRViewExample(),
-              //             ),
-              //           );
-              //         },
-              //         child: Text('QR'),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+              
+              // =====================================================
+              canedit?
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -172,8 +141,11 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
+              // ),
+              ):Container(),
+              
               // SizedBox.square(dimension: 10.0),
+              canedit?
               Card(
                 margin: EdgeInsets.all(10.0),
                 child: InkWell(
@@ -217,67 +189,66 @@ class HomePage extends StatelessWidget {
 
 
                 ),
-              ),
-              Divider(),
-
+              // ),
+              ):Container(),
               
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Text("Rondas", style: 
-              //     TextStyle(
-              //       fontSize: 20, 
-              //       fontWeight: FontWeight.bold,
-              //       color: Colors.blue[900]),
-              //   ),
+
+              Divider(),
+              // =====================================================
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Recorridos", 
+                      style: TextStyle(
+                        fontSize: 20, 
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[900]
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // SizedBox.square(dimension: 10.0),
+              MisRecorridos(),
+              // Container(
+              //   child: MisRecorridos(),
+              //   height: 200,
               // ),
-              // Card(
-              //   margin: EdgeInsets.all(10.0),
-              //   child: InkWell(
-              //     onTap: () {
-              //       Navigator.of(context).push(
-              //         MaterialPageRoute(
-              //           builder: (context) => ScreenHistorialRondas(),
-              //         ),
-              //       );
-              //     },
-              //     child: Column(
-              //       children: [
-              //         for (var ronda in rondas.take(3))
-              //           ListTile(
-              //             title: Text('${ronda.nombre}'),
-              //             subtitle: Text('supervisor:${ronda.apellido} - Fecha: ${ronda.fecha.toLocal()}'),
-              //           ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-              // Card(
-              //   margin: EdgeInsets.all(10.0),
-              //   child: InkWell(
-              //     onTap: () {
-              //       Navigator.of(context).push(
-              //         MaterialPageRoute(
-              //           builder: (context) => ScreenHistorialVisitas(),
-              //         ),
-              //       );
-              //     },
-              //     child: Column(
-              //       children: [
-              //         for (var ronda in rondas.take(3))
-              //           ListTile(
-              //             title: Text('${ronda.nombre}'),
-              //             subtitle: Text('supervisor:${ronda.apellido} - Fecha: ${ronda.fecha.toLocal()}'),
-              //           ),
-              //       ],
-              //     ),
-              //   ),
+              Divider(),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     Navigator.of(context).push(
+              //       MaterialPageRoute(
+              //         builder: (context) => PuntosConcretosScreen(
+              //                                 rondaNombre: "rondaNombre",
+              //                                 rondaConcretaId: 1,
+              //                               ),
+              //       ),
+              //     );
+              //   },
+              //   child: Text("rondanombre y ronda 1"),
+              
               // )
+              // =====================================================
 
             ],
           )
+        // ]
     );
   }
 }
+
+    // return Column(
+    //   children:[
+    //     Container(
+    //       child: MisRecorridos(),
+    //       height: 200,
+    //     ),
+    //   ]
+    // );
 
 
 class Visit {

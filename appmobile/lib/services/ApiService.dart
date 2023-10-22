@@ -7,8 +7,8 @@ import 'package:http/http.dart';
 
 class ApiService {
   final String _baseUrl = 'http://10.0.2.2:5000'; //local
-  //final String _baseUrl = 'http://192.168.100.5:5000'; //local
-  // final String _baseUrl = 'http://198.38.89.240:8035'; //produccionGrowthly
+  // final String _baseUrl = 'http://192.168.100.5:5000'; //local
+  // final String _baseUrl = 'http://198.38.89.240:6051'; //produccionGrowthly
 
   //ip para tlf http://10.0.2.2:5000
 
@@ -100,7 +100,7 @@ class ApiService {
     );
     // print(response.body.toString());
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 400) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Fallo al enviar datos');
