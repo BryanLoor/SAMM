@@ -117,13 +117,20 @@ class MisRecorridos extends StatelessWidget {
     }
     List<RondaData> rondas = [];
     for (var ronda in responseRondas['data']) {
-      Map<String,dynamic> dataPuntos = {
+      /*Map<String,dynamic> dataPuntos = {
         "idRonda": ronda['idRonda'],
         "idAgente": idAgente
+      };*/
+      Map<String,dynamic> dataPuntos = {
+        "idRecorrido": ronda['idRondaBitacora'],
       };
+      
+
       // print(dataPuntos);
-      Map<String,dynamic> responsePuntos = await apiService.postData("/rondas/getPuntosRecorridoxRonda", dataPuntos, jwtToken);
+      Map<String,dynamic> responsePuntos = await apiService.postData("/rondas/getPuntosRecorridoxRonda", dataPuntos, jwtToken);    
+      
       if (!responseRondas.containsKey("message") && responsePuntos['data'].length > 0){
+        print("entro aqui");
         int n_puntosRecorridos = 0;
         responsePuntos['data'].forEach((punto) {
           if(punto['Puntos']["Estado"] == "P"){
