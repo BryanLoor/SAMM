@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/page/MainPage.dart';
+import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
@@ -42,6 +44,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => MapviewController(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => MainNavigationIndexProvider(),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -77,7 +82,7 @@ class MyApp extends StatelessWidget {
         Home.routeName: (context) => const Home(),
         HomeRondas.routeName: (context) => const HomeRondas(),
         HomeVisitas.routeName: (context) => const HomeVisitas(),
-
+        MainPage.routeName:(context) => const MainPage(), 
         
         ScreenPerfil.routeName: (context) => const ScreenPerfil(),
         // ScreenHome.routeName: (context) => ScreenHome(),

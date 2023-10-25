@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/generarVisita/maps/mapsview.dart';
+import 'package:sammseguridad_apk/screens/v2/home/floatings/FloatingRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/PuntosDelRecorrido.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/RondaDetalle.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
@@ -51,6 +52,10 @@ class _RondasPageState extends State<RondasPage> {
         //   rondaNombre: "rondaNombre",
         //   rondaConcretaId: 1,
         // ),
+        Container(
+          margin: EdgeInsets.all(20),
+          alignment: Alignment.centerRight,
+          child: FloatingRondas())
       ],
     );
   }

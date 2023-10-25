@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sammseguridad_apk/widgets/Appbar.dart';
 // import 'package:sammseguridad_apk/widgets/Drawer.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -17,8 +16,7 @@ class PerfilPage extends StatelessWidget {
       'Contraseña: xxxxxxxxxx'; // Replace with your QR data
 
     return Scaffold(
-      appBar: CustomAppBar(),
-      // drawer: CustomDrawer(),
+     
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -55,7 +53,7 @@ class PerfilPage extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Cuenta',
+                  'Cuenta123',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 30.0, color: Colors.white),
                 ),

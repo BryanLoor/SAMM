@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/page/MainPage.dart';
+import 'package:sammseguridad_apk/page/Perfil.dart';
+import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 // import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
 // import 'package:sammseguridad_apk/screens/ScreenHome.dart';
@@ -8,6 +11,9 @@ import 'package:sammseguridad_apk/screens/logins/LoginResponse.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeVisitas.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/RondasPage.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/homePage.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/visitasPage.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,19 +34,20 @@ class _LoginPageState extends State<LoginPage> {
   static const _sizedBoxHeight = 10.0;
   bool isLoading = false;
 
-
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final ApiService _apiService = ApiService();
 
   late MainProvider _mainProvider;
-
+  late MainNavigationIndexProvider _mainnavigationindexprovider;
   // Añade esta línea
   // bool _obscureText = true;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _mainnavigationindexprovider =
+        Provider.of<MainNavigationIndexProvider>(context);
     _mainProvider = Provider.of<MainProvider>(context);
   }
 
@@ -108,14 +115,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> postData(
-    String endpoint, Map<String, dynamic> data, String jwtToken
-  ) async {
+      String endpoint, Map<String, dynamic> data, String jwtToken) async {
     try {
       var response = await _apiService.postData(endpoint, data, jwtToken);
       LoginResponse loginResponse = LoginResponse.fromJson(response);
       if (response['access_token'] != null) {
         _mainProvider.updateToken(response['access_token']);
-        _mainProvider.response=response;
+        _mainProvider.response = response;
         await _mainProvider.updateUserInfo(loginResponse);
       }
     } catch (e) {
@@ -130,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
         isLoading = true; // Muestra el loader
       });
       await postData('/login/login', {'Codigo': Codigo, 'Clave': Clave}, '');
+
       // Si la solicitud se completa con éxito, navega a la siguiente pantalla
       // Navigator.popAndPushNamed(context, Home.routeName);
       isologin = true;
@@ -147,7 +154,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-
   Future<void> startLogin(String username, String password) async {
     try {
       setState(() {
@@ -157,17 +163,19 @@ class _LoginPageState extends State<LoginPage> {
       // Espera un breve período (puedes personalizar la duración)
       // await Future.delayed(Duration(seconds: 2)); // Ejemplo de 2 segundos
 
-      bool isologin =await login(username, password);
+      bool isologin = await login(username, password);
       setState(() {
         isLoading = false; // Ocultar el loader
       });
 
       // print(isologin);
       if (isologin) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar(); // Ocultar cualquier SnackBar existente
+        ScaffoldMessenger.of(context)
+            .hideCurrentSnackBar(); // Ocultar cualquier SnackBar existente
         showCustomSnackBar(context, 'Inicio de sesión exitoso!', Colors.green);
         verifySession();
-      }else{
+        Navigator.pushReplacementNamed(context, MainPage.routeName);
+      } else {
         throw Exception('Error al iniciar sesión');
       }
 
@@ -176,7 +184,8 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLoading = false; // Ocultar el loader en caso de error
       });
-      ScaffoldMessenger.of(context).hideCurrentSnackBar(); // Ocultar cualquier SnackBar existente
+      ScaffoldMessenger.of(context)
+          .hideCurrentSnackBar(); // Ocultar cualquier SnackBar existente
       showCustomSnackBar(context, '$e', Colors.red);
 
       // Si no se pudo iniciar sesión, muestra el SnackBar rojo
@@ -189,25 +198,50 @@ class _LoginPageState extends State<LoginPage> {
       final descripcion = prefs.getString("Descripcion");
       print(descripcion);
       if (token != null) {
-        if (descripcion == "Agente"){
-          Navigator.pushReplacementNamed(context, HomeRondas.routeName);
-        }else
-        if (descripcion == "Anfitrión"){
-          Navigator.pushReplacementNamed(context, HomeVisitas.routeName);
-        }else{
-          Navigator.pushReplacementNamed(context, Home.routeName);
-          print("===================================================================================");
-          
-
+        if (descripcion == "Administrador") {
+          _mainnavigationindexprovider.pages = [
+            HomePage(),
+            RondasPage(),
+            VisitasPage(),
+            PerfilPage()
+          ];
+        } else if (descripcion == "Anfitrión") {
+          _mainnavigationindexprovider.pages = [
+            HomePage(),
+            RondasPage(),
+            VisitasPage(),
+            PerfilPage()
+          ];
         }
+        if (descripcion == "Supervisor") {
+          _mainnavigationindexprovider.pages = [
+            HomePage(),
+            RondasPage(),
+            VisitasPage(),
+            PerfilPage()
+          ];
+        }
+        if (descripcion == "Anfitrión") {
+          _mainnavigationindexprovider.pages = [
+            HomePage(),
+            RondasPage(),
+            VisitasPage(),
+            PerfilPage()
+          ];
+        }
+        if (descripcion == "Visita") {
+          _mainnavigationindexprovider.pages = [PerfilPage()];
+        }
+        if (descripcion == "Agente") {
+          _mainnavigationindexprovider.pages = [HomePage(), PerfilPage()];
+        }
+        Navigator.pushReplacementNamed(context, MainPage.routeName);
+
       } else {
         Navigator.pushReplacementNamed(context, LoginPage.routeName);
       }
-
     });
   }
-
-
 
   void showCustomSnackBar(BuildContext context, String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -222,118 +256,120 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-      ? Center(child: CircularProgressIndicator())
-      : Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(_paddingSize),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/images/SAMM.png',
-                    width: 100,
-                  ),
-                  const SizedBox(height: 6 * _sizedBoxHeight),
-                  // _buildTextField('Usuario', _usernameController),
-                  // _buildTextField('Contraseña', _passwordController,
-                      // isObscured: true),
-                  CustomTextField(
-                    label: 'Usuario',
-                    controller: _usernameController,
-                    isObscured: false,
-                  ),
-                  CustomTextField(
-                    label: 'Contraseña',
-                    controller: _passwordController,
-                    isObscured: true,
-                  ),
-                  // Row(
-                  //   children: [
-                  //     TextButton(
-                  //       onPressed: () {},
-                  //       child: const Text(
-                  //         'Olvidé mi contraseña',
-                  //         style: TextStyle(
-                  //           color: Color(0xFF0040AE),
-                  //           fontSize: _fontSize,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  const SizedBox(height: 6 * _sizedBoxHeight),
-                  Container(
-                    width: 250,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          startLogin(_usernameController.text, _passwordController.text);
-                        }
-                      },
-                      // onPressed: () async {
-                      //   if (_formKey.currentState!.validate()) {
-                      //     try {
-                      //       await login(_usernameController.text,
-                      //           _passwordController.text);
-                      //       showCustomSnackBar(context,
-                      //           'Inicio de sesión exitoso!', Colors.green);
-                      //     } catch (e) {
-                      //       showCustomSnackBar(context,
-                      //           'Error al iniciar sesión: $e', Colors.red);
-                      //     }
-                      //   }
-                      // },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        primary: Color(0xFF0040AE),
-                        onSurface: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Color(0xFF0040AE), width: 2),
-                          borderRadius: BorderRadius.circular(30.0),
+          ? Center(child: CircularProgressIndicator())
+          : Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(_paddingSize),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset(
+                          'assets/images/SAMM.png',
+                          width: 100,
                         ),
-                      ),
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontSize: _buttonFontSize,
-                          color: Colors.white,
+                        const SizedBox(height: 6 * _sizedBoxHeight),
+                        // _buildTextField('Usuario', _usernameController),
+                        // _buildTextField('Contraseña', _passwordController,
+                        // isObscured: true),
+                        CustomTextField(
+                          label: 'Usuario',
+                          controller: _usernameController,
+                          isObscured: false,
                         ),
-                      ),
+                        CustomTextField(
+                          label: 'Contraseña',
+                          controller: _passwordController,
+                          isObscured: true,
+                        ),
+                        // Row(
+                        //   children: [
+                        //     TextButton(
+                        //       onPressed: () {},
+                        //       child: const Text(
+                        //         'Olvidé mi contraseña',
+                        //         style: TextStyle(
+                        //           color: Color(0xFF0040AE),
+                        //           fontSize: _fontSize,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        const SizedBox(height: 6 * _sizedBoxHeight),
+                        Container(
+                          width: 250,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                startLogin(_usernameController.text,
+                                    _passwordController.text);
+                              }
+                            },
+                            // onPressed: () async {
+                            //   if (_formKey.currentState!.validate()) {
+                            //     try {
+                            //       await login(_usernameController.text,
+                            //           _passwordController.text);
+                            //       showCustomSnackBar(context,
+                            //           'Inicio de sesión exitoso!', Colors.green);
+                            //     } catch (e) {
+                            //       showCustomSnackBar(context,
+                            //           'Error al iniciar sesión: $e', Colors.red);
+                            //     }
+                            //   }
+                            // },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              primary: Color(0xFF0040AE),
+                              onSurface: Colors.grey,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    color: Color(0xFF0040AE), width: 2),
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: _buttonFontSize,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: _sizedBoxHeight),
+                        // Container(
+                        //   width: 250,
+                        //   child: ElevatedButton(
+                        //     onPressed: () => Navigator.pop(context),
+                        //     child: const Text(
+                        //       'Regresar',
+                        //       style: TextStyle(
+                        //         fontSize: _buttonFontSize,
+                        //         color: Color(0xFF0040AE),
+                        //       ),
+                        //     ),
+                        //     style: ElevatedButton.styleFrom(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 20, horizontal: 80),
+                        //       primary: Colors.white,
+                        //       // shape: RoundedRectangleBorder(
+                        //       //   side: BorderSide(color: Color(0xFF0040AE), width: 2),
+                        //       //   borderRadius: BorderRadius.circular(30.0),
+                        //       // ),
+                        //     ),
+                        //   ),
+                        // ),
+                        const SizedBox(height: _sizedBoxHeight),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: _sizedBoxHeight),
-                  // Container(
-                  //   width: 250,
-                  //   child: ElevatedButton(
-                  //     onPressed: () => Navigator.pop(context),
-                  //     child: const Text(
-                  //       'Regresar',
-                  //       style: TextStyle(
-                  //         fontSize: _buttonFontSize,
-                  //         color: Color(0xFF0040AE),
-                  //       ),
-                  //     ),
-                  //     style: ElevatedButton.styleFrom(
-                  //       padding: const EdgeInsets.symmetric(
-                  //           vertical: 20, horizontal: 80),
-                  //       primary: Colors.white,
-                  //       // shape: RoundedRectangleBorder(
-                  //       //   side: BorderSide(color: Color(0xFF0040AE), width: 2),
-                  //       //   borderRadius: BorderRadius.circular(30.0),
-                  //       // ),
-                  //     ),
-                  //   ),
-                  // ),
-                  const SizedBox(height: _sizedBoxHeight),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -343,12 +379,11 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
   final bool isObscured;
 
-  CustomTextField({
-    super.key, 
-    required this.label, 
-    required this.controller, 
-    required this.isObscured
-  });
+  CustomTextField(
+      {super.key,
+      required this.label,
+      required this.controller,
+      required this.isObscured});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -397,7 +432,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             //       )
             //     : null,
           ),
-          obscureText: widget.isObscured ? _obscureText : false, // Modifica esta línea
+          obscureText:
+              widget.isObscured ? _obscureText : false, // Modifica esta línea
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Por favor, coloque su ${widget.label}';

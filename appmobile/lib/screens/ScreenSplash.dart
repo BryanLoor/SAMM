@@ -1,9 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/page/MainPage.dart';
+import 'package:sammseguridad_apk/page/Perfil.dart';
+import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeVisitas.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/RondasPage.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/homePage.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/visitasPage.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +27,16 @@ class ScreenSplash extends StatefulWidget {
 }
 
 class _ScreenSplashState extends State<ScreenSplash> {
+  late MainNavigationIndexProvider _mainnavigationindexprovider;
+  // Añade esta línea
+  // bool _obscureText = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _mainnavigationindexprovider =
+        Provider.of<MainNavigationIndexProvider>(context);
+  }
   @override
   void initState() {
     super.initState();
@@ -62,7 +78,47 @@ class _ScreenSplashState extends State<ScreenSplash> {
     final descripcion = prefs.getString("Descripcion");
     bool canrefresh = await refreshToken(token??"");
     if (token != null && canrefresh) {
-      if (descripcion == "Agente"){
+        if (descripcion == "Administrador") {
+          _mainnavigationindexprovider.pages = [
+            HomePage(),
+            RondasPage(),
+            VisitasPage(),
+            PerfilPage()
+          ];
+        } else if (descripcion == "Anfitrión") {
+          _mainnavigationindexprovider.pages = [
+            HomePage(),
+            RondasPage(),
+            VisitasPage(),
+            PerfilPage()
+          ];
+        }
+        if (descripcion == "Supervisor") {
+          _mainnavigationindexprovider.pages = [
+            HomePage(),
+            RondasPage(),
+            VisitasPage(),
+            PerfilPage()
+          ];
+        }
+        if (descripcion == "Anfitrión") {
+          _mainnavigationindexprovider.pages = [
+            HomePage(),
+            RondasPage(),
+            VisitasPage(),
+            PerfilPage()
+          ];
+        }
+        if (descripcion == "Visita") {
+          _mainnavigationindexprovider.pages = [PerfilPage()];
+        }
+        if (descripcion == "Agente") {
+          _mainnavigationindexprovider.pages = [HomePage(), PerfilPage()];
+        }
+        Navigator.pushReplacementNamed(context, MainPage.routeName);
+
+      
+      /*if (descripcion == "Agente"){
         Navigator.pushReplacementNamed(context, HomeRondas.routeName);
       }else
       if (descripcion == "Anfitrión"){
@@ -71,8 +127,10 @@ class _ScreenSplashState extends State<ScreenSplash> {
         Navigator.pushReplacementNamed(context, Home.routeName);
         print("===================================================================================");
 
-      }
-    } else {
+      }*/
+      Navigator.pushReplacementNamed(context, MainPage.routeName);
+
+    }else {
       Navigator.pushReplacementNamed(context, LoginPage.routeName);
     }
   }

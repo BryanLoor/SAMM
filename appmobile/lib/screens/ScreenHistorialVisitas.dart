@@ -20,22 +20,25 @@ class _ScreenHistorialVisitasState extends State<ScreenHistorialVisitas> {
   late Future<List<Map<String, dynamic>>> _visitaListFuture;
 
   @override
-  void initState() {
+  Future<void> initState() async {
     super.initState();
+    print("hola desde init visitas");
     if (mounted) {
       final mainProviderSave =
           Provider.of<MainProvider>(context, listen: false);
       final apiService = Provider.of<ApiService>(context, listen: false);
       final visitasProvider = Provider.of<VisitasProvider>(context, listen: false);
-
+      
+      await visitasProvider.refreshvisitas(context, visitasProvider);
       _visitaListFuture =
           mainProviderSave.getPreferencesToken().then((dataToken) {
         token = dataToken.toString();
         mainProviderSave.updateToken(token);
-
+        print("antes de llamar visitas");
         return visitasProvider.getVisitaList(apiService);
       });
     }
+    print("entra init visitas");
   }
 
   Widget _buildTable(List<Map<String, dynamic>> visitas) {
@@ -99,9 +102,10 @@ class _ScreenHistorialVisitasState extends State<ScreenHistorialVisitas> {
                 color: Color(0xFF0040AE).withOpacity(0.2),
               ),
               child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _visitaListFuture,
+                future: VisitasProvider().visitaListFuture,
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
+                    print("tiene data");
                     return _buildTable(snapshot.data);
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');

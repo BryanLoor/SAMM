@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/visitasProvider.dart';
-import 'package:sammseguridad_apk/screens/v2/generarVisita/ScreenGenerarVisita.dart';
+import 'package:sammseguridad_apk/screens/v2/home/floatings/FloatingVisitas.dart';
 import 'package:sammseguridad_apk/screens/widgets/ModalBottomCreateVisita.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
-import 'package:sammseguridad_apk/widgets/Appbar.dart';
 // import 'package:sammseguridad_apk/widgets/Drawer.dart';
 import 'package:sammseguridad_apk/widgets/TwoColumnsWidget.dart';
 
@@ -32,6 +30,7 @@ class _VisitasPage extends State<VisitasPage>
   @override
   void initState() {
     super.initState();
+    print("estoy en visitas page");
 
     
   }
@@ -188,7 +187,7 @@ class _VisitasPage extends State<VisitasPage>
 
     setState(() {
       // Agrega nuevos elementos o actualiza la lista
-      visitasProvider.visitaListFuture= visitasProvider.getVisitaList(ApiService());
+      //visitasProvider.visitaListFuture= visitasProvider.getVisitaList(ApiService());
     });
   }
     return Column(
@@ -268,6 +267,10 @@ class _VisitasPage extends State<VisitasPage>
             ),
           ),
         ),
+        Container(
+          margin: EdgeInsets.all(20),
+          alignment: Alignment.centerRight,
+          child: FloatingVisitas())
       ],
     );
     

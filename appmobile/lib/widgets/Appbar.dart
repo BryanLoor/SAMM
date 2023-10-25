@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
+import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/ScreenPerfil.dart';
 import 'package:sammseguridad_apk/screens/ScreenSplash.dart';
 import 'package:sammseguridad_apk/screens/logins/ScreenLogin.dart';
@@ -49,13 +51,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: CircleAvatar(
-              child: Icon(Icons.person),
+              child: Icon(Icons.logout_outlined),
             ),
           ),
           // icon: Icon(Icons.person),
           itemBuilder: (BuildContext context) {
             return [
-              PopupMenuItem(
+              /*PopupMenuItem(
                 value: "Perfil",
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -65,7 +67,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     Icon(Icons.person),
                   ],
                 ),
-              ),
+              ),*/
               PopupMenuItem(
                 value: "Cerrar sesion",
                 child: Row(
@@ -81,12 +83,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
 
           onSelected: (value) {
-            if (value == "Perfil") {
-              Navigator.pushNamed(context, ScreenPerfil.routeName);
-            } else if (value == "Cerrar sesion") {
+            if (value == "Cerrar sesion") {
               // borrar datos de sharedpreference
               SharedPreferences.getInstance().then((value) {
                 value.clear();
+                MainProvider().logout();
+                //MainNavigationIndexProvider().pages=MainNavigationIndexProvider().pagesF;
               });
 
               Navigator.popAndPushNamed(context, ScreenSplash.routeName);

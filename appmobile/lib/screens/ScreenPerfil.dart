@@ -18,7 +18,7 @@ class ScreenPerfil extends StatelessWidget {
       'Contraseña: xxxxxxxxxx'; // Replace with your QR data
 
     return Scaffold(
-      appBar: CustomAppBar(),
+      //appBar: CustomAppBar(),
       // drawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,

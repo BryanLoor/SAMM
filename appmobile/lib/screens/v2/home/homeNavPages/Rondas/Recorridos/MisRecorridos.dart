@@ -14,9 +14,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MisRecorridos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
-    MainProvider mainProvider = Provider.of<MainProvider>(context, listen: false);
-    
+    RondasProvider rondasProvider =
+        Provider.of<RondasProvider>(context, listen: false);
+    MainProvider mainProvider =
+        Provider.of<MainProvider>(context, listen: false);
+
     return FutureBuilder<List<RondaData>>(
       future: fetchMisRecorridos(context),
       builder: (context, snapshot) {
@@ -41,9 +43,9 @@ class MisRecorridos extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => PuntosConcretosScreen(
-                                                  rondaNombre: ronda.nombreRonda,
-                                                  rondaConcretaId: ronda.idRondaBitacora,
-                                                ),
+                            rondaNombre: ronda.nombreRonda,
+                            rondaConcretaId: ronda.idRondaBitacora,
+                          ),
                         ),
                       );
                     },
@@ -63,19 +65,23 @@ class MisRecorridos extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
-                                      
                                     ),
                                   ),
-                                  Text('${
-                                    ronda.fechaRecorrido.substring(0, ronda.fechaRecorrido.length - 12)
-                                    }'),
+                                  Text(
+                                      '${ronda.fechaRecorrido.substring(0, ronda.fechaRecorrido.length - 12)}'),
                                 ],
                               ),
                             ),
                           ),
-                          SizedBox(width: 10.0,height:100,),
-                          Text('${ronda.nPuntosRecorridos} - ${ronda.nPuntosTotales}'),
-                          SizedBox(width: 10.0,),
+                          SizedBox(
+                            width: 10.0,
+                            height: 100,
+                          ),
+                          Text(
+                              '${ronda.nPuntosRecorridos} - ${ronda.nPuntosTotales}'),
+                          SizedBox(
+                            width: 10.0,
+                          ),
                           // SizedBox(width: 10.0,),
                         ],
                       ),
@@ -86,16 +92,16 @@ class MisRecorridos extends StatelessWidget {
             // itemCount: data?.length,
             // itemBuilder: (context, index) {
             //   return Card(
-                // child: ListTile(
-                //   title: Text('Nombre Ronda: ${data?[index].nombreRonda}'),
-                //   subtitle: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       Text('Puntos Totales: ${data?[index].nPuntosTotales}'),
-                //       Text('Puntos Recorridos: ${data?[index].nPuntosRecorridos}'),
-                //     ],
-                //   ),
-                // ),
+            // child: ListTile(
+            //   title: Text('Nombre Ronda: ${data?[index].nombreRonda}'),
+            //   subtitle: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Text('Puntos Totales: ${data?[index].nPuntosTotales}'),
+            //       Text('Puntos Recorridos: ${data?[index].nPuntosRecorridos}'),
+            //     ],
+            //   ),
+            // ),
             //   );
             // },
           );
@@ -104,62 +110,66 @@ class MisRecorridos extends StatelessWidget {
     );
   }
 
-
-
   Future<List<RondaData>> fetchMisRecorridos(context) async {
+    try {
+      var sharedPreferences = await SharedPreferences.getInstance();
+      var jwtToken = sharedPreferences.getString("token") ?? "";
+      int idAgente = sharedPreferences.getInt("Id") ?? 0;
+      // int idAgente = 1;
+      ApiService apiService = Provider.of<ApiService>(context, listen: false);
 
-    var sharedPreferences = await SharedPreferences.getInstance();
-    var jwtToken = sharedPreferences.getString("token") ?? "";
-    int idAgente = sharedPreferences.getInt("Id") ?? 0;
-    // int idAgente = 1;
-    ApiService apiService = Provider.of<ApiService>(context, listen: false);
-    
-    Map<String, dynamic> data = {
-      "idAgente": idAgente
-    };
+      Map<String, dynamic> data = {"idAgente": idAgente};
 
-    Map<String,dynamic> responseRondas = await apiService.postData("/rondas/getBitacoraRecorrido", data, jwtToken);
-    if (responseRondas.containsKey("message")){
-      return [];
-    }
-    List<RondaData> rondas = [];
-    for (var ronda in responseRondas['data']) {
-      /*Map<String,dynamic> dataPuntos = {
+      Map<String, dynamic> responseRondas = await apiService.postData(
+          "/rondas/getBitacoraRecorrido", data, jwtToken);
+      if (responseRondas.containsKey("message")) {
+        return [];
+      }
+      List<RondaData> rondas = [];
+      for (var ronda in responseRondas['data']) {
+        /*Map<String,dynamic> dataPuntos = {
         "idRonda": ronda['idRonda'],
         "idAgente": idAgente
       };*/
-      Map<String,dynamic> dataPuntos = {
-        "idRecorrido": ronda['idRondaBitacora'],
-      };
-      
-
-      // print(dataPuntos);
-      Map<String,dynamic> responsePuntos = await apiService.postData("/rondas/getPuntosRecorridoxRonda", dataPuntos, jwtToken);    
-      
-      if (!responseRondas.containsKey("message") && responsePuntos['data'].length > 0){
-        int n_puntosRecorridos = 0;
-        responsePuntos['data'].forEach((punto) {
-          if(punto['Puntos']["EstadoPuntoConcreto"] == "RECORRIDO"){
-            n_puntosRecorridos++;
-          }
-          // int n_puntosRecorridos = responsePuntos['data'].((punto) => punto['Puntos']["Estado"] == "R").length;
-        });
-        // Map<String,dynamic> puntos  = punto['Puntos'];
-        String nombreronda = responsePuntos['data'][0]['RondaNombre'].toString();
-        Map<String, dynamic> convertedRonda = {
-          // "Puntos" : puntos,
-          "IdRonda" : ronda['idRonda'],
-          "Nombreronda" : nombreronda == "" ? "Sin nombre" : nombreronda,
-          "n_puntosTotales" : responsePuntos['total'],
-          "n_puntosRecorridos" : n_puntosRecorridos,
-          "idRondaBitacora" : ronda['idRondaBitacora'],
-          "fechaRecorrido" : ronda['fechaRecorrido'].toString()
+        Map<String, dynamic> dataPuntos = {
+          "idRecorrido": ronda['idRondaBitacora'],
         };
-        rondas.add(RondaData.fromJson(convertedRonda));
-        
+
+        // print(dataPuntos);
+        Map<String, dynamic> responsePuntos = await apiService.postData(
+            "/rondas/getPuntosRecorridoxRonda", dataPuntos, jwtToken);
+
+        if (!responseRondas.containsKey("message") &&
+            responsePuntos['data'].length > 0) {
+          int n_puntosRecorridos = 0;
+          responsePuntos['data'].forEach((punto) {
+            if (punto['Puntos']["EstadoPuntoConcreto"] == "RECORRIDO") {
+              n_puntosRecorridos++;
+            }
+            // int n_puntosRecorridos = responsePuntos['data'].((punto) => punto['Puntos']["Estado"] == "R").length;
+          });
+          // Map<String,dynamic> puntos  = punto['Puntos'];
+          String nombreronda =
+              responsePuntos['data'][0]['RondaNombre'].toString();
+          Map<String, dynamic> convertedRonda = {
+            // "Puntos" : puntos,
+            "IdRonda": ronda['idRonda'],
+            "Nombreronda": nombreronda == "" ? "Sin nombre" : nombreronda,
+            "n_puntosTotales": responsePuntos['total'],
+            "n_puntosRecorridos": n_puntosRecorridos,
+            "idRondaBitacora": ronda['idRondaBitacora'],
+            "fechaRecorrido": ronda['fechaRecorrido'].toString()
+          };
+          rondas.add(RondaData.fromJson(convertedRonda));
+        }
       }
+      return rondas;
+    } catch (e) {
+      print(e);
+      //throw Exception('Fallo al hacer post');
+            return [];
+
     }
-    return rondas;
   }
 
   // //TODO: Cambiar la url por la del endpoint o usar el apiservice
@@ -167,7 +177,7 @@ class MisRecorridos extends StatelessWidget {
   //   var sharedPreferences = await SharedPreferences.getInstance();
   //   var jwtToken = sharedPreferences.getString("token") ?? "";
   //   ApiService apiService = Provider.of<ApiService>(context, listen: false);
-    
+
   //   Map<String, dynamic> data = {
   //     "idRonda": idRonda,
   //     "idAgente": idAgente

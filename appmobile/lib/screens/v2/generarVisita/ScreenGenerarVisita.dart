@@ -83,8 +83,10 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
 
   Future<void> getUbicaciones() async {
     try {
+      final token = MainProvider.prefs.getString('token');
+      print(token);
       const String url = "/visitas/getUbicaciones";
-      String response = await _apiService.getDataJson(url, token);
+      String response = await _apiService.getDataJson(url, token!);
 
       setState(() {
         ubicaciones = jsonDecode(response);
@@ -141,6 +143,8 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
       });
     });
     getUbicaciones().then((value) => {
+      print(ubicaciones),
+
           setState(() {
             ubicacionSelected = ubicaciones[0];
           })

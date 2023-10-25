@@ -60,6 +60,43 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    Future<List> getOpciones() async {
+    List data= [
+    {
+        "Codigo": "RONDMOB",
+        "Descripcion": "Rondas",
+        "Estado": "A",
+        "FechaCrea": "Wed, 05 Jul 2023 04:28:55 GMT",
+        "FechaModifica": "Wed, 05 Jul 2023 04:28:55 GMT",
+        "FechaUltimoLogin": "Wed, 05 Jul 2023 04:28:55 GMT",
+        "Icon": null,
+        "Id": 1007,
+        "UsuarioCrea": 1,
+        "UsuarioModifica": 1,
+        "path": "rondas"
+    },
+    {
+        "Codigo": "VISMOB",
+        "Descripcion": "Visitas",
+        "Estado": "A",
+        "FechaCrea": "Fri, 01 Sep 2023 00:00:00 GMT",
+        "FechaModifica": "Fri, 01 Sep 2023 00:00:00 GMT",
+        "FechaUltimoLogin": null,
+        "Icon": "FcPlanner",
+        "Id": 1006,
+        "UsuarioCrea": 1,
+        "UsuarioModifica": 1,
+        "path": "visitas"
+    }
+];
+    const url = '/menu/getMenu/MOBILE';
+    var jwtToken=MainProvider.prefs.getString("token");
+    //var jwtToken = sharedPreferences.getString("token") ?? "";
+
+    //var curretUser = MainProvider.prefs.getString("currentUser");
+    //return await  ApiService().getData(url,jwtToken!); 
+    return data;
+  }
     return Scaffold(
       
       appBar: CustomAppBar(),
@@ -112,6 +149,11 @@ class _HomeState extends State<Home> {
             ),
             label: 'Rondas',
           ),
+          ElevatedButton(onPressed: () {
+             print("-------------------------------------");
+
+        getOpciones().then((value) => print(value));
+          }, child: Icon(Icons.abc))
         ],
       ),
 
@@ -134,6 +176,7 @@ class _HomeState extends State<Home> {
         body: PageView(
         onPageChanged: (value) {
           setIndex(value);
+         
         },
         controller: _pageController,
         children: _pages,

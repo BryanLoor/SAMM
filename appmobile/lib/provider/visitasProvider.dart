@@ -4,7 +4,7 @@ import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 
 class VisitasProvider with ChangeNotifier {
-  late Future<List<Map<String, dynamic>>> _visitaListFuture;
+  late Future<List<Map<String, dynamic>>> _visitaListFuture = Future.value([]);
   bool _hasFetchedData = false;
   bool get hasFetchedData => _hasFetchedData;
   set hasFetchedData(bool newHasFetchedData) {
