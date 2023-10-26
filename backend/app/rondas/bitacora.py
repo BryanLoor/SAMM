@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from app.rondas import bp
 from flask_cors import cross_origin
 from app.models.SAMM_Persona import Persona
@@ -120,3 +120,130 @@ def getBitacoraRecorrido():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
     
+
+
+    
+@bp.route('/insertPuntosBitacoraDetalle', methods=['POST'])
+@cross_origin()
+@jwt_required()
+def insertPuntosBitacoraDetalle():
+    try:
+        user= SAMM_Usuario.query.filter_by(Codigo=get_jwt_identity()).first()
+        if(user.Id is None): return jsonify({"message":"Usuario  no existe"}),400
+    
+        idGuardia=request.json["idGuardia"]
+        idRonda=request.json["idRonda"]
+        puntos= request.json["puntos"]
+        print(puntos)
+        
+        #diaSemana=request.json["diaSemana"] or None
+        
+        # Obtener fechas de inicio y fin desde el frontend
+        ronda=SAMM_Ronda.query.filter(SAMM_Ronda.Id==idRonda).first()
+        print("++++++++++++++++++++++++++++++++++++++++++++++")
+        print(ronda)
+        print(ronda.FechaInicio)
+        print(ronda.FechaFin)
+        
+        fechaInicio = ronda.FechaInicio
+        fechaFin = ronda.FechaFin
+        frecuencia = ronda.Frecuencia
+
+
+        # Convertir las fechas a objetos de datetime
+        #fechaInicio = datetime.strptime(fechaInicio, "%Y-%m-%d")
+        #fechaFin = datetime.strptime(fechaFin, "%Y-%m-%d")
+
+        # Lógica para determinar las fechas según la frecuencia
+        fechas = []
+        delta = timedelta(days=1)
+        # Mapear nombres de días a índices (0=Lunes, 1=Martes, ..., 6=Domingo)
+        dias_semana = {
+            "LUNES": 0,
+            "MARTES": 1,
+            "MIÉRCOLES": 2,
+            "JUEVES": 3,
+            "VIERNES": 4,
+            "SÁBADO": 5,
+            "DOMINGO": 6
+        }
+        if frecuencia == "DIARIO":
+            fechas.append(fechaInicio)
+            while fechaInicio < fechaFin:
+                fechaInicio += delta
+                fechas.append(fechaInicio)
+        elif frecuencia == "SEMANAL":
+            # Lógica para frecuencia semanal (agregar según día de la semana)
+            diaSemana=ronda.diaSemana
+        
+            # Asumiendo que diaSemana es un nombre de día
+            if diaSemana.upper() in dias_semana:
+                indice_dia = dias_semana[diaSemana.upper()]
+                while fechaInicio < fechaFin:
+                    if fechaInicio.weekday() == indice_dia:
+                        fechas.append(fechaInicio)
+                    fechaInicio += delta
+            else:
+                return jsonify({'message': 'Nombre de día no válido'}), 400
+        elif frecuencia == "MENSUAL":
+            # Lógica para frecuencia mensual (agregar según día del mes)
+            # Asumiendo que diaMes es un número de día válido
+            diaMes=ronda.diaSemana
+            print("++++++++++++++++++++")
+            print(fechaInicio.day)
+            print(diaMes)
+            print("++++++++++++++++++++")
+            '''if diaSemana.upper() in dias_semana:
+
+                while fechaInicio < fechaFin:
+                    # Verificar que sea el día del mes correcto
+                    if fechaInicio.weekday() == diaMes:
+                        fechas.append(fechaInicio)
+                        break
+                    fechaInicio += delta
+            else:
+                return jsonify({'message': 'Nombre de día no válido'}), 400'''
+        else:
+            return jsonify({'message': 'Frecuencia no válida'}), 400
+
+         # Insertar registros en SAMM_BitacoraRecorrido y SAMM_Bitacora_RecorridoDetalle
+        for fecha in fechas:
+            # Insertar en SAMM_BitacoraRecorrido
+            bitacora_recorrido = SAMM_BitacoraRecorrido(
+                IdAgente=idGuardia,
+                IdRonda=idRonda,
+                UsuCrea=user.Id,
+                UsuMod=user.Id,
+                FechaCrea=datetime.now(),
+                FechaMod=datetime.now(),
+                Estado=1,
+                FechaRecorrido=fecha
+            )
+            db.session.add(bitacora_recorrido)
+            for punto in puntos:
+                print(punto)     
+                print(fecha)           
+                # Insertar en SAMM_Bitacora_RecorridoDetalle (ejemplo)
+                bitacora_detalle = SAMM_Bitacora_RecorridoDetalle(
+                    IdUsuario=idGuardia,
+                    IdRonda=idRonda,
+                    Estado="POR INICIAR",
+                    IdPuntoRonda=punto["idPunto"],  # Reemplazar con el valor correcto
+                    Codigo="ABC",   # Reemplazar con el valor correcto
+                    Descripcion=punto["Descripcion"],
+                    FotoURL="url",
+                    FechaCreacion=datetime.now(),
+                    UsuCreacion=user.Id,
+                    FechaModifica=datetime.now(),
+                    UsuModifica=user.Id,
+                    IdBitacoraRecorrido=bitacora_recorrido.Id  # Usar el Id generado
+                )
+                db.session.add(bitacora_detalle)
+
+        # Confirmar cambios en la base de datos
+        db.session.commit()
+
+        return jsonify({'message': 'Registros insertados correctamente'}), 200
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
