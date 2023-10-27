@@ -156,7 +156,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
     // if (_formKey.currentState!.validate()) {
     String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
     //String formattedTime = DateFormat.Hm().format(DateTime.now());
-    String formattedTime = '${selectedTime.hour}:${selectedTime.minute}';
+    String formattedTime = '${selectedTime.format(context)}';
 
     //poner en qr ID de registro
     //String qrData ='${DateFormat('dd/MM/yyyy').format(selectedDate)},${selectedTime.format(context)},${selectedTime},${stateCedula},${stateNombre},${placaController.text}';
@@ -257,7 +257,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                           ListTile(
                             leading: const Icon(Icons.timer),
                             title: const Text('Duración'),
-                            subtitle: Text('$selectedTime horas'),
+                            subtitle: Text('${selectedTime.format(context)} horas'),
                           ),
                         ],
                       ),
@@ -393,6 +393,8 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
 
     if (picked != null && picked != selectedTime) {
       // Verifica si la hora seleccionada es posterior a la hora actual
+      print(picked.hour);
+      print(currentTime.hour);
       if (picked.hour > currentTime.hour ||
           (picked.hour == currentTime.hour &&
               picked.minute > currentTime.minute)) {

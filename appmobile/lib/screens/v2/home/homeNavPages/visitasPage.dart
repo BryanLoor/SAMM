@@ -185,64 +185,65 @@ class _VisitasPage extends State<VisitasPage>
     // Simula la carga de nuevos datos o una operación de actualización
 
     setState(() {
+      visitasProvider.visitaListFuture=visitasProvider.getVisitaList(ApiService());
         });
   }
-    return Column(
-      children: [
-        Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-            ),
-            width: double.infinity,
-            child: Center(
-              child: SegmentedButton<TabMenu>(
-                style: ButtonStyle(
-                  //backgroundColor: MaterialStateProperty.all(Colors.amber),
-                  foregroundColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.selected)) {
-                        return Colors.white; // Text color when selected
-                      }
-                      return Colors.black; // Text color when unselected
-                    },
-                  ),
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.selected)) {
-                        return const Color.fromRGBO(
-                            13, 71, 161, 1); // Background color when selected
-                      }
-                      return Colors
-                          .transparent; // Background color when unselected
-                    },
-                  ),
-                ),
-                segments: const <ButtonSegment<TabMenu>>[
-                  ButtonSegment<TabMenu>(
-                      value: TabMenu.Historial,
-                      label: Text('Historial'),
-                      icon: Icon(Icons.history)),
-                  ButtonSegment<TabMenu>(
-                      value: TabMenu.Personas,
-                      label: Text('Frecuentes'),
-                      icon: Icon(Icons.person)),
-                ],
-                selected: <TabMenu>{tabMenuView},
-                selectedIcon: const Icon(Icons.shield),
-                onSelectionChanged: (Set<TabMenu> newSelection) {
-                  setState(() {
-                    // By default there is only a single segment that can be
-                    // selected at one time, so its value is always the first
-                    // item in the selected set.
-                    tabMenuView = newSelection.first;
-                  });
-                },
+    return RefreshIndicator(
+      onRefresh: _refreshData,
+      child: Column(
+        children: [
+          Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
               ),
-            )),
-        // SizedBox(height: 20.0),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: _refreshData,
+              width: double.infinity,
+              child: Center(
+                child: SegmentedButton<TabMenu>(
+                  style: ButtonStyle(
+                    //backgroundColor: MaterialStateProperty.all(Colors.amber),
+                    foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.selected)) {
+                          return Colors.white; // Text color when selected
+                        }
+                        return Colors.black; // Text color when unselected
+                      },
+                    ),
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.selected)) {
+                          return const Color.fromRGBO(
+                              13, 71, 161, 1); // Background color when selected
+                        }
+                        return Colors
+                            .transparent; // Background color when unselected
+                      },
+                    ),
+                  ),
+                  segments: const <ButtonSegment<TabMenu>>[
+                    ButtonSegment<TabMenu>(
+                        value: TabMenu.Historial,
+                        label: Text('Historial'),
+                        icon: Icon(Icons.history)),
+                    ButtonSegment<TabMenu>(
+                        value: TabMenu.Personas,
+                        label: Text('Frecuentes'),
+                        icon: Icon(Icons.person)),
+                  ],
+                  selected: <TabMenu>{tabMenuView},
+                  selectedIcon: const Icon(Icons.shield),
+                  onSelectionChanged: (Set<TabMenu> newSelection) {
+                    setState(() {
+                      // By default there is only a single segment that can be
+                      // selected at one time, so its value is always the first
+                      // item in the selected set.
+                      tabMenuView = newSelection.first;
+                    });
+                  },
+                ), 
+              )),
+          // SizedBox(height: 20.0),
+          Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: visitasProvider.visitaListFuture,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -253,7 +254,7 @@ class _VisitasPage extends State<VisitasPage>
                     return _buildTable(
                         removeDuplicateVisits(snapshot.data), true);
                   }
-        
+          
                   return _buildTable(removeDuplicateVisits(snapshot.data), true);
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
@@ -263,12 +264,14 @@ class _VisitasPage extends State<VisitasPage>
               },
             ),
           ),
-        ),
-        Container(
-          margin: EdgeInsets.all(20),
-          alignment: Alignment.centerRight,
-          child: FloatingVisitas())
-      ],
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: FloatingVisitas(),
+            ))
+        ],
+      ),
     );
     
   }

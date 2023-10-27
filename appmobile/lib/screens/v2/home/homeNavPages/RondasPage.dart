@@ -50,12 +50,10 @@ class _RondasPageState extends State<RondasPage> {
           //   rondaNombre: "rondaNombre",
           //   rondaConcretaId: 1,
           // ),
-          Expanded(
-            child: Container(
-                margin: EdgeInsets.all(20),
-                alignment: Alignment.bottomRight,
-                child: FloatingRondas()),
-          )
+          Container(
+              margin: EdgeInsets.all(20),
+              alignment: Alignment.bottomRight,
+              child: FloatingRondas())
         ],
       ),
     );
@@ -86,6 +84,7 @@ class RondasListView extends StatelessWidget {
             final rondas = snapshot.data ?? [];
     
             if (rondas.isEmpty) {
+              rondasProvider.getRondasList(apiService);
               return Center(
                 child: Text('No hay rondas'),
               );
