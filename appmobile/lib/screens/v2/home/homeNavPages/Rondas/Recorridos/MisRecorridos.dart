@@ -50,6 +50,7 @@ class MisRecorridos extends StatelessWidget {
                       );
                     },
                     child: Card(
+                      
                       margin: EdgeInsets.all(10.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -78,7 +79,7 @@ class MisRecorridos extends StatelessWidget {
                             height: 100,
                           ),
                           Text(
-                              '${ronda.nPuntosRecorridos} - ${ronda.nPuntosTotales}'),
+                              '${ronda.nPuntosRecorridos} / ${ronda.nPuntosTotales}'),
                           SizedBox(
                             width: 10.0,
                           ),

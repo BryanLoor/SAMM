@@ -30,7 +30,6 @@ class _VisitasPage extends State<VisitasPage>
   @override
   void initState() {
     super.initState();
-    print("estoy en visitas page");
 
     
   }

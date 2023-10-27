@@ -21,8 +21,9 @@ Map<String, IconData> icons = {
   "Bitácora Digital": Icons.menu_book_outlined,
   "Visitas": Icons.car_crash_outlined,
   "Rondas": Icons.change_circle_outlined,
-  "Recorridos": Icons.run_circle_outlined,
+  "Recorridos": Icons.home_outlined,
   "Perfil": Icons.person,
+  "Home":Icons.home_outlined
 };
 
 class _NavBarState extends State<NavBar> {
@@ -121,7 +122,7 @@ class _NavBarState extends State<NavBar> {
                 (index) {
                   final opcion = listaOpt[index];
                   final nombreOpcion = opcion["Descripcion"].toString();
-                  final icono = icons[nombreOpcion] ?? Icons.accessibility_new;
+                  final icono = icons[nombreOpcion] ?? Icons.star;
                   return NavigationDestination(
                     icon: Icon(
                       icono,

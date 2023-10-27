@@ -191,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
       // Si no se pudo iniciar sesión, muestra el SnackBar rojo
     }
   }
-
+  //Cambiar logica , CODIGO por DESCRIPCION, trabajar con los codigos de los roles
   void verifySession() async {
     SharedPreferences.getInstance().then((prefs) {
       final token = prefs.getString('token');

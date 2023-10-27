@@ -70,8 +70,7 @@ class _Formulario_AsignarGuardiaState extends State<Formulario_AsignarGuardia> {
     // final MainProvider mainProvider = Provider.of<MainProvider>(context, listen: false);
     final RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
     int idubicacion = rondasProvider.selectedItem["IdUbicacion"];
-    print("*******************************");
-    print(idubicacion);
+    
     // sacar el id de la ubicacion
     try {
       final newGuardias = await rondasProvider.getGuardiasValidos(apiService, idubicacion.toString());
