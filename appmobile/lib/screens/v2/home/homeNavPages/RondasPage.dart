@@ -15,53 +15,52 @@ class RondasPage extends StatefulWidget {
 }
 
 class _RondasPageState extends State<RondasPage> {
-  
   @override
   Widget build(BuildContext context) {
     final RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
     final ApiService apiService = Provider.of<ApiService>(context);
 
-
-
-
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-          ),
-           width: double.infinity,
-          child: Center(
-            child: Text(
-              'Rondas',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
+    return RefreshIndicator(
+      onRefresh: () async {
+                    setState(() {
+                      //rondasProvider.getRondasList(apiService);
+                    });
+                  },
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            width: double.infinity,
+            child: Center(
+              child: Text(
+                'Rondas',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-        ),
-
-
-
-        RondasListView(
-          rondasProvider: rondasProvider, 
-          apiService: apiService
-        ),
-        // PuntosDelRecorrido(
-        //   rondaNombre: "rondaNombre",
-        //   rondaConcretaId: 1,
-        // ),
-        Container(
-          margin: EdgeInsets.all(20),
-          alignment: Alignment.centerRight,
-          child: FloatingRondas())
-      ],
+    
+          RondasListView(
+              rondasProvider: rondasProvider, apiService: apiService),
+          // PuntosDelRecorrido(
+          //   rondaNombre: "rondaNombre",
+          //   rondaConcretaId: 1,
+          // ),
+          Expanded(
+            child: Container(
+                margin: EdgeInsets.all(20),
+                alignment: Alignment.bottomRight,
+                child: FloatingRondas()),
+          )
+        ],
+      ),
     );
   }
 }
-
-
 
 class RondasListView extends StatelessWidget {
   const RondasListView({
@@ -75,33 +74,35 @@ class RondasListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: rondasProvider.getRondasList(apiService),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Mostrar un indicador de carga mientras se espera la respuesta.
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          final rondas = snapshot.data ?? [];
-
-          if (rondas.isEmpty) {
-            return Center(
-              child: Text('No hay rondas'),
-            );
-          }
-
-          return Expanded(
-            child: ListView.builder(
+    return Expanded(
+      child: FutureBuilder<List<Map<String, dynamic>>>(
+        future: rondasProvider.getRondasList(apiService),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // Mostrar un indicador de carga mientras se espera la respuesta.
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            final rondas = snapshot.data ?? [];
+    
+            if (rondas.isEmpty) {
+              return Center(
+                child: Text('No hay rondas'),
+              );
+            }
+    
+            return ListView.builder(
               // reverse: true,
               itemCount: rondas.length,
               itemBuilder: (context, index) {
-                final item = rondas[rondas.length - 1 - index]; // Obtener elementos en orden inverso
+                final item = rondas[rondas.length -
+                    1 -
+                    index]; // Obtener elementos en orden inverso
                 final id = item['Id'];
                 final ubi = item['NameUbicacion'];
                 final descripcion = item['descripcion'];
                 final fechaCrea = item['Ubicacion']['fecha_crea'];
-
+    
                 return GestureDetector(
                   onTap: () {
                     rondasProvider.selectedItem = item!;
@@ -117,8 +118,8 @@ class RondasListView extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    
-                    margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                    margin:
+                        const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                     ),
@@ -135,12 +136,10 @@ class RondasListView extends StatelessWidget {
                   ),
                 );
               },
-            ),
-          );
-        }
-      },
+            );
+          }
+        },
+      ),
     );
   }
 }
-
-

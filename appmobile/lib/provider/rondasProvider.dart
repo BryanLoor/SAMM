@@ -206,6 +206,7 @@ class RondasProvider with ChangeNotifier {
     ApiService apiService,
     int idRonda,
     int idAgente,
+    List<Map<String,dynamic>> puntos
   ) async {
     var sharedPreferences = await SharedPreferences.getInstance();
     var token = sharedPreferences.getString("token") ?? "";
@@ -213,9 +214,20 @@ class RondasProvider with ChangeNotifier {
       "idRonda": idRonda,
       "idAgente": idAgente,
     };
+    var dataBitacora = {
+      "idRonda": idRonda,
+      "idAgente": idAgente,
+      "puntos":puntos
+    };
+    
+    try {
     await apiService.postData('/rondas/guardarGuardiasPorRonda', data,token);
+    await apiService.postData('/rondas/insertPuntosBitacora', dataBitacora, token);
+    } catch (e) {
+      print(e); 
+      throw Exception('Error al asignar, no puede volver a asignar el mismo guardia');      
+    }
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
-
   }
 
   Future<void> enviarNuevoPunto(
@@ -296,7 +308,9 @@ class RondasProvider with ChangeNotifier {
     String fechaInicio,
     String fechaFinal,
     String frecuencia,
-    String diaSemana
+    String diaSemana,
+    String numDiaMes
+    
   ) async {
     var sharedPreferences = await SharedPreferences.getInstance();
     var token = sharedPreferences.getString("token") ?? "";
@@ -307,7 +321,8 @@ class RondasProvider with ChangeNotifier {
       "FechaInicio" : fechaInicio,
       "FechaFin" : fechaFinal,
       "Frecuencia" : frecuencia,
-      "DiaSemana":diaSemana
+      "DiaSemana":diaSemana,
+      "NumDiaMes":numDiaMes
     };
     var response = await apiService.postData('/rondas/crearRonda', data,token);
     // var response = await apiService.getData('/visitas/getAllBitacoraVisitasCondense', token);
@@ -348,7 +363,9 @@ class RondasProvider with ChangeNotifier {
     String fechaInicio,
     String fechaFinal,
     String frecuencia,
-    String diaSemana
+    String diaSemana,
+    String numDiaMes
+
   ) async {
      enviarNuevaRonda(
       apiService, 
@@ -358,7 +375,9 @@ class RondasProvider with ChangeNotifier {
       fechaInicio,
       fechaFinal,
       frecuencia,
-      diaSemana
+      diaSemana,
+      numDiaMes
+
 
     ).then((idRonda){
       coordenadas.forEach((coordenada) {

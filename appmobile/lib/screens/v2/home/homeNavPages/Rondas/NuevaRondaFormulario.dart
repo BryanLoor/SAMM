@@ -42,10 +42,14 @@ class Formulario_crea_Ronda extends StatefulWidget {
 class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
   final TextEditingController _fechaInicioController = TextEditingController();
   final TextEditingController _fechaFinalController = TextEditingController();
-  final TextEditingController _diasController = TextEditingController();
+  final TextEditingController _diaSemanaController = TextEditingController();
+  final TextEditingController _numDiaMesController = TextEditingController();
+
   String selectedFrecuencia = "Diario";
   int selectedLocation = 1;
-  bool needDia = false;
+  bool needDiaSemana = false;
+  bool needDiaMes = false;
+
   bool rangoFechaValido = false;
 
   TextEditingController descriptionController = TextEditingController();
@@ -54,6 +58,7 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  dynamic botonEnable = null;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -79,23 +84,115 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
 
     _fechaInicioController.text = formattedDate;
     _fechaFinalController.text = formattedDate;
-    _diasController.text = "";
+    _diaSemanaController.text = "";
+    _numDiaMesController.text = "";
   }
 
   @override
   Widget build(BuildContext context) {
     RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
     ApiService apiService = Provider.of<ApiService>(context);
-    return SingleChildScrollView(
-      child: Column(
+    return Expanded(
+      child: ListView(
+        //mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField(
+                  decoration: InputDecoration(
+                      label: Text(
+                    "Frecuencia",
+                  )),
+                  value: selectedFrecuencia.isEmpty
+                      ? "Diario"
+                      : selectedFrecuencia,
+                  items: frecuencias.map((_frecuencia) {
+                    return DropdownMenuItem(
+                      value: _frecuencia,
+                      child: Text(_frecuencia),
+                    );
+                  }).toList(),
+                  hint: const Text('Selecciona una frecuencia'),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFrecuencia = value as String;
+                      if (selectedFrecuencia == "Diario" ||
+                          selectedFrecuencia == "Dias Laborales") {
+                        needDiaSemana = false;
+                        needDiaMes = false;
+                        _diaSemanaController.text = "";
+                        _numDiaMesController.text = "";
+                      } else if (selectedFrecuencia == "Mensual") {
+                        needDiaSemana = false;
+                        needDiaMes = true;
+                        _diaSemanaController.text = "";
+                        if (haPasadoAlMenosUnMes() == false) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Center(
+                                  child: Text(
+                                      "Si selecciona una frecuencia mensual, debe al menos tener 1 mes de duración y los días deben coincidir"),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Ok'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          rangoFechaValido = false;
+                        } else
+                          rangoFechaValido = true;
+                      } else {
+                        needDiaMes = false;
+                        needDiaSemana = true;
+                      }
+                    });
+                  },
+                ),
+              ),
+              needDiaSemana
+                  ? IconButton(
+                      onPressed: () => _selectDay(_diaSemanaController),
+                      icon: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text("Dia de la semana"),
+                          Icon(Icons.calendar_month_outlined),
+                          Text(_diaSemanaController.text)
+                        ],
+                      ))
+                  : needDiaMes
+                      ? IconButton(
+                          onPressed: () => _selectDayMes(_numDiaMesController),
+                          icon: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Dia del mes"),
+                              Icon(Icons.calendar_month_outlined),
+                              Text(_numDiaMesController.text)
+                            ],
+                          ))
+                      : SizedBox(
+                          width: 0,
+                        )
+            ],
+          ),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
                 children: [
                   Text(
-                    "Fecha icicial\n${_fechaInicioController.text}",
+                    "Fecha inicial\n${_fechaInicioController.text}",
                     style: const TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
                   ),
@@ -129,55 +226,6 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
             ],
           ),
           const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField(
-                  decoration: InputDecoration(
-                  
-                      label: Text(
-                    "Frecuencia",
-                  )),
-                  value:
-                      selectedFrecuencia == "" ? "Diario" : selectedFrecuencia,
-                  items: frecuencias.map((_frecuencia) {
-                    return DropdownMenuItem(
-                      value: _frecuencia,
-                      child: Text(_frecuencia),
-                    );
-                  }).toList(),
-                  hint: const Text('Selecciona una frecuencia'),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedFrecuencia = value as String;
-                      if (selectedFrecuencia == "Diario" ||
-                          selectedFrecuencia == "Dias Laborales") {
-                        _diasController.text = "";
-                        needDia = false;
-                      } else
-                        needDia = true;
-                    });
-                    print(selectedFrecuencia);
-                  },
-                ),
-              ),
-              needDia
-                  ? IconButton(
-                      onPressed: () => _selectDay(_diasController),
-                      icon: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text("Dia de la semana"),
-                          Icon(Icons.calendar_month_outlined),
-                          Text(_diasController.text)
-                        ],
-                      ))
-                  : SizedBox(
-                      width: 0,
-                    )
-            ],
-          ),
           Form(
             key: _formKey,
             child: TextFormField(
@@ -191,7 +239,6 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
               },
             ),
           ),
-          
           const SizedBox(height: 20),
           DropdownButtonFormField(
             value: selectedLocation,
@@ -208,55 +255,88 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
               });
             },
           ),
-          Container(
-            margin: EdgeInsets.only(top: 20),
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[900],
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+          Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 20),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[900],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  onPressed: rangoFechaValido &&
+                          _formKey.currentState?.validate() == true &&
+                          validarBoton()
+                      ? () async {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) =>
+                                const CircularProgressIndicator(),
+                          );
+    
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          // int userId = prefs.getInt('userId');
+                          DateTime fechaIni= DateTime.parse(_fechaInicioController.text);
+    
+                          //final fechaIniNextMonth = DateTime(fechaIni.year, fechaIni.month + 1,fechaIni.day);
+                          
+                          await rondasProvider.enviarNuevaRonda(
+                              apiService,
+                              prefs.getInt('Id') ?? 0,
+                              selectedLocation,
+                              descriptionController.text,
+                              _fechaInicioController.text,
+                              //fechaIniNextMonth.toString(),
+                              _fechaFinalController.text,
+                              selectedFrecuencia.toUpperCase(),
+                              _diaSemanaController.text.toUpperCase(),
+                              _numDiaMesController.text);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          // show snackbar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              
+                              content: Text('Ronda creada correctamente'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          setState(() {
+                            rondasProvider.getRondasList(apiService);
+                          });
+                        }
+                      : null,
+                  child: Text('Enviar'),
                 ),
               ),
-              onPressed: rangoFechaValido &&
-                      _formKey.currentState?.validate() == true && ((needDia==false && _diasController.text=="")|| (needDia==true && _diasController.text!=""))
-                  ? () async {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) => const CircularProgressIndicator(),
-                      );
-    
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      // int userId = prefs.getInt('userId');
-                      await rondasProvider.enviarNuevaRonda(
-                          apiService,
-                          prefs.getInt('Id') ?? 0,
-                          selectedLocation,
-                          descriptionController.text,
-                          _fechaInicioController.text,
-                          _fechaFinalController.text,
-                          selectedFrecuencia.toUpperCase(),
-                          _diasController.text.toUpperCase());
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      // show snackbar
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Ronda creada correctamente'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    }
-                  : null,
-              child: const Text('Enviar'),
-            ),
+              validarBoton()
+                  ? SizedBox()
+                  : Text(
+                      "*Seleccione los dias de la semana o del mes",
+                      style: TextStyle(color: Colors.red),
+                    ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  bool validarBoton() {
+    bool result = true;
+    setState(() {
+      if (needDiaMes == true && _numDiaMesController.text == "")
+        result = false;
+      else if (needDiaSemana == true && _diaSemanaController.text == "")
+        result = false;
+    });
+    return result;
   }
 
   _selectDay(TextEditingController? controller) {
@@ -306,11 +386,13 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
                           child: Text(
                         day,
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500,color: Colors.white),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
                       ))),
                   onTap: () {
                     setState(() {
-                      _diasController.text = day;
+                      _diaSemanaController.text = day;
                     });
 
                     // You can update your controller or perform any other action here
@@ -326,7 +408,7 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
   }
 
   Future<void> _selectDatePicker(TextEditingController controller) async {
-    DateTime selectedDate = DateTime.now();
+    DateTime selectedDate = DateTime.parse(_fechaFinalController.text);
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
@@ -341,11 +423,12 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
         Duration diferencia = DateTime.parse(_fechaFinalController.text)
             .difference(DateTime.parse(_fechaInicioController.text));
 
+        bool validarDuracionMes = haPasadoAlMenosUnMes();
+       
         // Obtiene el número de días de la diferencia
         int cantidadDias = diferencia.inDays;
         if (cantidadDias > 365) {
           controller.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
-          ;
           showDialog(
             context: context,
             builder: (context) {
@@ -360,9 +443,69 @@ class _Formulario_crea_RondaState extends State<Formulario_crea_Ronda> {
               );
             },
           );
+          
+          rangoFechaValido = false;
+        } else if (needDiaMes && validarDuracionMes == false) {
+          controller.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Center(
+                  child: Text(
+                      "Si selecciona una frecuencia mensual, debe al menos tener 1 mes de duración y los días deben coincidir"),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Ok'),
+                  ),
+                ],
+              );
+            },
+          );
           rangoFechaValido = false;
         } else
           rangoFechaValido = true;
+      });
+    }
+  }
+
+  bool haPasadoAlMenosUnMes() {
+
+    DateTime fechaInicial = DateTime.parse(_fechaInicioController.text);
+    DateTime fechaFinal = DateTime.parse(_fechaFinalController.text);
+    print(fechaFinal.month+3);
+    print("+++++++++++++++++++++++++++++");
+    if (fechaFinal.year > fechaInicial.year) {
+      // Si el año final es mayor, ha pasado al menos un mes.
+      return true;
+    } else if (fechaFinal.year == fechaInicial.year) {
+      // Si el año es el mismo, comparamos los meses.
+      if (fechaFinal.month > fechaInicial.month) {
+        // Si el mes final es mayor, ha pasado al menos un mes.
+        if (fechaFinal.day == fechaInicial.day) return true;
+      }
+    }
+    // Si no se cumple ninguna de las condiciones anteriores, no ha pasado un mes.
+    return false;
+  }
+
+  Future<void> _selectDayMes(TextEditingController controller) async {
+    DateTime currentDate = DateTime.now();
+    DateTime selectedDate = DateTime.now();
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(currentDate.year, currentDate.month, 1),
+      lastDate: DateTime(currentDate.year, currentDate.month + 1, 0),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        _numDiaMesController.text = picked.day.toString();
       });
     }
   }

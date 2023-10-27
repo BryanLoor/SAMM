@@ -116,6 +116,7 @@ class _CrearRondaState extends State<CrearRonda> {
                               DateTime.now().toString(),
                               DateTime.now().toString(),
                               "DIARIO",
+                              "",
                               ""
                               
 

@@ -17,6 +17,7 @@ class SAMM_Ronda(db.Model):
     FechaFin = db.Column(db.DateTime)
     Frecuencia = db.Column(db.String(50))
     diaSemana = db.Column(db.String(50),nullable=True)
+    NumDiaMes = db.Column(db.Integer)
     IdUsuarioSupervisor = db.Column(db.Integer)
 
 class SAMM_RondaSchema(ma.SQLAlchemyAutoSchema):

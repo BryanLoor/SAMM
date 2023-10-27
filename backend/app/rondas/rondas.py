@@ -183,11 +183,8 @@ def crearRonda():
     ronda.FechaFin = request.json['FechaFin']
     ronda.Frecuencia = request.json['Frecuencia'] 
     ronda.diaSemana = request.json['DiaSemana'] or None
-    
-    
+    ronda.NumDiaMes = request.json['NumDiaMes'] or None
 
-   
-   
    
     db.session.add(ronda)
     db.session.commit()

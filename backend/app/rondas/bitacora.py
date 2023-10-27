@@ -6,8 +6,8 @@ from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 
-from app.models.SAMM_BitacoraRecorrido import SAMM_BitacoraRecorrido
-from app.models.SAMM_Bitacora_RecorridoDetalle import SAMM_Bitacora_RecorridoDetalle
+from app.models.SAMM_BitacoraRecorrido import SAMM_BitacoraRecorrido,SAMM_BitacoraRecorridoSchema
+from app.models.SAMM_Bitacora_RecorridoDetalle import SAMM_Bitacora_RecorridoDetalle,SAMM_Bitacora_RecorridoDetalleSchema
 from app.models.SAMM_Usuario import SAMM_Usuario
 from app.models.SAMM_Ronda import SAMM_Ronda
 from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto,SAMM_Ronda_PuntoSchema
@@ -123,7 +123,7 @@ def getBitacoraRecorrido():
 
 
     
-@bp.route('/insertPuntosBitacoraDetalle', methods=['POST'])
+@bp.route('/insertPuntosBitacora', methods=['POST'])
 @cross_origin()
 @jwt_required()
 def insertPuntosBitacoraDetalle():
@@ -131,7 +131,7 @@ def insertPuntosBitacoraDetalle():
         user= SAMM_Usuario.query.filter_by(Codigo=get_jwt_identity()).first()
         if(user.Id is None): return jsonify({"message":"Usuario  no existe"}),400
     
-        idGuardia=request.json["idGuardia"]
+        idAgente=request.json["idAgente"]
         idRonda=request.json["idRonda"]
         puntos= request.json["puntos"]
         print(puntos)
@@ -161,10 +161,10 @@ def insertPuntosBitacoraDetalle():
         dias_semana = {
             "LUNES": 0,
             "MARTES": 1,
-            "MIÉRCOLES": 2,
+            "MIERCOLES": 2,
             "JUEVES": 3,
             "VIERNES": 4,
-            "SÁBADO": 5,
+            "SABADO": 5,
             "DOMINGO": 6
         }
         if frecuencia == "DIARIO":
@@ -188,29 +188,26 @@ def insertPuntosBitacoraDetalle():
         elif frecuencia == "MENSUAL":
             # Lógica para frecuencia mensual (agregar según día del mes)
             # Asumiendo que diaMes es un número de día válido
-            diaMes=ronda.diaSemana
-            print("++++++++++++++++++++")
-            print(fechaInicio.day)
-            print(diaMes)
-            print("++++++++++++++++++++")
-            '''if diaSemana.upper() in dias_semana:
+            diaMes=ronda.NumDiaMes
+            #if diaSemana.upper() in dias_semana:
 
-                while fechaInicio < fechaFin:
-                    # Verificar que sea el día del mes correcto
-                    if fechaInicio.weekday() == diaMes:
-                        fechas.append(fechaInicio)
-                        break
-                    fechaInicio += delta
-            else:
-                return jsonify({'message': 'Nombre de día no válido'}), 400'''
+            while fechaInicio <= fechaFin:
+                # Verificar que sea el día del mes correcto
+                if fechaInicio.day == diaMes:
+                    fechas.append(fechaInicio)
+                    break
+                fechaInicio += delta
+            #else:
+            #    return jsonify({'message': 'Nombre de día no válido'}), 400
         else:
             return jsonify({'message': 'Frecuencia no válida'}), 400
 
          # Insertar registros en SAMM_BitacoraRecorrido y SAMM_Bitacora_RecorridoDetalle
+        print(fechas)
         for fecha in fechas:
             # Insertar en SAMM_BitacoraRecorrido
             bitacora_recorrido = SAMM_BitacoraRecorrido(
-                IdAgente=idGuardia,
+                IdAgente=idAgente,
                 IdRonda=idRonda,
                 UsuCrea=user.Id,
                 UsuMod=user.Id,
@@ -220,15 +217,17 @@ def insertPuntosBitacoraDetalle():
                 FechaRecorrido=fecha
             )
             db.session.add(bitacora_recorrido)
+            db.session.commit()
+
+
             for punto in puntos:
-                print(punto)     
-                print(fecha)           
+                    
                 # Insertar en SAMM_Bitacora_RecorridoDetalle (ejemplo)
                 bitacora_detalle = SAMM_Bitacora_RecorridoDetalle(
-                    IdUsuario=idGuardia,
+                    IdUsuario=idAgente,
                     IdRonda=idRonda,
                     Estado="POR INICIAR",
-                    IdPuntoRonda=punto["idPunto"],  # Reemplazar con el valor correcto
+                    IdPuntoRonda=punto["Id"],  # Reemplazar con el valor correcto
                     Codigo="ABC",   # Reemplazar con el valor correcto
                     Descripcion=punto["Descripcion"],
                     FotoURL="url",
@@ -240,10 +239,11 @@ def insertPuntosBitacoraDetalle():
                 )
                 db.session.add(bitacora_detalle)
 
+
         # Confirmar cambios en la base de datos
         db.session.commit()
 
-        return jsonify({'message': 'Registros insertados correctamente'}), 200
+        return jsonify({'message': 'Registros insertados correctamente',}), 200
 
     except Exception as e:
         return jsonify({'message': str(e)}), 500

@@ -16,12 +16,11 @@ class RondaDetalle extends StatefulWidget {
   final int idRonda;
   final String nombreRonda;
   final String descripcionRonda;
-  const RondaDetalle({
-    required this.idRonda,
-    required this.nombreRonda,
-    required this.descripcionRonda,
-    super.key
-  });
+  const RondaDetalle(
+      {required this.idRonda,
+      required this.nombreRonda,
+      required this.descripcionRonda,
+      super.key});
 
   @override
   State<RondaDetalle> createState() => _RondaDetalleState();
@@ -32,7 +31,8 @@ class _RondaDetalleState extends State<RondaDetalle> {
 
   @override
   void initState() {
-    MainProvider mainProvider = Provider.of<MainProvider>(context, listen: false);
+    MainProvider mainProvider =
+        Provider.of<MainProvider>(context, listen: false);
     mainProvider.canedit().then((value) => canedit = value);
     super.initState();
   }
@@ -42,15 +42,17 @@ class _RondaDetalleState extends State<RondaDetalle> {
   Widget build(BuildContext context) {
     RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
     ApiService apiService = Provider.of<ApiService>(context);
-    MapviewController mapviewController = Provider.of<MapviewController>(context);
+    MapviewController mapviewController =
+        Provider.of<MapviewController>(context);
     return Scaffold(
       appBar: CustomAppBar(),
-
-
+    
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: ()async {
-          var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
-          final positionList = mapviewController.setMarkersByPositionList(listarondas);
+        onPressed: () async {
+          var listarondas = await rondasProvider.getRondaPoints(
+              apiService, widget.idRonda.toString());
+          final positionList =
+              mapviewController.setMarkersByPositionList(listarondas);
           mapviewController.menuselection = 4;
           Navigator.push(
             context,
@@ -61,11 +63,19 @@ class _RondaDetalleState extends State<RondaDetalle> {
             ),
           );
         },
-        label:  Row(
+        label: Row(
           children: [
-            Text('ver en el mapa', style: TextStyle(color: Colors.white),),
-            SizedBox(width: 10,),
-            Icon(Icons.map, color: Colors.white,)
+            Text(
+              'ver en el mapa',
+              style: TextStyle(color: Colors.white),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Icon(
+              Icons.map,
+              color: Colors.white,
+            )
           ],
         ),
         backgroundColor: Colors.blue[900],
@@ -96,8 +106,7 @@ class _RondaDetalleState extends State<RondaDetalle> {
       //     //   child: Text("Rondas"),
       //     //   value: 0,
       //     // ),
-
-
+    
       //     // tabMenuView == TabMenu.Puntos?
       //     // const PopupMenuItem(
       //     //   child: Row(
@@ -108,8 +117,7 @@ class _RondaDetalleState extends State<RondaDetalle> {
       //     //   ),
       //     //   value: 0,
       //     // )
-
-
+    
       //     // :PopupMenuItem(
       //     //   child: Row(
       //     //     children: [
@@ -119,7 +127,7 @@ class _RondaDetalleState extends State<RondaDetalle> {
       //     //   ),
       //     //   value: 1,
       //     // ),
-          
+    
       //     PopupMenuItem(
       //       child: Row(
       //         children: [
@@ -129,7 +137,7 @@ class _RondaDetalleState extends State<RondaDetalle> {
       //       ),
       //       value: 2,
       //     ),
-
+    
       //   ],
       //   onSelected: (value) async{
       //       switch (value) {
@@ -157,29 +165,26 @@ class _RondaDetalleState extends State<RondaDetalle> {
       //           // tabMenuView = TabMenu.Guardias;
       //           break;
       //         case 2:
-                // var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
-                // final positionList = mapviewController.setMarkersByPositionList(listarondas);
-                // mapviewController.menuselection = 4;
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => MapView(
-                //       idRonda: widget.idRonda,
-                //     ),
-                //   ),
-                // );
+      // var listarondas = await rondasProvider.getRondaPoints(apiService, widget.idRonda.toString());
+      // final positionList = mapviewController.setMarkersByPositionList(listarondas);
+      // mapviewController.menuselection = 4;
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => MapView(
+      //       idRonda: widget.idRonda,
+      //     ),
+      //   ),
+      // );
       //           break;
       //         default:
       //       }
       //     setState(() {
-            
+    
       //     });
       //   },
       // ),
-
-
-
-
+    
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -187,7 +192,7 @@ class _RondaDetalleState extends State<RondaDetalle> {
               decoration: BoxDecoration(
                 color: Colors.white,
               ),
-               width: double.infinity,
+              width: double.infinity,
               child: Center(
                 child: Text(
                   '${widget.descripcionRonda} ',
@@ -202,7 +207,7 @@ class _RondaDetalleState extends State<RondaDetalle> {
               decoration: BoxDecoration(
                 color: Colors.white,
               ),
-               width: double.infinity,
+              width: double.infinity,
               child: Center(
                 child: Text(
                   '${widget.nombreRonda} ',
@@ -214,58 +219,44 @@ class _RondaDetalleState extends State<RondaDetalle> {
               ),
             ),
             Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              width: double.infinity,
-              child: Center(
-                child: SegmentedButton<TabMenu>(
-                  segments: const <ButtonSegment<TabMenu>>[
-                    ButtonSegment<TabMenu>(
-                      value: TabMenu.Puntos,
-                      label: Text('Puntos'),
-                      icon: Icon(Icons.location_on_outlined)
-                    ),
-                    ButtonSegment<TabMenu>(
-                      value: TabMenu.Guardias,
-                      label: Text('Guardias'),
-                      icon: Icon(Icons.shield_outlined)
-                    ),
-                  ],
-                  selected: <TabMenu>{tabMenuView},
-                  selectedIcon: tabMenuView == TabMenu.Puntos 
-                    ? Icon(Icons.location_on) 
-                    : Icon(Icons.shield),
-                  onSelectionChanged: (Set<TabMenu> newSelection) {
-                    setState(() {
-                      // By default there is only a single segment that can be
-                      // selected at one time, so its value is always the first
-                      // item in the selected set.
-                      tabMenuView = newSelection.first;
-                    });
-                    
-                  },
+                decoration: BoxDecoration(
+                  color: Colors.white,
                 ),
-              )
-            ),
-          
-            if (tabMenuView == TabMenu.Guardias) 
+                width: double.infinity,
+                child: Center(
+                  child: SegmentedButton<TabMenu>(
+                    segments: const <ButtonSegment<TabMenu>>[
+                      ButtonSegment<TabMenu>(
+                          value: TabMenu.Puntos,
+                          label: Text('Puntos'),
+                          icon: Icon(Icons.location_on_outlined)),
+                      ButtonSegment<TabMenu>(
+                          value: TabMenu.Guardias,
+                          label: Text('Guardias'),
+                          icon: Icon(Icons.shield_outlined)),
+                    ],
+                    selected: <TabMenu>{tabMenuView},
+                    selectedIcon: tabMenuView == TabMenu.Puntos
+                        ? Icon(Icons.location_on)
+                        : Icon(Icons.shield),
+                    onSelectionChanged: (Set<TabMenu> newSelection) {
+                      setState(() {
+                        // By default there is only a single segment that can be
+                        // selected at one time, so its value is always the first
+                        // item in the selected set.
+                        tabMenuView = newSelection.first;
+                      });
+                    },
+                  ),
+                )),
+            if (tabMenuView == TabMenu.Guardias)
               GuardiasView(idRonda: widget.idRonda)
-            else if (tabMenuView == TabMenu.Puntos) 
+            else if (tabMenuView == TabMenu.Puntos)
               PuntosView(idRonda: widget.idRonda),
-      
-      
             if (tabMenuView == TabMenu.Puntos && canedit)
-            BotonAgregarPunto(
-              apiService: apiService, 
-              widget: widget
-            ),
-
-            if (tabMenuView == TabMenu.Guardias  && canedit)
-            BotonAgregarGuardia(
-              apiService: apiService, 
-              widget: widget
-            ),
+              BotonAgregarPunto(apiService: apiService, widget: widget),
+            if (tabMenuView == TabMenu.Guardias && canedit)
+              BotonAgregarGuardia(apiService: apiService, widget: widget),
           ],
         ),
       ),
@@ -286,7 +277,7 @@ class BotonAgregarPunto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () { 
+      onPressed: () {
         showDialog(
           context: context,
           builder: (context) {
@@ -312,12 +303,15 @@ class BotonAgregarPunto extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     Navigator.pop(context, 'Aceptar');
-                    MapviewController mapviewcontroller = Provider.of<MapviewController>(context, listen: false);
-                    RondasProvider rondasProvider = Provider.of<RondasProvider>(context, listen: false);
+                    MapviewController mapviewcontroller =
+                        Provider.of<MapviewController>(context, listen: false);
+                    RondasProvider rondasProvider =
+                        Provider.of<RondasProvider>(context, listen: false);
 
                     try {
                       var pos = await mapviewcontroller.determinePosition();
-                      String puntoNombre = puntoController.text; // Obtener el nombre del punto desde el TextField
+                      String puntoNombre = puntoController
+                          .text; // Obtener el nombre del punto desde el TextField
 
                       await rondasProvider.enviarNuevoPunto(
                         apiService,
@@ -352,13 +346,11 @@ class BotonAgregarPunto extends StatelessWidget {
             );
           },
         );
-
       },
       child: const Text('agregar punto'),
     );
   }
 }
-
 
 class BotonAgregarGuardia extends StatelessWidget {
   const BotonAgregarGuardia({
@@ -373,21 +365,16 @@ class BotonAgregarGuardia extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () { 
+      onPressed: () {
         showModalBottomSheet(
           context: context,
-          builder: (context) => AgregarGuardiaFormulario(idRonda: widget.idRonda),
+          builder: (context) =>
+              AgregarGuardiaFormulario(idRonda: widget.idRonda),
         );
-
       },
       child: const Text('Asignar un Guardia'),
     );
   }
 }
 
-
-
-
-enum TabMenu { Puntos, Guardias}
-
-
+enum TabMenu { Puntos, Guardias }

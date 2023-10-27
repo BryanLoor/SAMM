@@ -183,12 +183,9 @@ class _VisitasPage extends State<VisitasPage>
     // TabMenu tabMenuView = TabMenu.Personas;
     Future<void> _refreshData() async {
     // Simula la carga de nuevos datos o una operación de actualización
-    await Future.delayed(Duration(seconds: 1));
 
     setState(() {
-      // Agrega nuevos elementos o actualiza la lista
-      //visitasProvider.visitaListFuture= visitasProvider.getVisitaList(ApiService());
-    });
+        });
   }
     return Column(
       children: [
