@@ -17,6 +17,10 @@ class LoginResponse {
     final int id;
     final String nombres;
     final String accessToken;
+    final String identificacion;
+    final String telefono;
+    final String correo;
+    
 
     LoginResponse({
         required this.apellidos,
@@ -26,6 +30,10 @@ class LoginResponse {
         required this.id,
         required this.nombres,
         required this.accessToken,
+        required this.identificacion,
+        required this.telefono,
+        required this.correo,
+        
     });
 
     LoginResponse copyWith({
@@ -36,6 +44,10 @@ class LoginResponse {
         int? id,
         String? nombres,
         String? accessToken,
+        String? identificacion,
+        String? telefono,
+        String? correo,
+        
     }) => 
         LoginResponse(
             apellidos: apellidos ?? this.apellidos,
@@ -45,6 +57,11 @@ class LoginResponse {
             id: id ?? this.id,
             nombres: nombres ?? this.nombres,
             accessToken: accessToken ?? this.accessToken,
+            identificacion: identificacion ?? this.identificacion,
+            telefono: telefono ?? this.telefono,
+            correo: correo ?? this.correo,
+            
+            
         );
 
     factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
@@ -55,6 +72,10 @@ class LoginResponse {
         id: json["Id"],
         nombres: json["Nombres"],
         accessToken: json["access_token"],
+        identificacion: json["Identificacion"],
+        telefono: json["Telefono"],
+        correo: json["Correo"],
+        
     );
 
     Map<String, dynamic> toJson() => {
@@ -65,5 +86,9 @@ class LoginResponse {
         "Id": id,
         "Nombres": nombres,
         "access_token": accessToken,
+        "Identificacion": identificacion,
+        "Telefono": telefono,
+        "Correo": correo,
+        
     };
 }

@@ -141,6 +141,7 @@ class _LoginPageState extends State<LoginPage> {
       // Navigator.popAndPushNamed(context, Home.routeName);
       isologin = true;
     } catch (e) {
+      print(e);
       _usernameController.clear();
       _passwordController.clear();
       isologin = false;

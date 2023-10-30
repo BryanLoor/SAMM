@@ -39,7 +39,7 @@ def login():
             return jsonify({'message': 'Ingresa la clave'}), 400
         #usuario = SAMM_Usuario.query.filter_by(Codigo=Codigo).first()
         usuario = (
-            db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado, SAMM_Usuario.Id) 
+            db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado, SAMM_Usuario.Id,Persona.Identificacion,Persona.Cel_Personal,Persona.Correo_Personal) 
             .join(Persona, SAMM_Usuario.IdPersona == Persona.Id) 
             .join(SAMM_Rol, SAMM_Usuario.IdPerfil == SAMM_Rol.Id)
             .filter(SAMM_Usuario.Codigo == Codigo)
@@ -71,9 +71,11 @@ def login():
             "Apellidos": usuario[3],
             "Descripcion": usuario[4],
             "Estado": usuario[5],
-            "Id": usuario[6]
+            "Id": usuario[6],
+            "Identificacion":usuario[7],
+            "Telefono":usuario[8],
+            "Correo":usuario[9]
                 }
-    
         return jsonify(response_data), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
@@ -106,7 +108,7 @@ def get_user_data():
         # Verifica que el usuario correspondiente al token actual exista en tu base de datos o sistema.
         # Puedes buscar el usuario por su código de usuario (en este caso, el campo 'Codigo' en los datos del usuario).
         usuario = (
-            db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado, SAMM_Usuario.Id) 
+            db.session.query(SAMM_Usuario.Codigo, SAMM_Usuario.Clave, Persona.Nombres, Persona.Apellidos, SAMM_Rol.Descripcion, SAMM_Usuario.Estado, SAMM_Usuario.Id,Persona.Identificacion,Persona.Cel_Personal,Persona.Correo_Personal) 
             .join(Persona, SAMM_Usuario.IdPersona == Persona.Id) 
             .join(SAMM_Rol, SAMM_Usuario.IdPerfil == SAMM_Rol.Id)
             .filter(SAMM_Usuario.Codigo == current_user)
@@ -122,9 +124,11 @@ def get_user_data():
             "Apellidos": usuario[3],
             "Descripcion": usuario[4],
             "Estado": usuario[5],
-            "Id": usuario[6]
+            "Id": usuario[6],
+            "Identificacion":usuario[7],
+            "Telefono":usuario[8],
+            "Correo":usuario[9]
         }
-
         return jsonify(response_data), 200
 
     except Exception as e:

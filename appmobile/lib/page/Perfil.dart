@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 // import 'package:sammseguridad_apk/widgets/Drawer.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:sammseguridad_apk/provider/mainprovider.dart';
+import 'package:sammseguridad_apk/screens/logins/LoginResponse.dart';
 
-class PerfilPage extends StatelessWidget {
+class PerfilPage extends StatefulWidget {
+  
   const PerfilPage({Key? key}) : super(key: key);
 
   @override
+  State<PerfilPage> createState() => _PerfilPageState();
+}
+
+class _PerfilPageState extends State<PerfilPage> {
+
+  
+
+  @override
   Widget build(BuildContext context) {
+    MainProvider _mainProvider = Provider.of<MainProvider>(context);
     // Generate QR code data
-    final qrData = 'Nombres: María Elena, '
-      'Apellidos: Campuzano Loor, '
-      'Cédula: 1710078239, '
-      'Número de celular: 0987693034, '
-      'Correo electrónico: maelenacampuzano@gmail.com, '
+    final qrData = 'Nombres: ${MainProvider.prefs.getString("Nombres")}, '
+      'Apellidos: ${MainProvider.prefs.getString("Apellidos")}, '
+      'Cédula: ${MainProvider.prefs.getString("Identificacion")}, '
+      'Número de celular: ${MainProvider.prefs.getString("Telefono")}, '
+      'Correo electrónico: ${MainProvider.prefs.getString("Correo")}, '
       'Contraseña: xxxxxxxxxx'; // Replace with your QR data
 
     return Scaffold(
@@ -20,18 +33,18 @@ class PerfilPage extends StatelessWidget {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
+        /*decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/FOTO-1.jpg'),
             fit: BoxFit.cover,
           ),
-        ),
+        ),*/
         child: Center(
           child: Container(
             padding: EdgeInsets.all(10.0),
             margin: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.7),
+              color: Colors.blueGrey.withOpacity(0.7),
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: ListView(
@@ -47,16 +60,13 @@ class PerfilPage extends StatelessWidget {
                       data: qrData,
                       version: QrVersions.auto,
                       backgroundColor: Colors.white,
+
                       foregroundColor: Colors.black,
                     ),
                   ),
                 ),
                 SizedBox(height: 20),
-                Text(
-                  'Cuenta123',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 30.0, color: Colors.white),
-                ),
+                
                 SizedBox(height: 10),
                 Text(
                   'Información',
@@ -64,11 +74,11 @@ class PerfilPage extends StatelessWidget {
                   style: TextStyle(fontSize: 25.0, color: Colors.white),
                 ),
                 SizedBox(height: 40),
-                createInfoRow('Nombres:', 'María Elena'),
-                createInfoRow('Apellidos:', 'Campuzano Loor'),
-                createInfoRow('Cédula:', '1710078239'),
-                createInfoRow('Número de celular:', '0987693034'),
-                createInfoRow('Correo electrónico:', 'maelenacampuzano@gmail.com'),
+                createInfoRow('Nombres:', '${MainProvider.prefs.getString("Nombres")}'),
+                createInfoRow('Apellidos:', '${MainProvider.prefs.getString("Apellidos")}'),
+                createInfoRow('Cédula:', '${MainProvider.prefs.getString("Identificacion")}'),
+                createInfoRow('Número de celular:', '${MainProvider.prefs.getString("Telefono")}'),
+                createInfoRow('Correo electrónico:', '${MainProvider.prefs.getString("Correo")}'),
                 createInfoRow('Contraseña:', 'xxxxxxxxxx'),
                 InkWell(
                   onTap: () {

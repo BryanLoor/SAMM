@@ -53,6 +53,10 @@ class MainProvider extends ChangeNotifier {
     await prefs.setInt("Id", loginResponse.id);
     await prefs.setString("Nombres", loginResponse.nombres);
     await prefs.setString("access_token", loginResponse.accessToken);
+    await prefs.setString("Identificacion", loginResponse.identificacion);
+    await prefs.setString("Telefono", loginResponse.telefono);
+    await prefs.setString("Correo", loginResponse.correo);
+    
 
   }
 
@@ -75,6 +79,10 @@ class MainProvider extends ChangeNotifier {
     final id = prefs.getInt("Id");
     final nombres = prefs.getString("Nombres");
     final accessToken = prefs.getString("access_token");
+    final identificacion = prefs.getString("Identificacion");
+    final telefono = prefs.getString("Telefono");
+    final correo = prefs.getString("Correo");
+    
     // print(userInfoString);
     if (accessToken != null) {
       final usInfo = LoginResponse(
@@ -84,7 +92,11 @@ class MainProvider extends ChangeNotifier {
         estado: estado ?? "",
         id: id ?? 0,
         nombres: nombres ?? "",
-        accessToken: accessToken ?? "",
+        accessToken: accessToken ?? "", 
+        identificacion: identificacion?? "", 
+        correo: correo?? "", 
+        telefono: telefono?? "",
+
       );
       return usInfo;
       // return <String, dynamic>{};
@@ -98,6 +110,9 @@ class MainProvider extends ChangeNotifier {
         id: 0,
         nombres: "",
         accessToken: "",
+        identificacion: "",
+        telefono: "",
+        correo: ""
       );
     }
   }
