@@ -44,7 +44,7 @@ class _PerfilPageState extends State<PerfilPage> {
             padding: EdgeInsets.all(10.0),
             margin: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-              color: Colors.blueGrey.withOpacity(0.7),
+              //color: Colors.blueGrey.withOpacity(0.7),
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: ListView(
@@ -60,8 +60,10 @@ class _PerfilPageState extends State<PerfilPage> {
                       data: qrData,
                       version: QrVersions.auto,
                       backgroundColor: Colors.white,
-
-                      foregroundColor: Colors.black,
+                      dataModuleStyle: QrDataModuleStyle(
+                        color: Colors.black,
+                        dataModuleShape: QrDataModuleShape.square
+                      ),
                     ),
                   ),
                 ),
@@ -71,15 +73,19 @@ class _PerfilPageState extends State<PerfilPage> {
                 Text(
                   'Información',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 25.0, color: Colors.white),
+                  style: TextStyle(fontSize: 25.0, color: Colors.black),
                 ),
-                SizedBox(height: 40),
-                createInfoRow('Nombres:', '${MainProvider.prefs.getString("Nombres")}'),
+                SizedBox(height: 20),
+                Column(
+                  children: [
+                    createInfoRow('Nombres:', '${MainProvider.prefs.getString("Nombres")}'),
                 createInfoRow('Apellidos:', '${MainProvider.prefs.getString("Apellidos")}'),
                 createInfoRow('Cédula:', '${MainProvider.prefs.getString("Identificacion")}'),
                 createInfoRow('Número de celular:', '${MainProvider.prefs.getString("Telefono")}'),
                 createInfoRow('Correo electrónico:', '${MainProvider.prefs.getString("Correo")}'),
                 createInfoRow('Contraseña:', 'xxxxxxxxxx'),
+                  ],
+                ),
                 InkWell(
                   onTap: () {
                     // Implementar lógica de cambio de contraseña
@@ -90,7 +96,7 @@ class _PerfilPageState extends State<PerfilPage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -113,7 +119,7 @@ class _PerfilPageState extends State<PerfilPage> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
           Text(
@@ -122,7 +128,7 @@ class _PerfilPageState extends State<PerfilPage> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
         ],

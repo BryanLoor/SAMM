@@ -134,16 +134,12 @@ def insertPuntosBitacoraDetalle():
         idAgente=request.json["idAgente"]
         idRonda=request.json["idRonda"]
         puntos= request.json["puntos"]
-        print(puntos)
         
         #diaSemana=request.json["diaSemana"] or None
         
         # Obtener fechas de inicio y fin desde el frontend
         ronda=SAMM_Ronda.query.filter(SAMM_Ronda.Id==idRonda).first()
-        print("++++++++++++++++++++++++++++++++++++++++++++++")
-        print(ronda)
-        print(ronda.FechaInicio)
-        print(ronda.FechaFin)
+        
         
         fechaInicio = ronda.FechaInicio
         fechaFin = ronda.FechaFin
@@ -230,7 +226,7 @@ def insertPuntosBitacoraDetalle():
                     IdPuntoRonda=punto["Id"],  # Reemplazar con el valor correcto
                     Codigo="ABC",   # Reemplazar con el valor correcto
                     Descripcion=punto["Descripcion"],
-                    FotoURL="url",
+                    FotoURL=None,
                     FechaCreacion=datetime.now(),
                     UsuCreacion=user.Id,
                     FechaModifica=datetime.now(),

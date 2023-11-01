@@ -1,5 +1,7 @@
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,7 +23,9 @@ class RealizarRecorrido extends StatefulWidget {
 }
 
 class _RealizarRecorridoState extends State<RealizarRecorrido> {
-
+  String imageBase64="";
+  List<int>  imageBytes=[];
+  
   late Timer _timer;
   bool _estaCerca = false;
 
@@ -226,7 +230,7 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
                 apiService,
                 int.parse(mapviewController.markerSelected.markerId.value),
                 observacionescontroller.text,
-                "foto"
+                imageBase64
 
               );
               widget.mapviewController.registrarMarkerComoVisitado();
@@ -245,19 +249,34 @@ class _RealizarRecorridoState extends State<RealizarRecorrido> {
     );
   }
 
-  void _openCamera(){
-    // Create an instance of the ImagePicker class
-    final ImagePicker _picker = ImagePicker();
 
-    // Call the pickImage method using the instance
-    // var picture = 
-    _picker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 500,
-      maxHeight: 500,
-    );
-    
+void _openCamera() async {
+  // Create an instance of the ImagePicker class
+  final ImagePicker _picker = ImagePicker();
+
+  // Call the pickImage method using the instance
+  final XFile? pickedFile = await _picker.pickImage(
+    source: ImageSource.camera,
+    maxWidth: 500,
+    maxHeight: 500,
+  );
+  if (pickedFile != null) {
+    // Lee el archivo de la imagen
+    List<int> _imageBytes = await pickedFile.readAsBytes();
+
+    // Convierte los bytes a una cadena Base64
+    String base64String = base64Encode(_imageBytes);
+    imageBytes=_imageBytes;
+    imageBase64=base64String;
+    // Utiliza la cadena Base64 como desees (por ejemplo, guárdala en la base de datos)
+    print('Imagen en bytes: $imageBytes');
+    print('Imagen en Base64: $imageBase64');
+
+  } else {
+    // El usuario canceló la selección de la imagen
+    print('Selección de imagen cancelada');
   }
+}
 
 
   @override

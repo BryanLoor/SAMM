@@ -21,7 +21,6 @@ def updatePuntoBitacoraRecorridoDetalle():
         registro.Estado = request.json.get('Estado')
         registro.Descripcion = request.json.get('Descripcion')
         registro.FotoURL = request.json.get('FotoURL')
-
         db.session.commit()
 
         return jsonify({'message': 'Registro actualizado'}), 200

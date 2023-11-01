@@ -193,13 +193,14 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
   //Cambiar logica , CODIGO por DESCRIPCION, trabajar con los codigos de los roles
-  void verifySession() async {
+  void verifySession()  {
     SharedPreferences.getInstance().then((prefs) {
       final token = prefs.getString('token');
       final descripcion = prefs.getString("Descripcion");
-      print(descripcion);
+      
       if (token != null) {
         if (descripcion == "Administrador") {
+          print("ADMIN");
           _mainnavigationindexprovider.pages = [
             HomePage(),
             RondasPage(),
@@ -214,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
             PerfilPage()
           ];
         }
-        if (descripcion == "Supervisor") {
+        else if (descripcion == "Supervisor") {
           _mainnavigationindexprovider.pages = [
             HomePage(),
             RondasPage(),
@@ -222,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
             PerfilPage()
           ];
         }
-        if (descripcion == "Anfitrión") {
+        else if (descripcion == "Anfitrión") {
           _mainnavigationindexprovider.pages = [
             HomePage(),
             RondasPage(),
@@ -230,13 +231,15 @@ class _LoginPageState extends State<LoginPage> {
             PerfilPage()
           ];
         }
-        if (descripcion == "Visita") {
+        else if (descripcion == "Visita") {
           _mainnavigationindexprovider.pages = [PerfilPage()];
         }
-        if (descripcion == "Agente") {
+        else if (descripcion == "Agente") {
           _mainnavigationindexprovider.pages = [HomePage(), PerfilPage()];
-        }
+        }else _mainnavigationindexprovider.pages = [PerfilPage()];
+        _mainnavigationindexprovider.current=0;
         Navigator.pushReplacementNamed(context, MainPage.routeName);
+
 
       } else {
         Navigator.pushReplacementNamed(context, LoginPage.routeName);

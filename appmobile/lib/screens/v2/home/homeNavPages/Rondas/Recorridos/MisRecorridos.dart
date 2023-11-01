@@ -23,10 +23,7 @@ class MisRecorridos extends StatelessWidget {
       future: fetchMisRecorridos(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            child: CircularProgressIndicator(),
-            height: 10,
-          ); // Muestra un indicador de carga mientras se obtienen los datos.
+          return Center(child: CircularProgressIndicator()); // Muestra un indicador de carga mientras se obtienen los datos.
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {

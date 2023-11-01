@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/page/Perfil.dart';
@@ -23,7 +25,7 @@ Map<String, IconData> icons = {
   "Rondas": Icons.change_circle_outlined,
   "Recorridos": Icons.home_outlined,
   "Perfil": Icons.person,
-  "Home":Icons.home_outlined
+  "Home": Icons.home_outlined
 };
 
 class _NavBarState extends State<NavBar> {
@@ -60,6 +62,8 @@ class _NavBarState extends State<NavBar> {
     ];
     const url = '/menu/getMenu/MOBILE';
     var jwtToken = MainProvider.prefs.getString("token");
+    print(jwtToken);
+    print("****************************");
     //var jwtToken = sharedPreferences.getString("token") ?? "";
 
     //var curretUser = MainProvider.prefs.getString("currentUser");
@@ -86,7 +90,10 @@ class _NavBarState extends State<NavBar> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Muestra un indicador de carga mientras se obtienen los datos
-          return const CircularProgressIndicator();
+          //return const CircularProgressIndicator();
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
           // Manejo de errores si la solicitud falla
           return const Text('Error al traer las opciones');
@@ -104,9 +111,9 @@ class _NavBarState extends State<NavBar> {
             indicatorColor: Colors.blue[800],
             onDestinationSelected: (int index) {
               //setState(() {
-             
+
               mainNavigationIndexProvider.current = index;
-              
+
               //});
             },
             selectedIndex: mainNavigationIndexProvider.current,
