@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
-import 'package:sammseguridad_apk/screens/logins/LoginResponse.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/PuntosDelRecorrido.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MisRecorridos extends StatelessWidget {
+class MisRecorridos extends StatefulWidget {
+  @override
+  State<MisRecorridos> createState() => _MisRecorridosState();
+}
+
+class _MisRecorridosState extends State<MisRecorridos> {
+      TabMenu tabMenuView = TabMenu.MisRecorridos;
+
   @override
   Widget build(BuildContext context) {
     RondasProvider rondasProvider =
@@ -19,92 +23,248 @@ class MisRecorridos extends StatelessWidget {
     MainProvider mainProvider =
         Provider.of<MainProvider>(context, listen: false);
 
-    return FutureBuilder<List<RondaData>>(
-      future: fetchMisRecorridos(context),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator()); // Muestra un indicador de carga mientras se obtienen los datos.
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          final data = snapshot.data;
-          return ListView(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              for (var ronda in data!)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => PuntosConcretosScreen(
-                            rondaNombre: ronda.nombreRonda,
-                            rondaConcretaId: ronda.idRondaBitacora,
+    return RefreshIndicator(
+      onRefresh: () async {
+                    setState(() {
+                      //rondasProvider.getRondasList(apiService);
+                    });
+                  },
+      child: Column(
+        children: [
+          Center(
+              child: SegmentedButton<TabMenu>(
+                style: ButtonStyle(
+                          //backgroundColor: MaterialStateProperty.all(Colors.amber),
+                          foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return Colors.white; // Text color when selected
+                              }
+                              return Colors.black; // Text color when unselected
+                            },
+                          ),
+                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return const Color.fromRGBO(
+                                    13, 71, 161, 1); // Background color when selected
+                              }
+                              return Colors
+                                  .transparent; // Background color when unselected
+                            },
                           ),
                         ),
-                      );
-                    },
-                    child: Card(
+                segments: const <ButtonSegment<TabMenu>>[
+                            ButtonSegment<TabMenu>(
+                                value: TabMenu.MisRecorridos,
+                                label: Text('Mis Recorridos'),
+                                icon: Icon(Icons.history)),
+                            ButtonSegment<TabMenu>(
+                                value: TabMenu.PorRecorrer,
+                                label: Text('Por Recorrer'),
+                                icon: Icon(Icons.pending_actions_outlined)),
+                          ],
+                          selected: <TabMenu>{tabMenuView},
+                          selectedIcon: const Icon(Icons.shield),
+                          onSelectionChanged: (Set<TabMenu> newSelection) {
+                          setState(() {
+                            // By default there is only a single segment that can be
+                            // selected at one time, so its value is always the first
+                            // item in the selected set.
+                            tabMenuView = newSelection.first;
+                          });
+                        },),
                       
-                      margin: EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${ronda.idRondaBitacora} ${ronda.nombreRonda}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
+                          
+            ),
+          Expanded(
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: [FutureBuilder<List<RondaData>>(
+                future: fetchMisRecorridos(context),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator()); // Muestra un indicador de carga mientras se obtienen los datos.
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    final data = snapshot.data!;
+                    // Formato original
+                    DateFormat originalFormat = DateFormat('E, d MMM yyyy HH:mm:ss zzz', 'en');
+                    
+                    // Formato de destino
+                    DateFormat nuevoFormato = DateFormat('yyyy-MM-dd');
+                    print(nuevoFormato.parse(DateTime.now().toString()));
+                    return (tabMenuView == TabMenu.MisRecorridos)?ListView(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        for (var ronda in data)
+            
+                          if (originalFormat.parse(ronda.fechaRecorrido).toLocal().isBefore(nuevoFormato.parse(DateTime.now().toString())))
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PuntosConcretosScreen(
+                                        rondaNombre: ronda.nombreRonda,
+                                        rondaConcretaId: ronda.idRondaBitacora,
+                                      ),
                                     ),
+                                  );
+                                },
+                                child: Card(
+                                  
+                                  margin: EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Flexible(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${ronda.idRondaBitacora} ${ronda.nombreRonda}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                  '${ronda.fechaRecorrido.substring(0, ronda.fechaRecorrido.length - 12)}'),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10.0,
+                                        height: 100,
+                                      ),
+                                      Text(
+                                          '${ronda.nPuntosRecorridos} / ${ronda.nPuntosTotales}'),
+                                      SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      ronda.nPuntosRecorridos==ronda.nPuntosTotales?
+                                      Icon(Icons.check_circle_outline,color: Colors.green,):
+                                      Icon(Icons.check_circle_outline,color: Colors.grey,)
+                                      // SizedBox(width: 10.0,),
+                                    ],
                                   ),
-                                  Text(
-                                      '${ronda.fechaRecorrido.substring(0, ronda.fechaRecorrido.length - 12)}'),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                            height: 100,
-                          ),
-                          Text(
-                              '${ronda.nPuntosRecorridos} / ${ronda.nPuntosTotales}'),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          // SizedBox(width: 10.0,),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-            // itemCount: data?.length,
-            // itemBuilder: (context, index) {
-            //   return Card(
-            // child: ListTile(
-            //   title: Text('Nombre Ronda: ${data?[index].nombreRonda}'),
-            //   subtitle: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Text('Puntos Totales: ${data?[index].nPuntosTotales}'),
-            //       Text('Puntos Recorridos: ${data?[index].nPuntosRecorridos}'),
-            //     ],
-            //   ),
-            // ),
-            //   );
-            // },
-          );
-        }
-      },
+                      ],
+                      // itemCount: data?.length,
+                      // itemBuilder: (context, index) {
+                      //   return Card(
+                      // child: ListTile(
+                      //   title: Text('Nombre Ronda: ${data?[index].nombreRonda}'),
+                      //   subtitle: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Text('Puntos Totales: ${data?[index].nPuntosTotales}'),
+                      //       Text('Puntos Recorridos: ${data?[index].nPuntosRecorridos}'),
+                      //     ],
+                      //   ),
+                      // ),
+                      //   );
+                      // },
+                    ):ListView(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        Text("Aquí verás la ronda diaria y las próximas por hacer",textAlign: TextAlign.center,),
+                        for (int i = data.length - 1; i >= 0; i--)
+                          //ronda=data[i]
+                        //for (var ronda in data)
+                          if (originalFormat.parse(data[i].fechaRecorrido).isAfter(nuevoFormato.parse(DateTime.now().toString())) || (originalFormat.parse(data[i].fechaRecorrido).isAtSameMomentAs(nuevoFormato.parse(DateTime.now().toString())) ))
+            
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: InkWell(
+                                onTap: 1==3?() {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => PuntosConcretosScreen(
+                                        rondaNombre: data[i].nombreRonda,
+                                        rondaConcretaId: data[i].idRondaBitacora,
+                                      ),
+                                    ),
+                                  );
+                                }:null,
+                                child: Card(
+                                  
+                                  margin: EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Flexible(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${data[i].idRondaBitacora} ${data[i].nombreRonda}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                  '${data[i].fechaRecorrido.substring(0, data[i].fechaRecorrido.length - 12)}'),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10.0,
+                                        height: 100,
+                                      ),
+                                      Text(
+                                          '${data[i].nPuntosRecorridos} - ${data[i].nPuntosTotales}'),
+                                      SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      data[i].nPuntosRecorridos==data[i].nPuntosTotales?
+                                      Icon(Icons.check_circle_outline,color: Colors.green,):
+                                      Icon(Icons.check_circle_outline,color: Colors.grey,)
+                                      
+                                      // SizedBox(width: 10.0,),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                      ],
+                      // itemCount: data?.length,
+                      // itemBuilder: (context, index) {
+                      //   return Card(
+                      // child: ListTile(
+                      //   title: Text('Nombre Ronda: ${data?[index].nombreRonda}'),
+                      //   subtitle: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Text('Puntos Totales: ${data?[index].nPuntosTotales}'),
+                      //       Text('Puntos Recorridos: ${data?[index].nPuntosRecorridos}'),
+                      //     ],
+                      //   ),
+                      // ),
+                      //   );
+                      // },
+                    );
+                  }
+                },
+              )],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -169,34 +329,6 @@ class MisRecorridos extends StatelessWidget {
 
     }
   }
-
-  // //TODO: Cambiar la url por la del endpoint o usar el apiservice
-  // Future<List<RondaData>> fetchPuntosDeRonda(context,idRonda,idAgente) async {
-  //   var sharedPreferences = await SharedPreferences.getInstance();
-  //   var jwtToken = sharedPreferences.getString("token") ?? "";
-  //   ApiService apiService = Provider.of<ApiService>(context, listen: false);
-
-  //   Map<String, dynamic> data = {
-  //     "idRonda": idRonda,
-  //     "idAgente": idAgente
-  //   };
-
-  //   Map<String,dynamic> response = await apiService.postData("/rondas/getPuntosRecorridoxRonda", data, jwtToken);
-  //   List<RondaData> rondas = [];
-  //   for (var ronda in response['data']) {
-  //     // recorrer ronda['Puntos'] y contar en una variable los que tengan "Estado": "R"
-  //     int n_puntosRecorridos =  ronda['Puntos'].where((punto) => punto['Estado'] == "R").length;
-
-  //     Map<String, dynamic> converted = {
-  //       "Puntos" : ronda['Puntos'],
-  //       "Nombreronda" : ronda['IdRonda'],
-  //       "n_puntosTotales" : ronda['Puntos'].length,
-  //       "n_puntosRecorridos" : n_puntosRecorridos
-  //     };
-  //     rondas.add(RondaData.fromJson(ronda));
-  //   }
-  //   return rondas;
-  // }
 }
 
 class RondaData {
@@ -230,5 +362,6 @@ class RondaData {
   }
 }
 
+enum TabMenu { MisRecorridos, PorRecorrer }
 
 // idRondaBitacora

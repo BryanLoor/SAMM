@@ -23,7 +23,7 @@ Map<String, IconData> icons = {
   "Bitácora Digital": Icons.menu_book_outlined,
   "Visitas": Icons.car_crash_outlined,
   "Rondas": Icons.change_circle_outlined,
-  "Recorridos": Icons.home_outlined,
+  "Recorridos": Icons.run_circle_outlined,
   "Perfil": Icons.person,
   "Home": Icons.home_outlined
 };
@@ -62,8 +62,7 @@ class _NavBarState extends State<NavBar> {
     ];
     const url = '/menu/getMenu/MOBILE';
     var jwtToken = MainProvider.prefs.getString("token");
-    print(jwtToken);
-    print("****************************");
+
     //var jwtToken = sharedPreferences.getString("token") ?? "";
 
     //var curretUser = MainProvider.prefs.getString("currentUser");
@@ -75,7 +74,6 @@ class _NavBarState extends State<NavBar> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("INICIOOOOOOOOOOOOOOOOOOOOOOO");
     opcionesFuture = getOpciones();
   }
 
@@ -102,8 +100,8 @@ class _NavBarState extends State<NavBar> {
           return const Text('No hay datos disponibles.');
         } else {
           final listaOpt = snapshot.data;
-          print(mainNavigationIndexProvider.pages);
-          print(listaOpt);
+         
+         
 
           return NavigationBar(
             height: 60,

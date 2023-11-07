@@ -35,6 +35,7 @@ def getAllRondas():
         .join(Persona, SAMM_Usuario.IdPersona == Persona.Id, isouter=True)
         .join(SAMM_Ubicacion, SAMM_Ronda.IdUbicacion == SAMM_Ubicacion.Id, isouter=True)
         .join(SAMM_Estados, SAMM_Ronda.Estado == SAMM_Estados.Id)
+        .order_by(SAMM_Ronda.FechaCreacion.desc())  # Ordenar por fecha descendente
         .all()
         )
     

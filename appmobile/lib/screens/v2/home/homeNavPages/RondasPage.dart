@@ -77,7 +77,7 @@ class RondasListView extends StatelessWidget {
         future: rondasProvider.getRondasList(apiService),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Mostrar un indicador de carga mientras se espera la respuesta.
+            return Center(child: CircularProgressIndicator()); // Mostrar un indicador de carga mientras se espera la respuesta.
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
@@ -94,13 +94,11 @@ class RondasListView extends StatelessWidget {
               // reverse: true,
               itemCount: rondas.length,
               itemBuilder: (context, index) {
-                final item = rondas[rondas.length -
-                    1 -
-                    index]; // Obtener elementos en orden inverso
+                final item = rondas[index]; // Obtener elementos en orden inverso
                 final id = item['Id'];
                 final ubi = item['NameUbicacion'];
                 final descripcion = item['descripcion'];
-                final fechaCrea = item['Ubicacion']['fecha_crea'];
+                final fechaCrea = item['FechaCreacion'];
     
                 return GestureDetector(
                   onTap: () {

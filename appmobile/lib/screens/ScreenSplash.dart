@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/page/MainPage.dart';
 import 'package:sammseguridad_apk/page/Perfil.dart';
+import 'package:sammseguridad_apk/page/home/HomePageAdmin.dart';
+import 'package:sammseguridad_apk/page/home/HomePageAgente.dart';
+import 'package:sammseguridad_apk/page/home/HomePageAnfitrion.dart';
+import 'package:sammseguridad_apk/page/home/HomePageSupervisor.dart';
 import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeVisitas.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/MisRecorridos.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/RondasPage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/homePage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/visitasPage.dart';
@@ -76,18 +81,20 @@ class _ScreenSplashState extends State<ScreenSplash> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final descripcion = prefs.getString("Descripcion");
+    print(token);
+    print("+++++++++++++++++++++");
     bool canrefresh = await refreshToken(token??"");
     if (token != null && canrefresh) {
         if (descripcion == "Administrador") {
           _mainnavigationindexprovider.pages = [
-            HomePage(),
+            HomePageAdmin(),
             RondasPage(),
             VisitasPage(),
             PerfilPage()
           ];
         } else if (descripcion == "Anfitrión") {
           _mainnavigationindexprovider.pages = [
-            HomePage(),
+            HomePageAnfitrion(),
             RondasPage(),
             VisitasPage(),
             PerfilPage()
@@ -95,25 +102,18 @@ class _ScreenSplashState extends State<ScreenSplash> {
         }
         if (descripcion == "Supervisor") {
           _mainnavigationindexprovider.pages = [
-            HomePage(),
+            HomePageSupervisor(),
             RondasPage(),
             VisitasPage(),
             PerfilPage()
           ];
         }
-        if (descripcion == "Anfitrión") {
-          _mainnavigationindexprovider.pages = [
-            HomePage(),
-            RondasPage(),
-            VisitasPage(),
-            PerfilPage()
-          ];
-        }
+        
         if (descripcion == "Visita") {
           _mainnavigationindexprovider.pages = [PerfilPage()];
         }
         if (descripcion == "Agente") {
-          _mainnavigationindexprovider.pages = [HomePage(), PerfilPage()];
+          _mainnavigationindexprovider.pages = [HomePageAgente(),MisRecorridos(), PerfilPage()];
         }
         Navigator.pushReplacementNamed(context, MainPage.routeName);
 

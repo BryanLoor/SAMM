@@ -58,8 +58,7 @@ class _VisitasPage extends State<VisitasPage>
         shrinkWrap: true,
         itemCount: visitas.length,
         itemBuilder: (BuildContext context, int index) {
-          final reversedIndex = visitas!.length - 1 - index;
-          final visita = visitas[reversedIndex];
+          final visita = visitas[index];
           DateFormat inputFormat = DateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'");
 
           String fechaVisitaFormateada = DateFormat('yyyy-MM-dd').format(inputFormat.parse(visita['FechaTimeVisitaEstimada']));
@@ -92,7 +91,7 @@ class _VisitasPage extends State<VisitasPage>
                       //Text('Duracion: ${visita['Duracion']?.toString() ?? 'N/A'}'),
                       
                       // Text('Estado: ${visita['Estado']?.toString() ?? 'N/A'}'),
-                      // Text('FechaCrea: ${visita['FechaCrea']?.toString() ?? 'N/A'}'),
+                       //Text('Fecha Visita: ${fechaVisitaFormateada ?? 'N/A'}'),
                       //Text(                          'FechaVisita: ${fechaVisitaFormateada.toString()??"N/A"}'),
                       Text('Placa: ${visita['Placa']?.toString() ?? 'N/A'}'),
 
@@ -184,7 +183,8 @@ class _VisitasPage extends State<VisitasPage>
     // Simula la carga de nuevos datos o una operación de actualización
 
     setState(() {
-      visitasProvider.visitaListFuture=visitasProvider.getVisitaList(ApiService());
+      visitasProvider.visitaListFuture=visitasProvider.refreshvisitas(context, visitasProvider);
+      
         });
   }
     return RefreshIndicator(

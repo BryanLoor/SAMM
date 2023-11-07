@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sammseguridad_apk/page/MainPage.dart';
 import 'package:sammseguridad_apk/page/Perfil.dart';
+import 'package:sammseguridad_apk/page/home/HomePageAdmin.dart';
+import 'package:sammseguridad_apk/page/home/HomePageAgente.dart';
+import 'package:sammseguridad_apk/page/home/HomePageAnfitrion.dart';
+import 'package:sammseguridad_apk/page/home/HomePageSupervisor.dart';
 import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 // import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
@@ -11,6 +15,7 @@ import 'package:sammseguridad_apk/screens/logins/LoginResponse.dart';
 import 'package:sammseguridad_apk/screens/v2/home/Home.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeVisitas.dart';
+import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/MisRecorridos.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/RondasPage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/homePage.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/visitasPage.dart';
@@ -200,16 +205,15 @@ class _LoginPageState extends State<LoginPage> {
       
       if (token != null) {
         if (descripcion == "Administrador") {
-          print("ADMIN");
           _mainnavigationindexprovider.pages = [
-            HomePage(),
+            HomePageAdmin(),
             RondasPage(),
             VisitasPage(),
             PerfilPage()
           ];
         } else if (descripcion == "Anfitrión") {
           _mainnavigationindexprovider.pages = [
-            HomePage(),
+            HomePageAnfitrion(),
             RondasPage(),
             VisitasPage(),
             PerfilPage()
@@ -217,15 +221,7 @@ class _LoginPageState extends State<LoginPage> {
         }
         else if (descripcion == "Supervisor") {
           _mainnavigationindexprovider.pages = [
-            HomePage(),
-            RondasPage(),
-            VisitasPage(),
-            PerfilPage()
-          ];
-        }
-        else if (descripcion == "Anfitrión") {
-          _mainnavigationindexprovider.pages = [
-            HomePage(),
+            HomePageSupervisor(),
             RondasPage(),
             VisitasPage(),
             PerfilPage()
@@ -235,8 +231,8 @@ class _LoginPageState extends State<LoginPage> {
           _mainnavigationindexprovider.pages = [PerfilPage()];
         }
         else if (descripcion == "Agente") {
-          _mainnavigationindexprovider.pages = [HomePage(), PerfilPage()];
-        }else _mainnavigationindexprovider.pages = [PerfilPage()];
+          _mainnavigationindexprovider.pages = [HomePageAgente(),MisRecorridos(), PerfilPage()];
+        }
         _mainnavigationindexprovider.current=0;
         Navigator.pushReplacementNamed(context, MainPage.routeName);
 

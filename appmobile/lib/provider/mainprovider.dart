@@ -128,6 +128,8 @@ class MainProvider extends ChangeNotifier {
     try {
       prefs = await SharedPreferences.getInstance();
       _token = prefs.getString("token") ?? "";
+      print(_token);
+      print("++++++++++++++++++");
       return _token;
     } catch (e) {
       return "";
@@ -196,7 +198,7 @@ class MainProvider extends ChangeNotifier {
 
 
   Future<void> logout() async {
-    _token = "";
+    //_token = "";
     await prefs.setString("token", "");
     notifyListeners();
   }

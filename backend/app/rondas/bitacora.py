@@ -11,6 +11,7 @@ from app.models.SAMM_Bitacora_RecorridoDetalle import SAMM_Bitacora_RecorridoDet
 from app.models.SAMM_Usuario import SAMM_Usuario
 from app.models.SAMM_Ronda import SAMM_Ronda
 from app.models.SAMM_Ronda_Punto import SAMM_Ronda_Punto,SAMM_Ronda_PuntoSchema
+from app.models.SAMM_Ubicacion import SAMM_Ubicacion
 
 
 
@@ -102,6 +103,8 @@ def getBitacoraRecorrido():
                 SAMM_BitacoraRecorrido.IdAgente==idAgente,
                 #SAMM_Ronda.FechaInicio==datetime.now()
                 )
+            .order_by(SAMM_BitacoraRecorrido.FechaRecorrido.desc())  # Ordenar por fecha descendente
+
             .all()
             )
 
@@ -112,6 +115,8 @@ def getBitacoraRecorrido():
             "idRondaBitacora": q.SAMM_BitacoraRecorrido.Id,
             "fechaRecorrido": q.SAMM_BitacoraRecorrido.FechaRecorrido,
             "Nombres": f"{q.Persona.Nombres} {q.Persona.Apellidos}" if q.Persona else None,
+
+            
             
         }
         for q in query
@@ -120,7 +125,49 @@ def getBitacoraRecorrido():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
     
+    
+@bp.route('/getRecorridoDiario/<int:idAgente>', methods=['GET'])
+@cross_origin()
+@jwt_required()
+def getBitacoraRecorridoXId(idAgente):
+    try:
+        user= SAMM_Usuario.query.filter_by(Codigo=get_jwt_identity()).first()
+        if(user.Id is None): return jsonify({"message":"Usuario  no existe"}),400
+        agente_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.IdAgente == idAgente).first()
+        if (agente_existe is None):
+            return jsonify({"message":"Usuario Agente no existe en bitacora"}),400
+        #bitacora_recorrido_squema=SAMM_BitacoraRecorridoSchema()
+        query = (
+            db.session.query(SAMM_BitacoraRecorrido,SAMM_Usuario,SAMM_Ronda,Persona,SAMM_Ubicacion)
+            .join(SAMM_Ronda, SAMM_Ronda.Id == SAMM_BitacoraRecorrido.IdRonda)
+            .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_BitacoraRecorrido.IdAgente)
+            .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
+            .join(SAMM_Ubicacion, SAMM_Ronda.IdUbicacion == SAMM_Ubicacion.Id, isouter=True)
 
+            .filter(
+                SAMM_BitacoraRecorrido.IdAgente==idAgente,
+                SAMM_BitacoraRecorrido.FechaRecorrido==datetime.now().date()
+                )
+            .first()
+            )
+        schema = {
+            "IdUsuario": query.SAMM_Usuario.Id,
+            "idRonda": query.SAMM_BitacoraRecorrido.IdRonda,
+            "idRondaBitacora": query.SAMM_BitacoraRecorrido.Id,
+            "fechaRecorrido": query.SAMM_BitacoraRecorrido.FechaRecorrido,
+            "Nombres": f"{query.Persona.Nombres} {query.Persona.Apellidos}" if query.Persona else None,
+            "NameUbicacion": query.SAMM_Ubicacion.Descripcion if query.SAMM_Ubicacion else None,
+            "descripcion": query.SAMM_Ronda.Desripcion,
+
+        }
+        
+        
+        return jsonify({"data":schema}), 200
+        
+    except Exception as e:
+        print(e)
+        return jsonify({'message': str(e)}), 500
+        
 
     
 @bp.route('/insertPuntosBitacora', methods=['POST'])

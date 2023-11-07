@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
-import 'package:sammseguridad_apk/screens/ScreenPerfil.dart';
 import 'package:sammseguridad_apk/screens/ScreenSplash.dart';
-import 'package:sammseguridad_apk/screens/logins/ScreenLogin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -86,8 +83,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (value == "Cerrar sesion") {
               // borrar datos de sharedpreference
               SharedPreferences.getInstance().then((value) {
-                value.clear();
                 MainProvider().logout();
+                //String token =value.getString("token")!;
+                value.clear();
+                //value.setString("token", token);
+
                 //MainNavigationIndexProvider().pages=MainNavigationIndexProvider().pagesF;
               });
 

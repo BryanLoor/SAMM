@@ -25,12 +25,11 @@ class VisitasProvider with ChangeNotifier {
     final mainProviderSave =
           Provider.of<MainProvider>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
-    // final visitasProvider = Provider.of<VisitasProvider>(context);
-
+    
     visitasProvider.visitaListFuture =
         mainProviderSave.getPreferencesToken().then((dataToken) {
       token = dataToken.toString();
-      mainProviderSave.updateToken(token);
+            mainProviderSave.updateToken(token);
 
       return getVisitaList(apiService);
     });
@@ -45,12 +44,15 @@ class VisitasProvider with ChangeNotifier {
       var response = await apiService.getData('/visitas/getAllBitacoraVisitas', token);
       if (response["data"] is List) {
         res =  response["data"].cast<Map<String, dynamic>>();
+       
         
       }
+       print(res);
+        print("object");
 
 
     }catch(e){
-      // print(e);
+      print(e);
     }finally{
       return res;
     }
