@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/screens/v2/home/homeNavPages/Rondas/Recorridos/MisRecorridos.dart';
@@ -26,7 +27,8 @@ class _HomePageAgenteState extends State<HomePageAgente> {
     // TODO: implement initState
     super.initState();
   }
- Future<Map<String,dynamic>>  getData() async {
+
+  Future<Map<String, dynamic>> getData() async {
     try {
       var sharedPreferences = await SharedPreferences.getInstance();
       var jwtToken = sharedPreferences.getString("token") ?? "";
@@ -37,15 +39,16 @@ class _HomePageAgenteState extends State<HomePageAgente> {
       Map<String, dynamic> responseRondas = await apiService.getData(
           "/rondas/getRecorridoDiario/$idAgente", jwtToken);
       return responseRondas;
-      }catch (e) {
-        print(e); 
-      }
+    } catch (e) {
+      print(e);
+    }
     return {};
   }
 
   @override
   Widget build(BuildContext context) {
     final RondasProvider recorridoDiario = Provider.of<RondasProvider>(context);
+    final MainNavigationIndexProvider indexProvider = Provider.of<MainNavigationIndexProvider>(context);
 
     return Column(
       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,9 +79,26 @@ class _HomePageAgenteState extends State<HomePageAgente> {
             padding: EdgeInsets.all(16),
             alignment: Alignment.centerLeft,
             color: Colors.blue[900],
-            child: Text(
-              "Recorrido de hoy",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Recorrido de hoy",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Ir a Recorridos",
+                                      style: TextStyle(color: Colors.white, fontSize: 15),
+
+                    ),
+                    IconButton(onPressed: () {
+                      indexProvider.current=1;
+                    }, icon:Icon(Icons.arrow_forward_outlined, color: Colors.white,))
+                  ],
+                )
+              ],
             )),
         Expanded(
           child: Container(
@@ -100,63 +120,87 @@ class _HomePageAgenteState extends State<HomePageAgente> {
                       return Text('Error: ${snapshot.error}');
                     } else {
                       Map<String, dynamic> recorrido = snapshot.data!;
-                      
+
                       if (recorrido.isEmpty) {
-                        
                         return Center(
                           child: Text('No hay rondas'),
                         );
                       }
-                      recorrido=recorrido["data"];
-                          final id = recorrido['idRonda'];
-                          final ubi = recorrido['NameUbicacion'];
-                          final descripcion = recorrido['descripcion'];
-                          final fechaCrea = recorrido['fechaRecorrido'];
-                          DateFormat inputFormat =
-                              DateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'");
+                      recorrido = recorrido["data"];
+                      final id = recorrido['idRonda'];
+                      final ubi = recorrido['NameUbicacion'];
+                      final descripcion = recorrido['descripcion'];
+                      final fechaCrea = recorrido['fechaRecorrido'];
+                      DateFormat inputFormat =
+                          DateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'");
 
-                          String fechaCreaFormateada =
-                              DateFormat('MMMM dd , yyyy  ', 'es')
-                                  .format(inputFormat.parse(fechaCrea));
-                          return InkWell(
-                            onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => PuntosConcretosScreen(
-                                        rondaNombre: recorrido["descripcion"],
-                                        rondaConcretaId: recorrido["idRondaBitacora"],
-                                      ),
-                                    ),
-                                  );
-                                },
-                            child: Card(
-                              
-                              color: Colors.blue[50],
-                              child: Container(
-                                  //width: 350,
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Text(
-                                        "$id - $descripcion",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                      Text(
-                                        "Ubicación: $ubi",
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                      Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "$fechaCreaFormateada",
-                                          )),
-                                    ],
-                                  )),
+                      String fechaCreaFormateada =
+                          DateFormat('MMMM dd , yyyy  ', 'es')
+                              .format(inputFormat.parse(fechaCrea));
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => PuntosConcretosScreen(
+                                rondaNombre: recorrido["descripcion"],
+                                rondaConcretaId: recorrido["idRondaBitacora"],
+                              ),
                             ),
                           );
-                        
+                        },
+                        child: Card(
+                          elevation: 4,
+                          shadowColor: Colors.white,
+                          color: Colors.blue[50],
+                          child: Container(
+                              //width: 350,
+                              padding: EdgeInsets.only(left: 20, right: 20),
+                              
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Text(
+                                        "$fechaCreaFormateada",
+                                      )),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "$descripcion",
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                          SizedBox(height: 10,),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.location_on_outlined),
+                                              Text(
+                                                "$ubi",
+                                                style: TextStyle(fontSize: 18),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      Icon(
+                                        Icons.directions_run_outlined,
+                                        size: 50,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              )),
+                        ),
+                      );
                     }
                   }),
             ),

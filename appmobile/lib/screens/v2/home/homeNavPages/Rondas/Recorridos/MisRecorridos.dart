@@ -119,7 +119,7 @@ class _MisRecorridosState extends State<MisRecorridos> {
                                   
                                   margin: EdgeInsets.all(10.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
                                       Flexible(
                                         child: Padding(
@@ -198,10 +198,9 @@ class _MisRecorridosState extends State<MisRecorridos> {
                                   );
                                 }:null,
                                 child: Card(
-                                  
                                   margin: EdgeInsets.all(10.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
                                       Flexible(
                                         child: Padding(

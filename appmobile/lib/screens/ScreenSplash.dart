@@ -7,6 +7,7 @@ import 'package:sammseguridad_apk/page/home/HomePageAdmin.dart';
 import 'package:sammseguridad_apk/page/home/HomePageAgente.dart';
 import 'package:sammseguridad_apk/page/home/HomePageAnfitrion.dart';
 import 'package:sammseguridad_apk/page/home/HomePageSupervisor.dart';
+import 'package:sammseguridad_apk/page/home/HomePageVisita.dart';
 import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/screens/v2/home/HomeRondas.dart';
@@ -46,7 +47,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
   void initState() {
     super.initState();
 
-    Timer(const Duration(seconds: 2), () {
+    Timer(const Duration(seconds: 1), () {
     //   Navigator.pushReplacementNamed(context, LoginPage.routeName);
     //   // Navigator.pushReplacement(
     //   //   context,
@@ -95,7 +96,6 @@ class _ScreenSplashState extends State<ScreenSplash> {
         } else if (descripcion == "Anfitrión") {
           _mainnavigationindexprovider.pages = [
             HomePageAnfitrion(),
-            RondasPage(),
             VisitasPage(),
             PerfilPage()
           ];
@@ -110,7 +110,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
         }
         
         if (descripcion == "Visita") {
-          _mainnavigationindexprovider.pages = [PerfilPage()];
+          _mainnavigationindexprovider.pages = [HomePageVisita(),PerfilPage()];
         }
         if (descripcion == "Agente") {
           _mainnavigationindexprovider.pages = [HomePageAgente(),MisRecorridos(), PerfilPage()];

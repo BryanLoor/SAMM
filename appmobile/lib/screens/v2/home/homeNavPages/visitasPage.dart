@@ -192,6 +192,21 @@ class _VisitasPage extends State<VisitasPage>
       child: Column(
         children: [
           Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            width: double.infinity,
+            child: Center(
+              child: Text(
+                'Visitas',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
               ),

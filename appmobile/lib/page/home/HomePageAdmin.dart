@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 import 'package:sammseguridad_apk/provider/rondasProvider.dart';
 import 'package:sammseguridad_apk/services/ApiService.dart';
@@ -27,6 +28,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   @override
   Widget build(BuildContext context) {
     final RondasProvider rondasProvider = Provider.of<RondasProvider>(context);
+    final MainNavigationIndexProvider indexProvider = Provider.of<MainNavigationIndexProvider>(context);
 
     return Column(
       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -54,12 +56,29 @@ class _HomePageAdminState extends State<HomePageAdmin> {
         ),
         Container(
             width: double.infinity,
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
             color: Colors.blue[900],
-            child: Text(
-              "Tus últimas 5 rondas creadas",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Tus últimas 5 rondas creadas",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Ir a Rondas",
+                                      style: TextStyle(color: Colors.white, fontSize: 15),
+
+                    ),
+                    IconButton(onPressed: () {
+                      indexProvider.current=1;
+                    }, icon:Icon(Icons.arrow_forward_outlined, color: Colors.white,))
+                  ],
+                )
+              ],
             )),
         Expanded(
           child: Container(
@@ -106,29 +125,56 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                               DateFormat('MMMM dd , yyyy  HH:mm:ss', 'es')
                                   .format(inputFormat.parse(fechaCrea));
                           return Card(
+                            elevation: 4,
+                          shadowColor: Colors.white,
                             color: Colors.blue[50],
                             child: Container(
                                 width: 350,
-                                padding: EdgeInsets.only(left: 10),
+                                padding: EdgeInsets.only(left: 20,right: 20),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(
-                                      "$id - $descripcion",
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                    Text(
-                                      "Ubicació:n $ubi",
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "$fechaCreaFormateada",
-                                        )),
-                                  ],
-                                )),
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Text(
+                                        "$fechaCreaFormateada",
+                                      )),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "$descripcion",
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                          SizedBox(height: 10,),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.location_on_outlined),
+                                              Text(
+                                                "$ubi",
+                                                style: TextStyle(fontSize: 18),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      Icon(
+                                        Icons.directions_run_outlined,
+                                        size: 50,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              )),
+                                
                           );
                         },
                       );

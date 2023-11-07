@@ -7,6 +7,7 @@ import 'package:sammseguridad_apk/page/home/HomePageAdmin.dart';
 import 'package:sammseguridad_apk/page/home/HomePageAgente.dart';
 import 'package:sammseguridad_apk/page/home/HomePageAnfitrion.dart';
 import 'package:sammseguridad_apk/page/home/HomePageSupervisor.dart';
+import 'package:sammseguridad_apk/page/home/HomePageVisita.dart';
 import 'package:sammseguridad_apk/provider/MainNavigationIndexProvider.dart';
 import 'package:sammseguridad_apk/provider/mainprovider.dart';
 // import 'package:sammseguridad_apk/screens/ScreanMenu.dart';
@@ -214,7 +215,6 @@ class _LoginPageState extends State<LoginPage> {
         } else if (descripcion == "Anfitrión") {
           _mainnavigationindexprovider.pages = [
             HomePageAnfitrion(),
-            RondasPage(),
             VisitasPage(),
             PerfilPage()
           ];
@@ -223,12 +223,11 @@ class _LoginPageState extends State<LoginPage> {
           _mainnavigationindexprovider.pages = [
             HomePageSupervisor(),
             RondasPage(),
-            VisitasPage(),
             PerfilPage()
           ];
         }
         else if (descripcion == "Visita") {
-          _mainnavigationindexprovider.pages = [PerfilPage()];
+          _mainnavigationindexprovider.pages = [HomePageVisita(),PerfilPage()];
         }
         else if (descripcion == "Agente") {
           _mainnavigationindexprovider.pages = [HomePageAgente(),MisRecorridos(), PerfilPage()];
