@@ -6,11 +6,13 @@ class ModalBottomCreateVisita extends StatefulWidget {
   String cedula;
   String nombre;
   String apellido;
+  String idVisitante;
   
   ModalBottomCreateVisita({
     required this.cedula, 
     required this.nombre,
-    required this.apellido
+    required this.apellido,
+    required this.idVisitante
 
   });
   
@@ -41,6 +43,7 @@ class _ModalBottomCreateVisita extends State<ModalBottomCreateVisita> {
             widgetCedula: widget.cedula,
             widgetNombre: widget.nombre,
             widgetApellido: widget.apellido,
+            widgetIdVisitante:widget.idVisitante
           );
     // return SingleChildScrollView(
     //   child: Padding(

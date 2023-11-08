@@ -22,6 +22,7 @@ class FloatingVisitas extends StatelessWidget {
                 cedula: '',
                 nombre: '',
                 apellido: '',
+                idVisitante: '',
             ),
             );
           },

@@ -140,6 +140,8 @@ def getAllBitacoraVisitas():
             .join(SAMM_UbiUsuario, SAMM_UbiUsuario.IdUbicacion == SAMM_BitacoraVisita.IdUbicacion)
             .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
             .filter(SAMM_BitacoraVisita.IdAnfitrion == idUsuario )
+            .order_by(SAMM_BitacoraVisita.FechaTimeVisitaEstimada.desc())  # Ordenar por fecha descendente
+
             .all()
         )
         schema= [
@@ -182,6 +184,9 @@ def getAllBitacoraVisitas():
         .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
         .join(SAMM_UbiUsuario, SAMM_UbiUsuario.IdUbicacion == SAMM_BitacoraVisita.IdUbicacion)
         .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
+    
+        .order_by(SAMM_BitacoraVisita.FechaTimeVisitaEstimada.desc())  # Ordenar por fecha descendente
+
         .all()
     )
 
@@ -216,114 +221,65 @@ def getAllBitacoraVisitas():
 
     return jsonify({'data':schema}),200
 
+#Obtener todas las bitacora visitas de un usuario anfitrion
+@bp.route('/getVisitasAsignadas', methods=['GET'])
+@cross_origin()
+@jwt_required()
+def getVisitasAsignadas():
+    try:
+        codigoUsuario = get_jwt_identity()
+        #TODO:Rol deberia obtnerse del token y no hacerse esta consulta
+        usuario = (
+            db.session.query(SAMM_Usuario.IdPerfil, SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo == codigoUsuario).first()
+        )
 
-# @bp.route('/getAllBitacoraVisitasCondense', methods=['GET'])
-# @cross_origin()
-# @jwt_required()
-# def getAllBitacoraVisitasCondense():
-#     codigoUsuario = get_jwt_identity()
-#     #TODO:Rol deberia obtnerse del token y no hacerse esta consulta
-#     usuario = (
-#         db.session.query(SAMM_Usuario.IdPerfil, SAMM_Usuario.Id).filter(SAMM_Usuario.Codigo == codigoUsuario).first()
-#     )
+        idUsuario = usuario[1]
+        #En el caso de que se anfitrion osea id 3
+        
+        query = (
+            db.session.query(SAMM_BitacoraVisita,Persona,SAMM_Ubicacion,SAMM_Estados)
+            .join(SAMM_Estados, SAMM_BitacoraVisita.Estado == SAMM_Estados.Id)
+            .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_BitacoraVisita.IdAnfitrion)
+            .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
+            .join(SAMM_UbiUsuario, SAMM_UbiUsuario.IdUbicacion == SAMM_BitacoraVisita.IdUbicacion)
+            .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
+            .filter(SAMM_BitacoraVisita.IdVisita == idUsuario, SAMM_BitacoraVisita.FechaTimeVisitaEstimada>=datetime.now().date())
+            .order_by(SAMM_BitacoraVisita.FechaTimeVisitaEstimada.desc())  # Ordenar por fecha descendente
 
-#     rol = usuario[0]
-#     idUsuario = usuario[1]
-#     print(idUsuario)
-
-
-#     print(rol)
-#     #En el caso de que se anfitrion osea id 3
-#     if(rol == 3):
-#         query = (
-#             db.session.query(
-#                 SAMM_BitacoraVisita,Persona,SAMM_Ubicacion,SAMM_Estados)
-#             .join(SAMM_Estados, SAMM_BitacoraVisita.Estado == SAMM_Estados.Id)
-#             .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_BitacoraVisita.IdAnfitrion)
-#             .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
-#             .join(SAMM_UbiUsuario, SAMM_UbiUsuario.IdUbicacion == SAMM_BitacoraVisita.IdUbicacion)
-#             .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
-#             .filter(SAMM_BitacoraVisita.IdAnfitrion == idUsuario)
-#             .group_by(SAMM_BitacoraVisita.IdentificacionVisitante)
-#             .all()
-#         )
-#         schema= [
-#             {
-#                 'Id': q.SAMM_BitacoraVisita.Id,
-#                 "CodigoEstado":q.SAMM_Estados.Id,
-#                 "Estado":q.SAMM_Estados.Descripcion,
-#                 "IdAnfitrion":q.SAMM_BitacoraVisita.IdAnfitrion, #idUsuario
-#                 "IdentificacionAnfitrion": q.Persona.Identificacion,
-#                 "NombresAnfitrion":q.Persona.Nombres,
-#                 "ApellidosAnfitrion":q.Persona.Apellidos,
-#                 "IdVisitante":q.SAMM_BitacoraVisita.IdVisita,
-#                 "IdentificacionVisitante": q.SAMM_BitacoraVisita.IdentificacionVisitante,
-#                 "NombresVisitante":q.SAMM_BitacoraVisita.NombresVisitante,
-#                 "ApellidosVisitante":q.SAMM_BitacoraVisita.ApellidosVisitante,
-#                 "AntecdentesPenales": q.SAMM_BitacoraVisita.Antecedentes,
-#                 "Ubicacion":q.SAMM_Ubicacion.Descripcion,
-#                 "Celular":q.SAMM_BitacoraVisita.Telefono,
-#                 "Correo":q.SAMM_BitacoraVisita.Correo,
-#                 "Placa":q.SAMM_BitacoraVisita.Placa,
-#                 "Observaciones": q.SAMM_BitacoraVisita.Observaciones,
-#                 "FechaTimeVisitaEstimada":q.SAMM_BitacoraVisita.FechaTimeVisitaEstimada,
-#                 "FechaTimeVisitaReal":q.SAMM_BitacoraVisita.FechaTimeVisitaReal,
-#                 "FechaTimeSalidaEstimada":q.SAMM_BitacoraVisita.FechaTimeSalidaEstimada,
-#                 "FechaTimeSalidaReal":q.SAMM_BitacoraVisita.FechaTimeSalidaReal,
+            .all()
+        )
+        schema= [
+            {
+                'Id': q.SAMM_BitacoraVisita.Id,
+                "CodigoEstado":q.SAMM_Estados.Id,
+                "Estado":q.SAMM_Estados.Descripcion,
+                "IdAnfitrion":q.SAMM_BitacoraVisita.IdAnfitrion, #idUsuario
+                "IdentificacionAnfitrion": q.Persona.Identificacion,
+                "NombresAnfitrion":q.Persona.Nombres,
+                "ApellidosAnfitrion":q.Persona.Apellidos,
+                "IdVisitante":q.SAMM_BitacoraVisita.IdVisita,
+                "IdentificacionVisitante": q.SAMM_BitacoraVisita.IdentificacionVisitante,
+                "NombresVisitante":q.SAMM_BitacoraVisita.NombresVisitante,
+                "ApellidosVisitante":q.SAMM_BitacoraVisita.ApellidosVisitante,
+                "AntecdentesPenales": q.SAMM_BitacoraVisita.Antecedentes,
+                "Ubicacion":q.SAMM_Ubicacion.Descripcion,
+                "Celular":q.SAMM_BitacoraVisita.Telefono,
+                "Correo":q.SAMM_BitacoraVisita.Correo,
+                "Placa":q.SAMM_BitacoraVisita.Placa,
+                "Observaciones": q.SAMM_BitacoraVisita.Observaciones,
+                "FechaTimeVisitaEstimada":q.SAMM_BitacoraVisita.FechaTimeVisitaEstimada,
+                "FechaTimeVisitaReal":q.SAMM_BitacoraVisita.FechaTimeVisitaReal,
+                "FechaTimeSalidaEstimada":q.SAMM_BitacoraVisita.FechaTimeSalidaEstimada,
+                "FechaTimeSalidaReal":q.SAMM_BitacoraVisita.FechaTimeSalidaReal,
                 
-#             }
-#             for q in query
-#         ]
-#         return jsonify({'data':schema}),200
+            }
+            for q in query
+        ]
+        return jsonify({'data':schema}),200
 
-    
-
-#     #Esto traere todas las bitacoras si no es anfitrion
-
-#     query = (
-#         db.session.query(SAMM_BitacoraVisita,Persona,SAMM_Ubicacion,SAMM_Estados)
-#         .join(SAMM_Estados, SAMM_BitacoraVisita.Estado == SAMM_Estados.Id)
-#         .join(SAMM_Usuario, SAMM_Usuario.Id == SAMM_BitacoraVisita.IdAnfitrion)
-#         .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
-#         .join(SAMM_UbiUsuario, SAMM_UbiUsuario.IdUbicacion == SAMM_BitacoraVisita.IdUbicacion)
-#         .join(SAMM_Ubicacion, SAMM_UbiUsuario.IdUbicacion == SAMM_Ubicacion.Id)
-#         .group_by(SAMM_BitacoraVisita.IdentificacionVisitante)
-#         .all()
-#     )
-
-#     schema= [
-#         {
-#             'Id': q.SAMM_BitacoraVisita.Id,
-#             "CodigoEstado":q.SAMM_Estados.Id,
-#             "Estado":q.SAMM_Estados.Descripcion,
-#             "IdAnfitrion":q.SAMM_BitacoraVisita.IdAnfitrion, #idUsuario
-#             "IdentificacionAnfitrion": q.Persona.Identificacion,
-#             "NombresAnfitrion":q.Persona.Nombres,
-#             "ApellidosAnfitrion":q.Persona.Apellidos,
-#             "IdVisitante":q.SAMM_BitacoraVisita.IdVisita,
-#             "IdentificacionVisitante": q.SAMM_BitacoraVisita.IdentificacionVisitante,
-#             "NombresVisitante":q.SAMM_BitacoraVisita.NombresVisitante,
-#             "ApellidosVisitante":q.SAMM_BitacoraVisita.ApellidosVisitante,
-#             "AntecdentesPenales": q.SAMM_BitacoraVisita.Antecedentes,
-#             "Ubicacion":q.SAMM_Ubicacion.Descripcion,
-#             "Celular":q.SAMM_BitacoraVisita.Telefono,
-#             "Correo":q.SAMM_BitacoraVisita.Correo,
-#             "Placa":q.SAMM_BitacoraVisita.Placa,
-#             "Observaciones": q.SAMM_BitacoraVisita.Observaciones,
-#             "FechaTimeVisitaEstimada":q.SAMM_BitacoraVisita.FechaTimeVisitaEstimada,
-#             "FechaTimeVisitaReal":q.SAMM_BitacoraVisita.FechaTimeVisitaReal,
-#             "FechaTimeSalidaEstimada":q.SAMM_BitacoraVisita.FechaTimeSalidaEstimada,
-#             "FechaTimeSalidaReal":q.SAMM_BitacoraVisita.FechaTimeSalidaReal,
-            
-#         }
-#         for q in query
-#     ]
-
-
-#     return jsonify({'data':schema}),200
-
-
-
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500 
+     
 
 
 
@@ -441,20 +397,34 @@ def get_persona_by_CED_and_NAME(cedula_or_name):
                 Persona.Apellidos.like(f"%{cedula_or_name}%"),
                 Persona.Identificacion.like(f"%{cedula_or_name}%")
             )).all()
+        query = (
+            db.session.query(Persona,SAMM_Usuario)
+            .join(Persona, SAMM_Usuario.IdPersona == Persona.Id)
+            .filter(or_(
+                Persona.Nombres.like(f"%{cedula_or_name}%"),
+                Persona.Apellidos.like(f"%{cedula_or_name}%"),
+                Persona.Identificacion.like(f"%{cedula_or_name}%")
+            )).all()
+        )
             
-        
         #if len(personas) == 0:
         #    return jsonify({'message': 'Persona no existe'}), 400
         personas_dict = [
+        
         {
-            "Nombres": row.Nombres,
-            "Apellidos": row.Apellidos,
-            "Cedula": row.Identificacion, 
-            "IdPersona": row.Id,
-            "Cel_Personal":row.Cel_Personal,
-            "Correo_Personal":row.Correo_Personal
+            "Id": row.SAMM_Usuario.Id,
+            "Nombres": row.Persona.Nombres,
+            "Apellidos": row.Persona.Apellidos,
+            "Cedula": row.Persona.Identificacion, 
+            "IdPersona": row.Persona.Id,
+            "Cel_Personal":row.Persona.Cel_Personal,
+            "Correo_Personal":row.Persona.Correo_Personal
+            
         }
-        for row in personas
+        
+        for row in query
+        
+
     ]
         
         return jsonify({"data":personas_dict,"total":len(personas_dict)}), 200

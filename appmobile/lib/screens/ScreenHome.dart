@@ -63,6 +63,7 @@ class ScreenHome extends StatelessWidget {
                             cedula: '',
                             nombre: '',
                             apellido: '',
+                            idVisitante: '',
                           ),
                         );
                       },
@@ -146,6 +147,7 @@ class ScreenHome extends StatelessWidget {
                             cedula: '',
                             nombre: '',
                             apellido: '',
+                            idVisitante:'',
                           ),
                         );
                       },

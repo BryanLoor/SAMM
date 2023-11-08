@@ -131,12 +131,15 @@ def getBitacoraRecorrido():
 @jwt_required()
 def getBitacoraRecorridoXId(idAgente):
     try:
+        
         user= SAMM_Usuario.query.filter_by(Codigo=get_jwt_identity()).first()
+        print(user)
         if(user.Id is None): return jsonify({"message":"Usuario  no existe"}),400
         agente_existe = SAMM_BitacoraRecorrido.query.filter(SAMM_BitacoraRecorrido.IdAgente == idAgente).first()
         if (agente_existe is None):
             return jsonify({"message":"Usuario Agente no existe en bitacora"}),400
         #bitacora_recorrido_squema=SAMM_BitacoraRecorridoSchema()
+        print(agente_existe)
         query = (
             db.session.query(SAMM_BitacoraRecorrido,SAMM_Usuario,SAMM_Ronda,Persona,SAMM_Ubicacion)
             .join(SAMM_Ronda, SAMM_Ronda.Id == SAMM_BitacoraRecorrido.IdRonda)

@@ -18,6 +18,7 @@ class ScreenGenerarVisita extends StatefulWidget {
   String widgetCedula;
   String widgetNombre;
   String widgetApellido;
+  String widgetIdVisitante;
   
   var parentKey;
 
@@ -25,6 +26,7 @@ class ScreenGenerarVisita extends StatefulWidget {
       {required this.widgetCedula,
       required this.widgetNombre,
       required this.widgetApellido,
+      required this.widgetIdVisitante,
       this.parentKey,
       Key? key})
       : super(key: key);
@@ -43,7 +45,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
   String stateCedula = '';
   String stateNombre = '';
   String stateApellido = '';
-  String idVisitanteEncontrado = '';
+  String idVisitante = '';
   Map<String, dynamic> visitanteEncontrado = {};
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
@@ -120,6 +122,8 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
     stateCedula = widget.widgetCedula;
     stateNombre = widget.widgetNombre;
     stateApellido = widget.widgetApellido;
+    idVisitante = widget.widgetIdVisitante;
+
     ubicacionSelected = {};
     ubicaciones = [];
     if (stateCedula.length != 10 ||
@@ -172,7 +176,7 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
       'lastNameVisitante': stateApellido,
       //'idAnfitrion': mainProvider.response['Id'],
       'idAnfitrion': MainProvider.prefs.getInt("Id"),
-      'idVisitante': visitanteEncontrado["IdPersona"],
+      'idVisitante': visitanteEncontrado["Id"]??idVisitante,
       'antecedentes': 0,
       'phone': visitanteEncontrado["Cel_Persona"] ?? "9999999999",
       'email': visitanteEncontrado["Correo_Personal"] ?? "correo@ejemplo.com",
@@ -180,6 +184,8 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
       // 'lastName': _lastNameController.text,
       'placa': placaController.text,
     };
+    print(data);
+    print("!--------------VISITANTE ENCONTRADO------");
     try {
       await apiService
           .postData('/visitas/registraVisita', data, token)
@@ -744,10 +750,12 @@ class _ScreenGenerarVisitaState extends State<ScreenGenerarVisita> {
                             visitanteEncontrado = resultadosBusqueda[index];
                             busquedaController.text =
                                 resultadosBusqueda[index]["Cedula"];
-                            setState(() {
+                            
                               stateCedula = resultadosBusqueda[index]["Cedula"];
                               cedulaIsFiled = true;
-                            });
+                              print(resultadosBusqueda[index]);
+                              print("--------------RESULTADO BUSQUEDA--------------");
+                            
                           });
                         },
                         title: Text(nombre,

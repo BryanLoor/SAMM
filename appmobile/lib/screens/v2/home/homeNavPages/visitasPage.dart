@@ -69,7 +69,8 @@ class _VisitasPage extends State<VisitasPage>
           Duration duracionVisita = fechaSalida.difference(fechaVisita);
           //Duration duracionVisita = fechaSalidaFormateada.difference(fechaVisitaFormateada);
           // print("La duración de la visita es: ${duracionVisita.inDays} días, ${duracionVisita.inHours % 24} horas y ${duracionVisita.inMinutes % 60} minutos.");
-
+          print(visita);
+          print("-----------VISITAAA------------");
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: ListTile(
@@ -139,6 +140,7 @@ class _VisitasPage extends State<VisitasPage>
                                   cedula: visita['IdentificacionVisitante'],
                                   nombre: visita['NombresVisitante'],
                                   apellido: visita['ApellidosVisitante'],
+                                  idVisitante :visita['IdVisitante'].toString()
                                 ));
                           },
                           // builder: (context) => ModalBottomCreateVisita(
