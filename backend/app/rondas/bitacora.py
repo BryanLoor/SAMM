@@ -184,7 +184,10 @@ def insertPuntosBitacoraDetalle():
         idAgente=request.json["idAgente"]
         idRonda=request.json["idRonda"]
         puntos= request.json["puntos"]
-        
+        print(idAgente)
+        print(idRonda)
+        print(puntos)
+        print("-----------------------")
         #diaSemana=request.json["diaSemana"] or None
         
         # Obtener fechas de inicio y fin desde el frontend
@@ -251,6 +254,7 @@ def insertPuntosBitacoraDetalle():
          # Insertar registros en SAMM_BitacoraRecorrido y SAMM_Bitacora_RecorridoDetalle
         print(fechas)
         for fecha in fechas:
+            print(fecha)
             # Insertar en SAMM_BitacoraRecorrido
             bitacora_recorrido = SAMM_BitacoraRecorrido(
                 IdAgente=idAgente,
@@ -289,7 +293,8 @@ def insertPuntosBitacoraDetalle():
         # Confirmar cambios en la base de datos
         db.session.commit()
 
-        return jsonify({'message': 'Registros insertados correctamente',}), 200
+        return jsonify({'message': 'Registros insertados correctamente',}), 201
 
     except Exception as e:
+        print(e)
         return jsonify({'message': str(e)}), 500

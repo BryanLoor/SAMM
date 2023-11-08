@@ -303,6 +303,7 @@ class BotonAgregarPunto extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     Navigator.pop(context, 'Aceptar');
+                    
                     MapviewController mapviewcontroller =
                         Provider.of<MapviewController>(context, listen: false);
                     RondasProvider rondasProvider =

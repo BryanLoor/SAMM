@@ -136,6 +136,8 @@ class _HomePageAgenteState extends State<HomePageAgente> {
                           .format(inputFormat.parse(fechaCrea));
                   return InkWell(
                     onTap: () {
+                      print(recorrido["idRondaBitacora"]);
+                      print("---------------------------");
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => PuntosConcretosScreen(

@@ -219,7 +219,7 @@ class RondasProvider with ChangeNotifier {
       "idAgente": idAgente,
       "puntos":puntos
     };
-    
+    print(dataBitacora);
     try {
     await apiService.postData('/rondas/guardarGuardiasPorRonda', data,token);
     await apiService.postData('/rondas/insertPuntosBitacora', dataBitacora, token);

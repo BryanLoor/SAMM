@@ -116,6 +116,7 @@ class _Formulario_AsignarGuardiaState extends State<Formulario_AsignarGuardia> {
                   rondasProvider.ItemPuntos
                 ).catchError((onError){
                  print(rondasProvider.ItemPuntos);
+                 print("++++++++++++++++++++++");
                   ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           duration: Duration(seconds: 2),
